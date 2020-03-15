@@ -11,6 +11,11 @@ GEN : cli.Generator & {
   Cli: CLI
 }
 
+_CmdImports : [
+  schema.Import & { Path: CLI.Package + "/pkg" }
+]
+
+
 CLI : cli.Schema & {
   Name: "mvs"
   Package: "github.com/hofstadter-io/mvs"
@@ -58,7 +63,7 @@ CLI : cli.Schema & {
 
   PersistentPrerun: true
   PersistentPrerunBody: """
-    fmt.Println("PersistentPrerun", RootLangPflag, args)
+    // fmt.Println("PersistentPrerun", RootLangPflag, args)
   """
 
   Commands: [
@@ -70,15 +75,26 @@ CLI : cli.Schema & {
 
       Args: [
         schema.Arg & {
-          Name: "file"
+          Name: "filename"
           Type: "string"
           Required: true
-          Help: "module name or path, depending on language"
+          Help: "existing package filename, depending on language"
         }
       ]
 
+      Imports: _CmdImports
+
       Body: """
-      fmt.Println("Convert", RootLangPflag, file)
+      if RootLangPflag == "" {
+        fmt.Println("language flag is required for this command")
+        cmd.Usage()
+        os.Exit(1)
+      }
+      err := pkg.Convert(RootLangPflag, filename)
+      if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+      }
       """
 
     },
@@ -87,6 +103,17 @@ CLI : cli.Schema & {
       Usage:  "graph"
       Short:  "print module requirement graph"
       Long:   Short
+
+      Imports: _CmdImports
+
+      Body: """
+      err := pkg.Graph(RootLangPflag)
+      if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+      }
+      """
+
     },
     schema.Command & {
       Name:   "init"
@@ -103,8 +130,19 @@ CLI : cli.Schema & {
         }
       ]
 
+      Imports: _CmdImports
+
       Body: """
-      fmt.Println("Init", RootLangPflag, module)
+      if RootLangPflag == "" {
+        fmt.Println("language flag is required for this command")
+        cmd.Usage()
+        os.Exit(1)
+      }
+      err := pkg.Init(RootLangPflag, module)
+      if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+      }
       """
 
     },
@@ -113,18 +151,51 @@ CLI : cli.Schema & {
       Usage:  "tidy"
       Short:  "add missinad and remove unused modules"
       Long:   Short
+
+      Imports: _CmdImports
+
+      Body: """
+      err := pkg.Tidy(RootLangPflag)
+      if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+      }
+      """
+
     },
     schema.Command & {
       Name:   "vendor"
       Usage:  "vendor"
       Short:  "make a vendored copy of dependencies"
       Long:   Short
+
+      Imports: _CmdImports
+
+      Body: """
+      err := pkg.Vendor(RootLangPflag)
+      if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+      }
+      """
+
     },
     schema.Command & {
       Name:   "verify"
       Usage:  "verify"
       Short:  "verify dependencies have expected content"
       Long:   Short
+
+      Imports: _CmdImports
+
+      Body: """
+      err := pkg.Verify(RootLangPflag)
+      if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+      }
+      """
+
     },
   ]
 }

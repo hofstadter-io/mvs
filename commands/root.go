@@ -1,10 +1,6 @@
 package commands
 
-// github.com/hofstadter-io/mvs
-
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +44,7 @@ var RootCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		fmt.Println("PersistentPrerun", RootLangPflag, args)
+		// fmt.Println("PersistentPrerun", RootLangPflag, args)
 
 	},
 }

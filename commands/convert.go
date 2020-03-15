@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/hofstadter-io/mvs/pkg"
 )
 
 var convertLong = `convert another package system to MVS, language flag is required`
@@ -22,20 +24,29 @@ var ConvertCmd = &cobra.Command{
 		// Argument Parsing
 
 		if 0 >= len(args) {
-			fmt.Println("missing required argument: 'File'")
+			fmt.Println("missing required argument: 'Filename'")
 			cmd.Usage()
 			os.Exit(1)
 		}
 
-		var file string
+		var filename string
 
 		if 0 < len(args) {
 
-			file = args[0]
+			filename = args[0]
 
 		}
 
-		fmt.Println("Convert", RootLangPflag, file)
+		if RootLangPflag == "" {
+			fmt.Println("language flag is required for this command")
+			cmd.Usage()
+			os.Exit(1)
+		}
+		err := pkg.Convert(RootLangPflag, filename)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
 	},
 }
