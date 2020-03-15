@@ -19,6 +19,9 @@ CLI : cli.Schema & {
 
   Commands: [
     schema.Command & {
+      Name: "convert"
+    },
+    schema.Command & {
       Name: "download"
     },
     schema.Command & {
