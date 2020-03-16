@@ -21,10 +21,15 @@ func Hack(lang string, args []string) error {
 		return err
 	}
 
-	err = repo.RemoteRefs()
+	refs, err := repo.RemoteRefs()
 	if err != nil {
 		return err
 	}
 
+	for _, ref := range refs {
+		fmt.Println(ref)
+	}
+
+	fmt.Println("\ntotal:", len(refs))
 	return nil
 }
