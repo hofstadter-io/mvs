@@ -1,9 +1,9 @@
 package git
 
 import (
-	"gopkg.in/src-d/go-billy.v4"
-	gogit "gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/storage"
+	"github.com/go-git/go-billy/v5"
+	gogit "github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/storage"
 )
 
 type GitRepo struct {

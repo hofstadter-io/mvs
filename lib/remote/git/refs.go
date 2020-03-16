@@ -1,7 +1,7 @@
 package git
 
 import (
-	"gopkg.in/src-d/go-git.v4/plumbing"
+	"github.com/go-git/go-git/v5/plumbing"
 )
 
 func (R *GitRepo) RemoteRefs() ([]*plumbing.Reference, error) {
