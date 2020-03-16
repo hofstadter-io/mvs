@@ -11,9 +11,34 @@ import (
 )
 
 type GitRepo struct {
-	Store storage.Storer
-	FS    billy.Filesystem
-	Repo  *gogit.Repository
+	Store  storage.Storer
+	FS     billy.Filesystem
+
+	Repo   *gogit.Repository
+
+	Remote *gogit.Remote
+
+	FetchOptions *gogit.FetchOptions
+	ListOptions *gogit.ListOptions
+}
+
+func (R *GitRepo) RemoteRefs() error {
+	fmt.Println("Refs:")
+	refs, err := R.Remote.List(R.ListOptions)
+	if err != nil {
+		return err
+	}
+
+	for _, ref := range refs {
+		fmt.Println(ref)
+		if ref.Type() == plumbing.HashReference {
+			fmt.Println(ref)
+		}
+	}
+
+	fmt.Println("\ntotal:", len(refs))
+
+	return err
 }
 
 func (R *GitRepo) GetRefs() error {
@@ -35,7 +60,7 @@ func (R *GitRepo) GetRefs() error {
 }
 
 func (R *GitRepo) GetTags() error {
-	fmt.Println("\nTags:")
+	fmt.Println("Tags:")
 	iter, err := R.Repo.Tags()
 	if err != nil {
 		return err

@@ -15,17 +15,13 @@ func Hack(lang string, args []string) error {
 		ver = args[1]
 	}
 
-	repo, err := git.FetchRepo(url, ver)
+	fmt.Println("fetching:", url, "@", ver)
+	repo, err := git.NewRemote(url)
 	if err != nil {
 		return err
 	}
 
-	err = repo.GetRefs()
-	if err != nil {
-		return err
-	}
-
-	err = repo.GetTags()
+	err = repo.RemoteRefs()
 	if err != nil {
 		return err
 	}

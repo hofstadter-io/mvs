@@ -7,12 +7,46 @@ import (
 
 	"gopkg.in/src-d/go-billy.v4/memfs"
 	gogit "gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/config"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
-func FetchRepo(srcUrl, srcVer string) (*GitRepo, error) {
+func NewRemote(srcUrl string) (*GitRepo, error) {
+
+	rc := &config.RemoteConfig {
+		Name: "origin",
+		URLs: []string{
+			"https://" + srcUrl,
+		},
+	}
+
+	lo := &gogit.ListOptions{}
+
+	if strings.Contains(srcUrl, "github.com") && os.Getenv("GITHUB_TOKEN") != "" {
+		lo.Auth = &http.BasicAuth{
+			Username: "github-token", // yes, this can be anything except an empty string
+			Password: os.Getenv("GITHUB_TOKEN"),
+		}
+		// co.URL = "git@" + strings.Replace(srcUrl, "/", ":", 1)
+	}
+
+	fmt.Println("URL:", rc.URLs[0])
+
+	// Clones the repository into the worktree (fs) and storer all the .git
+	// content into the storer
+	st := memory.NewStorage()
+	remote := gogit.NewRemote(st, rc)
+
+	return &GitRepo {
+		Store: st,
+		Remote: remote,
+		ListOptions: lo,
+	}, nil
+}
+
+func CloneRepo(srcUrl, srcVer string) (*GitRepo, error) {
 
 	co := &gogit.CloneOptions{
 		URL: "https://" + srcUrl,
@@ -23,7 +57,7 @@ func FetchRepo(srcUrl, srcVer string) (*GitRepo, error) {
 			Username: "github-token", // yes, this can be anything except an empty string
 			Password: os.Getenv("GITHUB_TOKEN"),
 		}
-		co.URL = "git@" + strings.Replace(srcUrl, "/", ":", 1)
+		// co.URL = "git@" + strings.Replace(srcUrl, "/", ":", 1)
 	}
 
 	fmt.Println("URL:", co.URL)
@@ -31,7 +65,6 @@ func FetchRepo(srcUrl, srcVer string) (*GitRepo, error) {
 	if srcVer != "" {
 		co.ReferenceName = plumbing.ReferenceName(srcVer)
 	}
-
 
 	// Clones the repository into the worktree (fs) and storer all the .git
 	// content into the storer
