@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/hofstadter-io/mvs/pkg"
+	"github.com/hofstadter-io/mvs/lib"
 )
 
 var convertLong = `convert another package system to MVS, language flag is required`
@@ -42,7 +42,7 @@ var ConvertCmd = &cobra.Command{
 			cmd.Usage()
 			os.Exit(1)
 		}
-		err := pkg.Convert(RootLangPflag, filename)
+		err := lib.Convert(RootLangPflag, filename)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

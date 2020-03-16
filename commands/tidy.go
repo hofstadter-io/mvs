@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/hofstadter-io/mvs/pkg"
+	"github.com/hofstadter-io/mvs/lib"
 )
 
 var tidyLong = `add missinad and remove unused modules`
@@ -23,7 +23,7 @@ var TidyCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		err := pkg.Tidy(RootLangPflag)
+		err := lib.Tidy(RootLangPflag)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

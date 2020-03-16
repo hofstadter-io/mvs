@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/hofstadter-io/mvs/pkg"
+	"github.com/hofstadter-io/mvs/lib"
 )
 
 var verifyLong = `verify dependencies have expected content`
@@ -23,7 +23,7 @@ var VerifyCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		err := pkg.Verify(RootLangPflag)
+		err := lib.Verify(RootLangPflag)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

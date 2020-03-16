@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/hofstadter-io/mvs/pkg"
+	"github.com/hofstadter-io/mvs/lib"
 )
 
 var graphLong = `print module requirement graph`
@@ -23,7 +23,7 @@ var GraphCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		err := pkg.Graph(RootLangPflag)
+		err := lib.Graph(RootLangPflag)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

@@ -12,7 +12,7 @@ GEN : cli.Generator & {
 }
 
 _CmdImports : [
-  schema.Import & { Path: CLI.Package + "/pkg" }
+  schema.Import & { Path: CLI.Package + "/lib" }
 ]
 
 
@@ -90,7 +90,7 @@ CLI : cli.Schema & {
         cmd.Usage()
         os.Exit(1)
       }
-      err := pkg.Convert(RootLangPflag, filename)
+      err := lib.Convert(RootLangPflag, filename)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -107,7 +107,7 @@ CLI : cli.Schema & {
       Imports: _CmdImports
 
       Body: """
-      err := pkg.Graph(RootLangPflag)
+      err := lib.Graph(RootLangPflag)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -138,7 +138,7 @@ CLI : cli.Schema & {
         cmd.Usage()
         os.Exit(1)
       }
-      err := pkg.Init(RootLangPflag, module)
+      err := lib.Init(RootLangPflag, module)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -155,7 +155,7 @@ CLI : cli.Schema & {
       Imports: _CmdImports
 
       Body: """
-      err := pkg.Tidy(RootLangPflag)
+      err := lib.Tidy(RootLangPflag)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -172,7 +172,7 @@ CLI : cli.Schema & {
       Imports: _CmdImports
 
       Body: """
-      err := pkg.Vendor(RootLangPflag)
+      err := lib.Vendor(RootLangPflag)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -189,7 +189,7 @@ CLI : cli.Schema & {
       Imports: _CmdImports
 
       Body: """
-      err := pkg.Verify(RootLangPflag)
+      err := lib.Verify(RootLangPflag)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)

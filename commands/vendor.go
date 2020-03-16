@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/hofstadter-io/mvs/pkg"
+	"github.com/hofstadter-io/mvs/lib"
 )
 
 var vendorLong = `make a vendored copy of dependencies`
@@ -23,7 +23,7 @@ var VendorCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		err := pkg.Vendor(RootLangPflag)
+		err := lib.Vendor(RootLangPflag)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
