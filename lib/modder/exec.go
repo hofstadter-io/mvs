@@ -45,3 +45,7 @@ func (m *ExecModder) Verify() error {
 	fmt.Println(out)
 	return err
 }
+
+func (m *ExecModder) Load(dir string) error {
+	panic("This function should never be called or implemented")
+}

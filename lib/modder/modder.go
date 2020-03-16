@@ -6,4 +6,5 @@ type Modder interface {
 	Tidy() error
 	Vendor() error
 	Verify() error
+	Load(dir string) error
 }

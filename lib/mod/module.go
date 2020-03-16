@@ -7,8 +7,8 @@ type Module struct {
 	LangVer  string
 	Module   string
 	Version  string
-	Requires []Require
-	Replaces []Replace
+	Require  []Require
+	Replace  []Replace
 	SumMod   *Module
 }
 

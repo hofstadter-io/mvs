@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"gopkg.in/yaml.v3"
+
+	"github.com/hofstadter-io/mvs/lib/mod"
 )
 
 type SimpleModder struct {
@@ -47,9 +51,24 @@ func (m *SimpleModder) Tidy() error {
 }
 
 func (m *SimpleModder) Vendor() error {
+	return m.Load(".")
 	return fmt.Errorf("%s SimpleModder - Vendor not implemented", m.Name)
 }
 
 func (m *SimpleModder) Verify() error {
 	return fmt.Errorf("%s SimpleModder - Verify not implemented", m.Name)
+}
+
+func (m *SimpleModder) Load(dir string) error {
+	mdr, err := mod.LoadModule(m.Name, dir)
+	if err != nil {
+		return err
+	}
+	content, err := yaml.Marshal(mdr)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Module Contents:\n%s\n", string(content))
+	return nil
 }

@@ -9,37 +9,13 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Load(dir string) (ModSet, []error) {
+func Load(dir string) (map[string]ModSet, []error) {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		return err
+		return nil, []error{err}
 	}
 
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-		_, fn := path.Split(file.Name())
-		if path.Ext(fn) == ".mod" {
-			lang := path.Base(fn)
-			fmt.Printf("Processing %s modules\n", lang)
-			lmod, err := LoadRecurse(lang, dir)
-			if err != nil {
-				errs = append(errs, err)
-				continue
-			}
-			set[lang] = lmod
-		}
-	}
-}
-
-func LoadLocal(dir string) (ModSet, []error) {
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return err
-	}
-
-	set := make(map[string]*Module)
+	sets := make(map[string]ModSet)
 	errs := make([]error, 0)
 
 	for _, file := range files {
@@ -50,23 +26,58 @@ func LoadLocal(dir string) (ModSet, []error) {
 		if path.Ext(fn) == ".mod" {
 			lang := path.Base(fn)
 			fmt.Printf("Processing %s modules\n", lang)
-			lmod, err := LoadModule(lang, dir)
-			if err != nil {
-				errs = append(errs, err)
+			setL, errsL := LoadRecurse(lang, dir)
+			if errsL != nil {
+				errs = append(errs, errsL...)
 				continue
 			}
-			set[lang] = lmod
+
+			sets[lang] = setL
 		}
 	}
-
-	return set, errs
+	return sets, errs
 }
 
 func LoadRecurse(lang, dir string) (ModSet, []error) {
 
+	return nil, nil
 }
 
-func LoadModule(lang, dir string) (*Module, error) {
+func LoadLocal(dir string) (map[string]ModSet, []error) {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return nil, []error{err}
+	}
+
+	sets := make(map[string]ModSet)
+	errs := make([]error, 0)
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		_, fn := path.Split(file.Name())
+		if path.Ext(fn) == ".mod" {
+			lang := path.Base(fn)
+			fmt.Printf("Processing %s modules\n", lang)
+			modL, err := LoadModule(lang, dir)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+
+			setL := ModSet {
+				modL.Module: modL,
+			}
+			sets[lang] = setL
+		}
+	}
+
+	return sets, errs
+}
+
+/*
+func LoadModSet(lang, dir string) (ModSet, error) {
 	// XXX TEMP yaml this file
 	modFn := lang + ".mod.yaml"
 	sumFn := lang + ".sum.yaml"
@@ -74,19 +85,19 @@ func LoadModule(lang, dir string) (*Module, error) {
 	var modMod *Module
 	modBytes, err := ioutil.ReadFile(path.Join(dir, modFn))
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	} else {
 		// TODO, replace this with a parser
 		yerr := yaml.Unmarshal(modBytes, modMod)
 		if yerr != nil {
-			return yerr
+			return nil, yerr
 		}
 	}
 
 	sumBytes, err := ioutil.ReadFile(path.Join(dir, modFn))
 	if err != nil {
 		if ok := err.(*os.PathError); !ok {
-			return err
+			return nil, err
 		} else {
 			sumBytes = []byte{}
 		}
@@ -95,10 +106,48 @@ func LoadModule(lang, dir string) (*Module, error) {
 		var sumMod *Module
 		yerr := yaml.Unmarshal(sumBytes, sumMod)
 		if yerr != nil {
-			return yerr
+			return nil, yerr
 		}
 		modMod.SumMod = sumMod
 	}
 
 	return modMod, nil
+}
+*/
+
+func LoadModule(lang, dir string) (*Module, error) {
+	// XXX TEMP yaml this file
+	modFn := lang + ".mod.yaml"
+	sumFn := lang + ".sum.yaml"
+
+	var modMod Module
+	modBytes, err := ioutil.ReadFile(path.Join(dir, modFn))
+	if err != nil {
+		return nil, err
+	} else {
+		// TODO, replace this with a parser
+		yerr := yaml.Unmarshal(modBytes, &modMod)
+		if yerr != nil {
+			return nil, yerr
+		}
+	}
+
+	sumBytes, err := ioutil.ReadFile(path.Join(dir, sumFn))
+	if err != nil {
+		if _, ok := err.(*os.PathError); !ok {
+			return nil, err
+		} else {
+			sumBytes = []byte{}
+		}
+	} else {
+		// TODO, replace this with a parser
+		var sumMod Module
+		yerr := yaml.Unmarshal(sumBytes, &sumMod)
+		if yerr != nil {
+			return nil, yerr
+		}
+		modMod.SumMod = &sumMod
+	}
+
+	return &modMod, nil
 }
