@@ -20,13 +20,11 @@ import (
 
 // A File is the parsed, interpreted form of a go.mod file.
 type File struct {
-	Module          *Module
-	Language        *Language
-	LanguageVersion *LanguageVersion
-	Go              *Go
-	Require         []*Require
-	Exclude         []*Exclude
-	Replace         []*Replace
+	Module   *Module
+	Language *Language
+	Require  []*Require
+	Exclude  []*Exclude
+	Replace  []*Replace
 
 	Syntax *FileSyntax
 }
@@ -37,20 +35,9 @@ type Module struct {
 	Syntax *Line
 }
 
-// A Langauge is the language statement.
+// A Language is the language = version statement.
 type Language struct {
-	Name   string
-	Syntax *Line
-}
-
-// A LangaugeVersion is the language version statement.
-type LanguageVersion struct {
-	Version string
-	Syntax  *Line
-}
-
-// A Go is the go statement.
-type Go struct {
+	Name    string
 	Version string // "1.23"
 	Syntax  *Line
 }
@@ -87,38 +74,6 @@ func (f *File) AddModuleStmt(path string) error {
 	} else {
 		f.Module.Mod.Path = path
 		f.Syntax.updateLine(f.Module.Syntax, "module", AutoQuote(path))
-	}
-	return nil
-}
-
-func (f *File) AddLanguageStmt(lang string) error {
-	if f.Syntax == nil {
-		f.Syntax = new(FileSyntax)
-	}
-	if f.Language == nil {
-		f.Language = &Language{
-			Name:   lang,
-			Syntax: f.Syntax.addLine(nil, "language", AutoQuote(lang)),
-		}
-	} else {
-		f.Language.Name = lang
-		f.Syntax.updateLine(f.Language.Syntax, "language", AutoQuote(lang))
-	}
-	return nil
-}
-
-func (f *File) AddLanguageVersionStmt(version string) error {
-	if f.Syntax == nil {
-		f.Syntax = new(FileSyntax)
-	}
-	if f.LanguageVersion == nil {
-		f.LanguageVersion = &LanguageVersion{
-			Version: version,
-			Syntax:  f.Syntax.addLine(nil, "languageversion", AutoQuote(version)),
-		}
-	} else {
-		f.LanguageVersion.Version = version
-		f.Syntax.updateLine(f.LanguageVersion.Syntax, "languageversion", AutoQuote(version))
 	}
 	return nil
 }
@@ -222,16 +177,17 @@ func (f *File) add(errs *bytes.Buffer, line *Line, verb string, args []string, f
 		fmt.Fprintf(errs, "%s:%d: unknown directive: %s\n", f.Syntax.Name, line.Start.Line, verb)
 
 	case "go":
-		if f.Go != nil {
-			fmt.Fprintf(errs, "%s:%d: repeated go statement\n", f.Syntax.Name, line.Start.Line)
+		if f.Language != nil {
+			fmt.Fprintf(errs, "%s:%d: repeated language statement\n", f.Syntax.Name, line.Start.Line)
 			return
 		}
 		if len(args) != 1 || !GoVersionRE.MatchString(args[0]) {
 			fmt.Fprintf(errs, "%s:%d: usage: go 1.23\n", f.Syntax.Name, line.Start.Line)
 			return
 		}
-		f.Go = &Go{Syntax: line}
-		f.Go.Version = args[0]
+		f.Language = &Language{Syntax: line}
+		f.Language.Name = "go"
+		f.Language.Version = args[0]
 	case "module":
 		if f.Module != nil {
 			fmt.Fprintf(errs, "%s:%d: repeated module statement\n", f.Syntax.Name, line.Start.Line)
@@ -550,22 +506,26 @@ func (f *File) Cleanup() {
 	f.Syntax.Cleanup()
 }
 
-func (f *File) AddGoStmt(version string) error {
-	if !GoVersionRE.MatchString(version) {
-		return fmt.Errorf("invalid language version string %q", version)
+func (f *File) AddLanguageStmt(name, version string) error {
+	if name == "go" {
+		if !GoVersionRE.MatchString(version) {
+			return fmt.Errorf("invalid language version string %q", version)
+		}
 	}
-	if f.Go == nil {
+	if f.Language == nil {
 		var hint Expr
 		if f.Module != nil && f.Module.Syntax != nil {
 			hint = f.Module.Syntax
 		}
-		f.Go = &Go{
+		f.Language = &Language{
+			Name:    name,
 			Version: version,
-			Syntax:  f.Syntax.addLine(hint, "go", version),
+			Syntax:  f.Syntax.addLine(hint, name, version),
 		}
 	} else {
-		f.Go.Version = version
-		f.Syntax.updateLine(f.Go.Syntax, "go", version)
+		f.Language.Name = name
+		f.Language.Version = version
+		f.Syntax.updateLine(f.Language.Syntax, name, version)
 	}
 	return nil
 }
