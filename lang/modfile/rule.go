@@ -18,7 +18,7 @@ import (
 	"golang.org/x/mod/module"
 )
 
-// A File is the parsed, interpreted form of a go.mod file.
+// A File is the parsed, interpreted form of a lang.mod file.
 type File struct {
 	Module   *Module
 	Language *Language
@@ -117,8 +117,15 @@ func parseToFile(file string, data []byte, fix VersionFixer, strict bool) (*File
 	if err != nil {
 		return nil, err
 	}
+	fileParts := strings.SplitN(file, ".", 2)
+	if len(fileParts) != 2 {
+		return nil, fmt.Errorf("invalid filename, expecting [lang].mod")
+	}
+	langName := fileParts[0]
+
 	f := &File{
-		Syntax: fs,
+		Syntax:   fs,
+		Language: &Language{Name: langName},
 	}
 
 	var errs bytes.Buffer
@@ -174,20 +181,23 @@ func (f *File) add(errs *bytes.Buffer, line *Line, verb string, args []string, f
 
 	switch verb {
 	default:
+		if verb == f.Language.Name {
+			// A version other than "" means we read a [lang] directive already
+			if f.Language.Version != "" {
+				fmt.Fprintf(errs, "%s:%d: repeated language statement\n", f.Syntax.Name, line.Start.Line)
+				return
+			}
+			if len(args) != 1 || (f.Language.Name == "go" && !GoVersionRE.MatchString(args[0])) {
+				fmt.Fprintf(errs, "%s:%d: usage: %s 1.23\n", f.Language.Name, f.Syntax.Name, line.Start.Line)
+				return
+			}
+			f.Language.Syntax = line
+			f.Language.Version = args[0]
+			return
+		}
+
 		fmt.Fprintf(errs, "%s:%d: unknown directive: %s\n", f.Syntax.Name, line.Start.Line, verb)
 
-	case "go":
-		if f.Language != nil {
-			fmt.Fprintf(errs, "%s:%d: repeated language statement\n", f.Syntax.Name, line.Start.Line)
-			return
-		}
-		if len(args) != 1 || !GoVersionRE.MatchString(args[0]) {
-			fmt.Fprintf(errs, "%s:%d: usage: go 1.23\n", f.Syntax.Name, line.Start.Line)
-			return
-		}
-		f.Language = &Language{Syntax: line}
-		f.Language.Name = "go"
-		f.Language.Version = args[0]
 	case "module":
 		if f.Module != nil {
 			fmt.Fprintf(errs, "%s:%d: repeated module statement\n", f.Syntax.Name, line.Start.Line)
@@ -507,12 +517,15 @@ func (f *File) Cleanup() {
 }
 
 func (f *File) AddLanguageStmt(name, version string) error {
+	// TODO restrict other language versions?
 	if name == "go" {
 		if !GoVersionRE.MatchString(version) {
 			return fmt.Errorf("invalid language version string %q", version)
 		}
 	}
-	if f.Language == nil {
+	// f.Language.Syntax is nil when the Language is first set
+	// from the filename
+	if f.Language == nil || f.Language.Syntax == nil {
 		var hint Expr
 		if f.Module != nil && f.Module.Syntax != nil {
 			hint = f.Module.Syntax
