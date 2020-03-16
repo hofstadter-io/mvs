@@ -3,7 +3,7 @@ package modder
 import (
 	"fmt"
 
-	"github.com/hofstadter.io/mvs/lib/util"
+	"github.com/hofstadter-io/mvs/lib/util"
 )
 
 type ExecModder struct {
