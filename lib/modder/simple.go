@@ -38,11 +38,7 @@ func (m *SimpleModder) Init(module string) error {
 		return err
 	}
 	err = f.AddModuleStmt(module)
-	err = f.AddLanguageStmt(lang)
-	if err != nil {
-		return err
-	}
-	err = f.AddLanguageVersionStmt("tbd")
+	err = f.AddLanguageStmt(lang, "1.0")
 	if err != nil {
 		return err
 	}
