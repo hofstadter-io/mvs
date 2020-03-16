@@ -7,6 +7,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"github.com/hofstadter-io/mvs/lang/modfile"
 	"github.com/hofstadter-io/mvs/lib/mod"
 )
 
@@ -17,11 +18,8 @@ type SimpleModder struct {
 }
 
 func (m *SimpleModder) Init(module string) error {
-	return initYaml(m.Name, module)
-}
-
-func initYaml(lang, module string) error {
-	filename := fmt.Sprintf("%s.mod.yaml", lang)
+	lang := m.Name
+	filename := fmt.Sprintf("%s.mod", lang)
 
 	// make sure file does not exist
 	_, err := ioutil.ReadFile(filename)
@@ -34,12 +32,30 @@ func initYaml(lang, module string) error {
 		return err
 	}
 
-	content := ""
-	content += fmt.Sprintf("Language: %s\n", lang)
-	content += fmt.Sprintf("LangVer: %s\n", "TBD")
-	content += fmt.Sprintf("Module: %s\n", module)
+	// Create empty modfile
+	f, err := modfile.Parse(filename, nil, nil)
+	if err != nil {
+		return err
+	}
+	err = f.AddModuleStmt(module)
+	err = f.AddLanguageStmt(lang)
+	if err != nil {
+		return err
+	}
+	err = f.AddLanguageVersionStmt("tbd")
+	if err != nil {
+		return err
+	}
+	bytes, err := f.Format()
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(filename, bytes, 0644)
+	if err != nil {
+		return err
+	}
 
-	return ioutil.WriteFile(filename, []byte(content), 0644)
+	return nil
 }
 
 func (m *SimpleModder) Graph() error {
