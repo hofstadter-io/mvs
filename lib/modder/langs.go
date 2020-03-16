@@ -1,38 +1,41 @@
 package modder
 
-var {
+var (
 
 	// Common files to copy from modules, also includes the .md version of the filename
-	CommonCopies := []string {
+	CommonCopies = []string {
 		"README",
 		"LICENSE",
 		"PATENTS",
-		"CONTRIBUTORS"
-		"SECURITY"
+		"CONTRIBUTORS",
+		"SECURITY",
 	}
 
-	GolangModder := &ExecModder {
+	GolangModder = &ExecModder {
 		Name: "go",
 		Commands: map[string][]string{
-			"init":    []string{"go", "init"},
-			"graph":   []string{"go", "graph"},
-			"tidy":    []string{"go", "tidy"},
-			"vendor":  []string{"go", "vendor"},
-			"verify":  []string{"go", "verify"},
+			"init":    []string{"go", "mod", "init"},
+			"graph":   []string{"go", "mod", "graph"},
+			"tidy":    []string{"go", "mod", "tidy"},
+			"vendor":  []string{"go", "mod", "vendor"},
+			"verify":  []string{"go", "mod", "verify"},
 		},
 	}
 
-	CuelangModder := &SimpleModder {
-		Name: "cue"
-		Version: "0.0"
-		Copies: []string {
-			CommonCopies...,
-			"module.cue"
+	CuelangModder = &SimpleModder {
+		Name: "cue",
+		Version: "0.0",
+		Copies: append(CommonCopies, []string {
+			"module.cue",
 			"pkg",
 			"usr",
 			"gen",
-		}
+		}...),
 	}
 
+	ModderMap = map[string]Modder{
+		"go": GolangModder,
+		"cue": CuelangModder,
+	}
 
-}
+)

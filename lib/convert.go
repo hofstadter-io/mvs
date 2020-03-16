@@ -5,7 +5,5 @@ import (
 )
 
 func Convert(lang, filename string) error {
-	fmt.Println("Convert", lang, filename)
-
-	return nil
+	return  fmt.Errorf("Convert not implemented for %q\n", lang)
 }

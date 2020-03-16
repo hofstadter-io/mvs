@@ -3,6 +3,7 @@ package mod
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
 
 	"gopkg.in/yaml.v3"
@@ -84,7 +85,7 @@ func LoadModule(lang, dir string) (*Module, error) {
 
 	sumBytes, err := ioutil.ReadFile(path.Join(dir, modFn))
 	if err != nil {
-		if ok := err.(os.PathError); !ok {
+		if ok := err.(*os.PathError); !ok {
 			return err
 		} else {
 			sumBytes = []byte{}
