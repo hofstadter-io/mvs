@@ -50,14 +50,6 @@ CLI : cli.Schema & {
       Help: "The language or system prefix to process. The default is to discover and process all known."
       Long: "lang"
       Short: "l"
-    },
-    schema.Flag & {
-      Name: "dryrun"
-      Type: "string"
-      Default: ""
-      Help: "Print the command and do not execute."
-      Long: "dry-run"
-      Short: "d"
     }
   ]
 
@@ -197,6 +189,25 @@ CLI : cli.Schema & {
       """
 
     },
+    schema.Command & {
+      Name:   "hack"
+      Usage:  "hack"
+      Short:  "dev command"
+      Long:   Short
+      Hidden: true
+
+      Imports: _CmdImports
+
+      Body: """
+      err := lib.Hack(RootLangPflag, args)
+      if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+      }
+      """
+
+    },
+
   ]
 }
 

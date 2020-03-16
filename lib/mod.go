@@ -54,4 +54,3 @@ func Verify(lang string) error {
 	}
 	return mod.Verify()
 }
-

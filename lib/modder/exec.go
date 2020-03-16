@@ -7,7 +7,7 @@ import (
 )
 
 type ExecModder struct {
-	Name string
+	Name     string
 	Commands map[string][]string
 }
 

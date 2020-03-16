@@ -20,15 +20,12 @@ mod file format:
   ...`
 
 var (
-	RootLangPflag   string
-	RootDryrunPflag string
+	RootLangPflag string
 )
 
 func init() {
 
 	RootCmd.PersistentFlags().StringVarP(&RootLangPflag, "lang", "l", "", "The language or system prefix to process. The default is to discover and process all known.")
-
-	RootCmd.PersistentFlags().StringVarP(&RootDryrunPflag, "dry-run", "d", "", "Print the command and do not execute.")
 
 }
 
@@ -56,4 +53,5 @@ func init() {
 	RootCmd.AddCommand(TidyCmd)
 	RootCmd.AddCommand(VendorCmd)
 	RootCmd.AddCommand(VerifyCmd)
+	RootCmd.AddCommand(HackCmd)
 }

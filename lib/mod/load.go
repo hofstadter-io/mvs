@@ -66,7 +66,7 @@ func LoadLocal(dir string) (map[string]ModSet, []error) {
 				continue
 			}
 
-			setL := ModSet {
+			setL := ModSet{
 				modL.Module: modL,
 			}
 			sets[lang] = setL
