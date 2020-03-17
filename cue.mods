@@ -1,0 +1,8 @@
+module github.com/hofstadter-io/mvs
+
+cue 0.0.15
+
+require (
+  github.com/hof-lang/cuemod--cli-golang v0.0.0
+)
+

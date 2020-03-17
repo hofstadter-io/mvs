@@ -22,4 +22,3 @@ func (R *GitRepo) ClonedRefs() ([]*plumbing.Reference, error) {
 
 	return refs, err
 }
-
