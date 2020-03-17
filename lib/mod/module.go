@@ -18,11 +18,12 @@ type Require struct {
 }
 
 type Replace struct {
-	Path   string
-	Source string
+	OldPath    string
+	OldVersion string
+	NewPath    string
+	NewVersion string
 }
 
 // If no lang.sum, calc sum, degenerate of next
 // if both, look for differences, calc sumc
 // if diff, fetch and do normal thing
-

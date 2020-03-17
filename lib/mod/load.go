@@ -7,6 +7,8 @@ import (
 	"path"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/hofstadter-io/mvs/lang/modfile"
 )
 
 func Load(dir string) (map[string]ModSet, []error) {
@@ -117,7 +119,7 @@ func LoadModSet(lang, dir string) (ModSet, error) {
 
 func LoadModule(lang, dir string) (*Module, error) {
 	// XXX TEMP yaml this file
-	modFn := lang + ".mod.yaml"
+	modFn := lang + ".mod"
 	sumFn := lang + ".sum.yaml"
 
 	var modMod Module
@@ -125,10 +127,21 @@ func LoadModule(lang, dir string) (*Module, error) {
 	if err != nil {
 		return nil, err
 	} else {
-		// TODO, replace this with a parser
-		yerr := yaml.Unmarshal(modBytes, &modMod)
-		if yerr != nil {
-			return nil, yerr
+		f, err := modfile.Parse(modFn, modBytes, nil)
+		if err != nil {
+			return nil, err
+		}
+		modMod.Language = f.Language.Name
+		modMod.LangVer = f.Language.Version
+		modMod.Module = f.Module.Mod.Path
+		modMod.Version = f.Module.Mod.Version
+		for _, req := range f.Require {
+			m := Require{Path: req.Mod.Path, Version: req.Mod.Version}
+			modMod.Require = append(modMod.Require, m)
+		}
+		for _, rep := range f.Replace {
+			m := Replace{OldPath: rep.Old.Path, OldVersion: rep.Old.Version, NewPath: rep.New.Path, NewVersion: rep.New.Version}
+			modMod.Replace = append(modMod.Replace, m)
 		}
 	}
 
