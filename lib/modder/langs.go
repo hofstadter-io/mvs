@@ -1,11 +1,12 @@
 package modder
 
 import (
+	"github.com/hofstadter-io/mvs/lib/modder/exec"
 	"github.com/hofstadter-io/mvs/lib/modder/simple"
 )
 
 var (
-	// Default known modders
+	// Default known modderr
 	ModderMap = map[string]Modder{
 		"go":  GolangModder,
 		"cue": CuelangModder,
@@ -22,7 +23,7 @@ var (
 		"SECURITY",
 	}
 
-	GolangModder = &ExecModder{
+	GolangModder = &exec.Modder{
 		Name: "go",
 		Commands: map[string][]string{
 			"init":   []string{"go", "mod", "init"},
