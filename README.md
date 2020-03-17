@@ -22,7 +22,12 @@ Language support:
 - Hoflang - extends Cuelang with full compatibility
 - Custom - Use the `.mvsconfig` to create your own
 
-Upcoming languages: Python and JavaScript so they can have an MVS system and the benefits.
+Upcoming languages: Python and JavaScript so they
+can have an MVS system and the benefits,
+and `mvs` can start supporting package registries.
+These language implementations may end up generation
+the language specific files with version setup so that
+the MVS resolution is realized with npm and pip.
 
 The main difference from go mods is that `mvs`, generally,
 is not introspecting your code to determine dependencies.
