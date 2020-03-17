@@ -7,16 +7,16 @@ import (
 
 Outdir: "./"
 
-GEN : cli.Generator & {
+GEN :: cli.Generator & {
   Cli: CLI
 }
 
-_CmdImports : [
+_CmdImports :: [
   schema.Import & { Path: CLI.Package + "/lib" }
 ]
 
 
-CLI : cli.Schema & {
+CLI :: cli.Schema & {
   Name: "mvs"
   Package: "github.com/hofstadter-io/mvs"
 
