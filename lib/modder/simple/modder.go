@@ -1,5 +1,9 @@
 package simple
 
+import (
+	"github.com/hofstadter-io/mvs/lib/mod"
+)
+
 type Modder struct {
 	Name    string
 	Version string
@@ -7,5 +11,7 @@ type Modder struct {
 	SumFile string
 	ModsDir string
 	Copies  []string
+
+	module *mod.Module
 }
 

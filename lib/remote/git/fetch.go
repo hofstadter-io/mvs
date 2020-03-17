@@ -32,7 +32,7 @@ func NewRemote(srcUrl string) (*GitRepo, error) {
 		// co.URL = "git@" + strings.Replace(srcUrl, "/", ":", 1)
 	}
 
-	fmt.Println("URL:", rc.URLs[0])
+	// fmt.Println("URL:", rc.URLs[0])
 
 	// Clones the repository into the worktree (fs) and storer all the .git
 	// content into the storer
