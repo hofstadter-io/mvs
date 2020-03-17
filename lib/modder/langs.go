@@ -1,6 +1,16 @@
 package modder
 
+import (
+	"github.com/hofstadter-io/mvs/lib/modder/simple"
+)
+
 var (
+	// Default known modders
+	ModderMap = map[string]Modder{
+		"go":  GolangModder,
+		"cue": CuelangModder,
+		"hof": HoflangModder,
+	}
 	// TODO, add custom Modders here (for simple) read from a ./.mvsconfig file
 
 	// Common files to copy from modules, also includes the .md version of the filename
@@ -23,7 +33,7 @@ var (
 		},
 	}
 
-	CuelangModder = &SimpleModder{
+	CuelangModder = &simple.Modder{
 		Name:    "cue",
 		Version: "0.0.15",
 		ModFile: "cue.mods",
@@ -39,7 +49,7 @@ var (
 		}...),
 	}
 
-	HoflangModder = &SimpleModder{
+	HoflangModder = &simple.Modder{
 		Name:    "hof",
 		Version: "0.0.0",
 		ModFile: "hof.mod",
@@ -55,9 +65,4 @@ var (
 		}...),
 	}
 
-	ModderMap = map[string]Modder{
-		"go":  GolangModder,
-		"cue": CuelangModder,
-		"hof": HoflangModder,
-	}
 )

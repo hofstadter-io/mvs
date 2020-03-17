@@ -7,14 +7,13 @@ import (
 )
 
 type GitRepo struct {
-	Store  storage.Storer
-	FS     billy.Filesystem
+	Store storage.Storer
+	FS    billy.Filesystem
 
-	Repo   *gogit.Repository
+	Repo *gogit.Repository
 
 	Remote *gogit.Remote
 
 	FetchOptions *gogit.FetchOptions
-	ListOptions *gogit.ListOptions
+	ListOptions  *gogit.ListOptions
 }
-

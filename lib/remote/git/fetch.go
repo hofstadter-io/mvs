@@ -15,7 +15,7 @@ import (
 
 func NewRemote(srcUrl string) (*GitRepo, error) {
 
-	rc := &config.RemoteConfig {
+	rc := &config.RemoteConfig{
 		Name: "origin",
 		URLs: []string{
 			"https://" + srcUrl,
@@ -32,16 +32,16 @@ func NewRemote(srcUrl string) (*GitRepo, error) {
 		// co.URL = "git@" + strings.Replace(srcUrl, "/", ":", 1)
 	}
 
-	fmt.Println("URL:", rc.URLs[0])
+	// fmt.Println("URL:", rc.URLs[0])
 
 	// Clones the repository into the worktree (fs) and storer all the .git
 	// content into the storer
 	st := memory.NewStorage()
 	remote := gogit.NewRemote(st, rc)
 
-	return &GitRepo {
-		Store: st,
-		Remote: remote,
+	return &GitRepo{
+		Store:       st,
+		Remote:      remote,
 		ListOptions: lo,
 	}, nil
 }
@@ -69,15 +69,15 @@ func CloneRepo(srcUrl, srcVer string) (*GitRepo, error) {
 	// Clones the repository into the worktree (fs) and storer all the .git
 	// content into the storer
 	st := memory.NewStorage()
- 	fs := memfs.New()
+	fs := memfs.New()
 	r, err := gogit.Clone(st, fs, co)
 	if err != nil {
 		return nil, err
 	}
 
-	return &GitRepo {
+	return &GitRepo{
 		Store: st,
-		FS: fs,
-		Repo: r,
+		FS:    fs,
+		Repo:  r,
 	}, nil
 }
