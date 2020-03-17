@@ -17,14 +17,14 @@ func (m *Modder) Vendor() error {
 
 	// TODO, build up errors
 	for _, req := range m.module.Require {
-		err = m.fetch(req.Path, req.Version)
+		err = m.index(req.Path, req.Version)
 		if err != nil { return err }
 	}
 
 	return nil
 }
 
-func (m *Modder) fetch(url, req string) error {
+func (m *Modder) index(url, req string) error {
 	fmt.Println("indexing:", url)
 
 	if !semver.IsValid(req) {
