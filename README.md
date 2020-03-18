@@ -25,14 +25,12 @@ Language support:
 - [Hoflang](https://hof-lang.org) - extends Cuelang with low-code capabilities (also a builtin custom)
 - Custom - Create your own locally or globally with `.mvsconfig` files
 
-Upcoming languages: Python and JavaScript so they
-can have an MVS system and the benefits,
-and `mvs` can start supporting package registries.
-These language implementations may end up generation
-the language specific files with version setup so that
-the MVS resolution is realized with npm and pip.
-We are also planning to fetch from common package managers.
-Pull requests for new languages are welcome.
+Upcoming languages: Python and JavaScript
+so they can have an MVS system and the benefits,
+and `mvs` can start supporting and fetching from package registries.
+These language implementations will have flexibility to
+manage with mvs and the common toolchain to varying degrees.
+Pull requests for improved language support are welcome.
 
 The main difference from go mods is that `mvs`, generally,
 is not introspecting your code to determine dependencies.
@@ -40,6 +38,9 @@ It relies on user management of the `<lang>.mods` file.
 Since golang is exec'd out to, introspection is supported,
 and as more languages improve, we look to similarly
 improve this situation in `mvs`.
+A midstep to full custom implementation will be a
+introspection custom module with some basic support
+using file globs and regex lists.
 
 _Note, we also default to the plural `<lang>.mods/sums` files and `<lang.mod>/` vendor directory.
 This is 1) because cuelang reads from `cue.mod` directory, and 2) because it is less likely
@@ -125,7 +126,7 @@ go mod vendor  # or... mvs vendor -l go
 mvs vendor -l cue
 
 # Generate code
-cue gen        # Generate gocode
+cue gen        # Generate gocode for the cmd implementation
 
 # Build binary
 go build
@@ -134,8 +135,12 @@ go build
 ./mvs help
 ```
 
+You may also want to look at the [cuemod--cli-golang](https://github.com/hof-lang/cuemod--cli-golang) project.
+We use this to generate the CLI code and files for CI.
+It is a pure cuelang prototype of our [hof tool](https://github.com/hofstadter-io/hof) for code generation.
+
 You can find us in the
-[cucelang slack](https://join.slack.com/t/cuelang/shared_invite/enQtNzQwODc3NzYzNTA0LTAxNWQwZGU2YWFiOWFiOWQ4MjVjNGQ2ZTNlMmIxODc4MDVjMDg5YmIyOTMyMjQ2MTkzMTU5ZjA1OGE0OGE1NmE)
+[cuelang slack](https://join.slack.com/t/cuelang/shared_invite/enQtNzQwODc3NzYzNTA0LTAxNWQwZGU2YWFiOWFiOWQ4MjVjNGQ2ZTNlMmIxODc4MDVjMDg5YmIyOTMyMjQ2MTkzMTU5ZjA1OGE0OGE1NmE)
 for now.
 
 
@@ -144,9 +149,11 @@ for now.
 - MVS has better semantics for vendoring and leads to more stable code
 - Prototype for Cuelang module and vendor management
 - JS and Python can have MVS while still using the remainder of the tool chains.
+- We need a module system for our [hof-lang](https://hof-lang.org) project.
 
 links about go mods
 
 [Using go modules](https://blog.golang.org/using-go-modules)
 
 [Go and Versioning](https://research.swtch.com/vgo)
+
