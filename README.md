@@ -1,9 +1,11 @@
-# mvs
+# MVS
 
 A flexible MVS tool and library based on Go mods.
 
 Create module systems with __Minimum Version Selection__ semantics
 for any language, and generally any set of git repositories.
+Manage polyglot and monorepo codebase dependencies
+with more stability from a single tool.
 
 
 ### Features
@@ -107,9 +109,12 @@ Coming soon
 
 ### Development
 
-Commands if you want to develop `mvs`.
+Want to help out?
 
-Make sure you have go 1.14 and cue 0.0.15 installed.
+Here are sommands if you want to develop `mvs`.
+
+Make sure you have go 1.14 and [cue installed](https://cuelang.org/docs/install/).
+We are mainly [developing with cuelang tip](https://github.com/cuelang/cue/blob/master/doc/contribute.md#overview-1) (just step-1 at the link)
 
 ```shell
 # Fetch deps (go and cue)
@@ -125,6 +130,10 @@ go build
 # Run local mvs
 ./mvs help
 ```
+
+You can find us in the
+[cucelang slack](https://join.slack.com/t/cuelang/shared_invite/enQtNzQwODc3NzYzNTA0LTAxNWQwZGU2YWFiOWFiOWQ4MjVjNGQ2ZTNlMmIxODc4MDVjMDg5YmIyOTMyMjQ2MTkzMTU5ZjA1OGE0OGE1NmE)
+for now.
 
 
 ### Rational
