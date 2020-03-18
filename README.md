@@ -2,7 +2,7 @@
 
 A flexible MVS tool and library based on Go mods.
 
-Create module systems with __Minimum Version Selection__ semantics
+Create module systems with [Minimum Version Selection](https://research.swtch.com/vgo-mvs) semantics
 for any language, and generally any set of git repositories.
 Manage polyglot and monorepo codebase dependencies
 with more stability from a single tool.
@@ -142,3 +142,8 @@ for now.
 - Prototype for Cuelang module and vendor management
 - JS and Python can have MVS while still using the remainder of the tool chains.
 
+links about go mods
+
+[Using go modules](https://blog.golang.org/using-go-modules)
+
+[Go and Versioning](https://research.swtch.com/vgo)
