@@ -151,7 +151,7 @@ for now.
 - JS and Python can have MVS while still using the remainder of the tool chains.
 - We need a module system for our [hof-lang](https://hof-lang.org) project.
 
-### links about go mods
+#### Links about go mods
 
 [Using go modules](https://blog.golang.org/using-go-modules)
 
