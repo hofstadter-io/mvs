@@ -36,6 +36,12 @@ Since golang is exec'd out to, introspection is supported,
 and as more languages improve, we look to similarly
 improve this situation in `mvs`.
 
+_Note, we also default to the plural `<lang>.mods/sums` files and `<lang.mod>/` vendor directory.
+This is 1) because cuelang reads from `cue.mod` directory, and 2) because it is less likely
+to collide with existing directories.
+You can also configure more behavior per language and module than go mods.
+The go mods is shelled out to as a convience, and often languages impose restrictions._
+
 
 ### Install
 
@@ -47,12 +53,16 @@ go get github.com/hofstadter-io/mvs
 ### Usage
 
 ```shell
+# Initialize this folder as a module
 mvs init -l <lang> <module-path>
 
-vim <lang>.mods
+# Add your requirements
+vim <lang>.mods  # go.mod like file
 
-mvs vendor
+# Pull in dependencies
+mvs vendor [-l <lang>]
 
+# See all of the commands
 mvs help
 ```
 
@@ -60,6 +70,7 @@ mvs help
 ### Module File
 
 The module file holds the requirements for project.
+It has the same format as a `go.mod` file.
 
 ```
 # These are like golang import paths
@@ -101,14 +112,18 @@ Commands if you want to develop `mvs`.
 Make sure you have go 1.14 and cue 0.0.15 installed.
 
 ```shell
-# Vendor deps (go and cue)
-mvs vendor
+# Fetch deps (go and cue)
+go mod vendor  # or... mvs vendor -l go
+mvs vendor -l cue
 
 # Generate code
 cue gen        # Generate gocode
 
 # Build binary
 go build
+
+# Run local mvs
+./mvs help
 ```
 
 
