@@ -46,24 +46,21 @@ func NewRemote(srcUrl string) (*GitRepo, error) {
 	}, nil
 }
 
-func CloneRepo(srcUrl, srcVer string) (*GitRepo, error) {
+func CloneRepoRef(srcUrl string, ref *plumbing.Reference) (*GitRepo, error) {
 
 	co := &gogit.CloneOptions{
-		URL: "https://" + srcUrl,
+		URL:           "https://" + srcUrl,
+		SingleBranch:  true,
+		ReferenceName: ref.Name(),
 	}
+
+	fmt.Println("cloning:", co.URL, ref)
 
 	if strings.Contains(srcUrl, "github.com") && os.Getenv("GITHUB_TOKEN") != "" {
 		co.Auth = &http.BasicAuth{
 			Username: "github-token", // yes, this can be anything except an empty string
 			Password: os.Getenv("GITHUB_TOKEN"),
 		}
-		// co.URL = "git@" + strings.Replace(srcUrl, "/", ":", 1)
-	}
-
-	fmt.Println("URL:", co.URL)
-
-	if srcVer != "" {
-		co.ReferenceName = plumbing.ReferenceName(srcVer)
 	}
 
 	// Clones the repository into the worktree (fs) and storer all the .git

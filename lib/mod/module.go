@@ -1,15 +1,30 @@
 package mod
 
+import (
+	"github.com/go-git/go-git/v5/plumbing"
+
+	"github.com/hofstadter-io/mvs/lib/remote/git"
+)
+
 type ModSet map[string]*Module
 
 type Module struct {
+	// From mod/sum files
 	Language string
 	LangVer  string
 	Module   string
 	Version  string
 	Require  []Require
 	Replace  []Replace
-	SumMod   *Module
+
+	// nested sum file
+	SumMod *Module
+	// TODO modules.txt for checksums
+
+	Errors []error
+	Ref    *plumbing.Reference
+	Refs   []*plumbing.Reference
+	Clone  *git.GitRepo
 }
 
 type Require struct {

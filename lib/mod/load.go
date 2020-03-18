@@ -54,21 +54,21 @@ func LoadLocal(dir string) (map[string]ModSet, []error) {
 			continue
 		}
 		/*
-		_, fn := path.Split(file.Name())
-		if path.Ext(fn) == ".mod" {
-			lang := path.Base(fn)
-			fmt.Printf("Processing %s modules\n", lang)
-			modL, err := LoadModule(lang, dir)
-			if err != nil {
-				errs = append(errs, err)
-				continue
-			}
+			_, fn := path.Split(file.Name())
+			if path.Ext(fn) == ".mod" {
+				lang := path.Base(fn)
+				fmt.Printf("Processing %s modules\n", lang)
+				modL, err := LoadModule(lang, dir)
+				if err != nil {
+					errs = append(errs, err)
+					continue
+				}
 
-			setL := ModSet{
-				modL.Module: modL,
+				setL := ModSet{
+					modL.Module: modL,
+				}
+				sets[lang] = setL
 			}
-			sets[lang] = setL
-		}
 		*/
 	}
 
@@ -113,4 +113,3 @@ func LoadModSet(lang, dir string) (ModSet, error) {
 	return modMod, nil
 }
 */
-

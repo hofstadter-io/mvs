@@ -17,10 +17,15 @@ var (
 	// Common files to copy from modules, also includes the .md version of the filename
 	CommonCopies = []string{
 		"README",
+		"README.md",
 		"LICENSE",
+		"LICENSE.md",
 		"PATENTS",
+		"PATENTS.md",
 		"CONTRIBUTORS",
+		"CONTRIBUTORS.md",
 		"SECURITY",
+		"SECURITY.md",
 	}
 
 	GolangModder = &exec.Modder{
@@ -39,31 +44,14 @@ var (
 		Version: "0.0.15",
 		ModFile: "cue.mods",
 		SumFile: "cue.sums",
-		ModsDir: "cue.mod",
-		Copies: append(CommonCopies, []string{
-			"cue.mods",
-			"cue.sums",
-			"cue.mod/module.cue",
-			"cue.mod/pkg/",
-			"cue.mod/usr/",
-			"cue.mod/gen/",
-		}...),
+		ModsDir: "cue.mod/pkg",
 	}
 
 	HoflangModder = &simple.Modder{
 		Name:    "hof",
 		Version: "0.0.0",
-		ModFile: "hof.mod",
-		SumFile: "hof.sum",
-		ModsDir: "hof.mods",
-		Copies: append(CommonCopies, []string{
-			"hof.mod",
-			"hof.sum",
-			"hof.mods/module.cue",
-			"hof.mods/pkg/",
-			"hof.mods/usr/",
-			"hof.mods/gen/",
-		}...),
+		ModFile: "hof.mods",
+		SumFile: "hof.sums",
+		ModsDir: "hof.mod/pkg",
 	}
-
 )
