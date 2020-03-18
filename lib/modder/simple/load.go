@@ -5,9 +5,8 @@ import (
 	"os"
 	"path"
 
-	"gopkg.in/yaml.v3"
-
 	"github.com/hofstadter-io/mvs/lang/modfile"
+	"github.com/hofstadter-io/mvs/lang/sumfile"
 	"github.com/hofstadter-io/mvs/lib/mod"
 )
 
@@ -33,7 +32,6 @@ func (mdr *Modder) Load(dir string) error {
 
 func (m *Modder) LoadModule(dir string) (*mod.Module, error) {
 
-	// XXX TEMP yaml this file
 	modFn := m.ModFile
 	sumFn := m.SumFile
 
@@ -68,11 +66,9 @@ func (m *Modder) LoadModule(dir string) (*mod.Module, error) {
 			sumBytes = []byte{}
 		}
 	} else {
-		// TODO, replace this with a parser
-		var sumMod mod.Module
-		yerr := yaml.Unmarshal(sumBytes, &sumMod)
-		if yerr != nil {
-			return nil, yerr
+		sumMod, err := sumfile.ParseSum(sumBytes, path.Join(dir, sumFn))
+		if err != nil {
+			return nil, err
 		}
 		modMod.SumMod = &sumMod
 	}
