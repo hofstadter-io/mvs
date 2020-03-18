@@ -11,17 +11,17 @@ with more stability from a single tool.
 ### Features
 
 - Create MVS module systems with custom file names and vendor directories.
-- Recursive dependency and version resolution.
-- Custom configuration for nameing and vendoring.
-- Polyglot, support multiple module systems or multiple languages within one system.
+- Recursive dependencies, version resolution, and code instrospection.
+- Custom configuration for naming, vendoring, and other behaviors.
+- Polyglot, support multiple module systems and multiple languages within one tool.
 - Works with any git system and supports the main features from go mods.
-- Convert other vendor and module systems to MVS.
+- Convert other vendor and module systems to MVS or just manage their files with MVS.
 
 Language support:
 
-- Golang - exec's out to go tool
-- Cuelang - uses the default implementation
-- Hoflang - extends Cuelang with full compatibility
+- [Golang](https://golang.org) - exec's out to go tool
+- [Cuelang](https://cuelang.org) - uses the default implementation
+- [Hoflang](https://hof-lang.org) - extends Cuelang with low-code capabilities
 - Custom - Use the `.mvsconfig` to create your own
 
 Upcoming languages: Python and JavaScript so they
@@ -30,6 +30,8 @@ and `mvs` can start supporting package registries.
 These language implementations may end up generation
 the language specific files with version setup so that
 the MVS resolution is realized with npm and pip.
+We are also planning to fetch from common package managers.
+Pull requests for new languages are welcome.
 
 The main difference from go mods is that `mvs`, generally,
 is not introspecting your code to determine dependencies.
