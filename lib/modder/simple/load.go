@@ -1,7 +1,6 @@
 package simple
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -12,24 +11,27 @@ import (
 	"github.com/hofstadter-io/mvs/lib/mod"
 )
 
-func (m *Modder) Load(dir string) error {
-	mdr, err := m.LoadModule(dir)
-	if err != nil {
-		return err
-	}
-	m.module = mdr
+func (mdr *Modder) Load(dir string) error {
+	panic("modder.Load no longer used")
+	/*
+		m, err := mdr.LoadModule(dir)
+		if err != nil {
+			return err
+		}
+		mdr.module = m
 
-	content, err := yaml.Marshal(mdr)
-	if err != nil {
-		return err
-	}
+		content, err := yaml.Marshal(m)
+		if err != nil {
+			return err
+		}
 
-	fmt.Printf("Module Contents:\n%s\n", string(content))
+		fmt.Printf("Module Contents:\n%s\n", string(content))
 
-	return nil
+		return nil
+	*/
 }
 
-func (m *Modder)LoadModule(dir string) (*mod.Module, error) {
+func (m *Modder) LoadModule(dir string) (*mod.Module, error) {
 
 	// XXX TEMP yaml this file
 	modFn := m.ModFile
