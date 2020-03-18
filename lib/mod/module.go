@@ -3,6 +3,7 @@ package mod
 import (
 	"github.com/go-git/go-git/v5/plumbing"
 
+	"github.com/hofstadter-io/mvs/lang/sumfile"
 	"github.com/hofstadter-io/mvs/lib/remote/git"
 )
 
@@ -18,7 +19,7 @@ type Module struct {
 	Replace  []Replace
 
 	// nested sum file
-	SumMod *Module
+	SumMod *sumfile.Sum
 	// TODO modules.txt for checksums
 
 	Errors []error
