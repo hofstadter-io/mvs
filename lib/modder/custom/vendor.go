@@ -1,4 +1,4 @@
-package simple
+package custom
 
 import (
 	"fmt"
@@ -34,6 +34,8 @@ func (mdr *Modder) Vendor() error {
 
 		fmt.Println(" ", req.Path, req.Version, ref)
 
+		// TODO Later, after any real clone, during dep recursion or vendoring,
+		// We should fill this in to respect modules' .mvsconfig, or portions of it depending on what we are doing
 		m := &mod.Module{
 			Module:  req.Path,
 			Version: req.Version,

@@ -1,4 +1,4 @@
-package complex
+package custom
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 /* TODO
-	- more configuration for intialization
+- more configuration for intialization
 */
 
 func (m *Modder) Init(module string) error {

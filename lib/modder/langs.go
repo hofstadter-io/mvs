@@ -1,6 +1,7 @@
 package modder
 
 import (
+	"github.com/hofstadter-io/mvs/lib/modder/custom"
 	"github.com/hofstadter-io/mvs/lib/modder/exec"
 	"github.com/hofstadter-io/mvs/lib/modder/simple"
 )
@@ -39,7 +40,7 @@ var (
 		},
 	}
 
-	CuelangModder = &simple.Modder{
+	CuelangModder = &custom.Modder{
 		Name:    "cue",
 		Version: "0.0.15",
 		ModFile: "cue.mods",

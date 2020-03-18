@@ -1,4 +1,4 @@
-package complex
+package custom
 
 import (
 	"github.com/hofstadter-io/mvs/lib/mod"
@@ -6,30 +6,30 @@ import (
 
 // This modder is for more complex, yet configurable module processing.
 // You can have system wide and local custom configurations.
-	// The fields in this struct are alpha and are likely to change
+// The fields in this struct are alpha and are likely to change
 type Modder struct {
 	// MetaConfiguration
-	Name      string
-	Version   string
+	Name    string
+	Version string
 
 	// Module information
-	ModFile   string
-	SumFile   string
-	ModsDir   string
+	ModFile string
+	SumFile string
+	ModsDir string
 
 	// Init related fields
 	// we need to create things like directories and files beyond the
-	InitTemplates []string
-	InitPreCommands []string
+	InitTemplates    []string
+	InitPreCommands  []string
 	InitPostCommands []string
 
 	// Vendor related fields
 	// filesystem globs for discovering files we should copy over
-	VendorIncludeGlobs   []string
-	VendorExcludeGlobs   []string
+	VendorIncludeGlobs []string
+	VendorExcludeGlobs []string
 	// Any files we need to generate
-	VendorTemplates []string
-	VendorPreCommands []string
+	VendorTemplates    []string
+	VendorPreCommands  []string
 	VendorPostCommands []string
 
 	// Introspection Configuration(s)
