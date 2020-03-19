@@ -44,7 +44,12 @@ var (
 	}
 
 	GolangModder = &exec.Modder{
-		Name: "go",
+		Name:     "go",
+		Version:  "1.14",
+		ModFile:  "go.mod",
+		SumFile:  "go.sum",
+		ModsDir:  "vendor",
+		Checksum: "vendor/modules.txt",
 		Commands: map[string][]string{
 			"init":   []string{"go", "mod", "init"},
 			"graph":  []string{"go", "mod", "graph"},
@@ -105,20 +110,39 @@ func DiscoverLangs() (langs []string) {
 
 	for lang, mdrI := range LangModderMap {
 		mdr, ok := mdrI.(*custom.Modder)
-		// TODO switch on type, need to give exec modder more fields
-		if !ok {
-			continue
-		}
-		_, err := os.Lstat(mdr.ModFile)
-		if err != nil {
-			if _, ok := err.(*os.PathError); !ok {
-				fmt.Println(err)
-				// return err
+		if ok {
+			// Let's check for a custom
+			_, err := os.Lstat(mdr.ModFile)
+			if err != nil {
+				if _, ok := err.(*os.PathError); !ok {
+					fmt.Println(err)
+					// return err
+				}
+				// file not found, but error
+				continue
 			}
-			// file not found, but error
+			// we found a mod file
+			langs = append(langs, lang)
+		} else {
+
+			// Let's try an exev modder
+			emdr, ok := mdrI.(*exec.Modder)
+			if ok {
+				_, err := os.Lstat(emdr.ModFile)
+				if err != nil {
+					if _, ok := err.(*os.PathError); !ok {
+						fmt.Println(err)
+						// return err
+					}
+					// file not found, but error
+					continue
+				}
+				// we found a mod file
+				langs = append(langs, lang)
+			}
 			continue
 		}
-		langs = append(langs, lang)
+
 	}
 
 	return langs

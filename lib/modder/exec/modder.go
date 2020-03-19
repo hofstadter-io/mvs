@@ -7,8 +7,15 @@ import (
 )
 
 type Modder struct {
-	Name     string
-	Commands map[string][]string
+	Name    string `yaml:"Name"`
+	Version string `yaml:"Version"`
+
+	// Module information
+	ModFile  string              `yaml:"ModFile"`
+	SumFile  string              `yaml:"SumFile"`
+	ModsDir  string              `yaml:"ModsDir"`
+	Checksum string              `yaml:"Checksum"`
+	Commands map[string][]string `yaml:"Checksum"`
 }
 
 func (m *Modder) Init(module string) error {
