@@ -94,11 +94,11 @@ require (
   github.com/hof-lang/cuemod--cli-golang v0.1.5      # This is a tag v0.1.5 (can omit 'v' in tag, but not here)
 )
 
-replace (
-  <module-path> <module-path|local-path>
-  github.com/hof-lang/cuemod--cli-golang => github.com/hofstadter-io/hofmod-cli-golang
-  github.com/hof-lang/cuemod--cli-golang => ../../cuelibs/cuemod--cli-golang
-)
+
+# replace <module-path> => <module-path|local-path> [version]
+replace github.com/hof-lang/cuemod--cli-golang => github.com/hofstadter-io/hofmod-cli-golang v0.2.0
+replace github.com/hof-lang/cuemod--cli-golang => ../../cuelibs/cuemod--cli-golang
+
 ```
 
 
