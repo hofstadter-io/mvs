@@ -246,7 +246,7 @@ func (mdr *Modder) writeVendor() error {
 			for _, end := range endings {
 				_, err := m.Clone.FS.Stat(fn + end)
 				if err != nil {
-					if _, ok := err.(*os.PathError); !ok {
+					if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
 						// some other error
 						return err
 					}
