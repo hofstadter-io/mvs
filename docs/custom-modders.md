@@ -11,8 +11,8 @@ by providing global or local `.mvsconfig.yaml` files.
 See the following two files for the configuration options
 and defaults built into the tool:
 
-- Definition: [/lib/modder/modder.go](../lib/modder/modder.go)
-- Defaults: [/lib/langs.go](./lib/langs.go) and [/.mvsconfig.yaml](../.mvsconfig.yaml)
+- Definition: [lib/modder/modder.go](../lib/modder/modder.go)
+- Defaults: [lib/langs.go](../lib/langs.go) and [.mvsconfig.yaml](../.mvsconfig.yaml)
 
 You create your own modders by createing `.mvsconfig.yaml` files.
 MVS will look for these in two places before any commands are run.

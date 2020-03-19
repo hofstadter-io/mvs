@@ -11,8 +11,8 @@ Manage polyglot and monorepo codebase dependencies with
 ### Features
 
 - Based on go mods MVS system for 100% reproducible builds.
-- Custom module systems with custom file names and vendor directories.
 - Recursive dependencies, version resolution, and code instrospection.
+- Custom module systems with custom file names and vendor directories.
 - Control configuration for naming, vendoring, and other behaviors.
 - Polyglot support for multiple module systems and multiple languages within one tool.
 - Works with any git system and supports the main features from go mods.
@@ -23,7 +23,7 @@ Language support:
 - [golang](https://golang.org) - shells out and uses the go tool to run commands for convienence
 - [cuelang](https://cuelang.org) - builtin in default using the custom module feature
 - [hof-lang](https://hof-lang.org) - extends Cuelang with low-code capabilities (also a builtin custom)
-- [custom](./docs/custom-modder.md) - Create your own locally or globally with `.mvsconfig` files
+- [custom](./docs/custom-modders.md) - Create your own locally or globally with `.mvsconfig` files
 
 Upcoming languages: Python and JavaScript
 so they can have an MVS system and the benefits,
@@ -110,7 +110,11 @@ replace github.com/hof-lang/cuemod--cli-golang => ../../cuelibs/cuemod--cli-gola
 `.mvsconfig.yaml` allows you to define custom module systems.
 With some simple configuration, you can create and control
 and vendored module system based on `go mods`.
-You can also define global configurations
+You can also define global configurations.
+
+See the [custom-modder docs](./docs/custom-modders.md)
+to learn more about writing
+you own module systems.
 
 This is the current Cuelang Modder configuration:
 
@@ -140,12 +144,8 @@ cue:
   IntrospectExcludeGlobs:
     - "cue.mod/pkg"
   IntrospectExtractRegex:
-    - "tbd... same as go importk"
+    - "tbd... same as go imports"
 ```
-
-See the [custom-modder docs](./docs/custom-modders.md)
-to learn more about writing
-you own module systems.
 
 
 ### Development
