@@ -53,19 +53,60 @@ CLI :: cli.Schema & {
     }
   ]
 
+  Imports: [
+    schema.Import & { Path: CLI.Package + "/lib" }
+  ]
+
   PersistentPrerun: true
   PersistentPrerunBody: """
     // fmt.Println("PersistentPrerun", RootLangPflag, args)
+    lib.InitLangs()
   """
 
   Commands: [
     schema.Command & {
-      Name:   "convert"
-      Usage:  "convert -l <lang> <file>"
-      Short:  "convert another package system to MVS."
-      Long:   "convert another package system to MVS, language flag is required"
+      Name:   "langinfo"
+      Usage:  "langinfo [language]"
+      Short:  "print info about languages and modders known to mvs"
+      Long:  """
+        print info about languages and modders known to mvs
+          - no arg prints a list of known languages
+          - an arg prints info about the language modder configuration that would be used
+      """
 
       Args: [
+        schema.Arg & {
+          Name: "lang"
+          Type: "string"
+          Help: "name of the language to print info about"
+        }
+      ]
+
+      Imports: _CmdImports
+
+      Body: """
+      msg, err := lib.LangInfo(lang)
+      if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+      }
+      fmt.Println(msg)
+      """
+
+    },
+    schema.Command & {
+      Name:   "convert"
+      Usage:  "convert <lang> <file>"
+      Short:  "convert another package system to MVS."
+      Long:   Short
+
+      Args: [
+        schema.Arg & {
+          Name: "lang"
+          Type: "string"
+          Required: true
+          Help: "name of the language to print info about"
+        },
         schema.Arg & {
           Name: "filename"
           Type: "string"
@@ -77,12 +118,7 @@ CLI :: cli.Schema & {
       Imports: _CmdImports
 
       Body: """
-      if RootLangPflag == "" {
-        fmt.Println("language flag is required for this command")
-        cmd.Usage()
-        os.Exit(1)
-      }
-      err := lib.Convert(RootLangPflag, filename)
+      err := lib.Convert(lang, filename)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -109,11 +145,17 @@ CLI :: cli.Schema & {
     },
     schema.Command & {
       Name:   "init"
-      Usage:  "init -l <lang> <module>"
+      Usage:  "init <lang> <module>"
       Short:  "initialize a new module in the current directory"
-      Long:   "initialize a new module in the current directory, language flag is required"
+      Long:   Short
 
       Args: [
+        schema.Arg & {
+          Name: "lang"
+          Type: "string"
+          Required: true
+          Help: "name of the language to print info about"
+        },
         schema.Arg & {
           Name: "module"
           Type: "string"
@@ -125,12 +167,7 @@ CLI :: cli.Schema & {
       Imports: _CmdImports
 
       Body: """
-      if RootLangPflag == "" {
-        fmt.Println("language flag is required for this command")
-        cmd.Usage()
-        os.Exit(1)
-      }
-      err := lib.Init(RootLangPflag, module)
+      err := lib.Init(lang, module)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)

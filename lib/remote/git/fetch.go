@@ -52,7 +52,7 @@ func CloneLocalRepo(location string) (*GitRepo, error) {
 
 	// Only returning the Billy FS in this case
 	return &GitRepo{
-		FS:    fs,
+		FS: fs,
 	}, nil
 }
 

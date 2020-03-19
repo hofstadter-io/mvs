@@ -2,6 +2,8 @@ package commands
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/hofstadter-io/mvs/lib"
 )
 
 var mvsLong = `MVS is a polyglot vendor management tool based on go mods.
@@ -42,11 +44,13 @@ var RootCmd = &cobra.Command{
 		// Argument Parsing
 
 		// fmt.Println("PersistentPrerun", RootLangPflag, args)
+		lib.InitLangs()
 
 	},
 }
 
 func init() {
+	RootCmd.AddCommand(LanginfoCmd)
 	RootCmd.AddCommand(ConvertCmd)
 	RootCmd.AddCommand(GraphCmd)
 	RootCmd.AddCommand(InitCmd)

@@ -83,7 +83,6 @@ func (mdr *Modder) Vendor() error {
 		// TODO ADD par.Work here - clone and ilook for sum..., then do checks and actions
 		mdr.addDependency(m)
 
-
 		// WORK SECTION ========================
 
 	}
@@ -95,8 +94,8 @@ func (mdr *Modder) Vendor() error {
 		if strings.HasPrefix(rep.NewPath, "./") || strings.HasPrefix(rep.NewPath, "../") {
 			fmt.Println("Local replace:", rep)
 			m := &mod.Module{
-				Module:  rep.OldPath,
-				Version: rep.OldVersion,
+				Module:         rep.OldPath,
+				Version:        rep.OldVersion,
 				ReplaceModule:  rep.NewPath,
 				ReplaceVersion: rep.NewVersion,
 			}
@@ -109,7 +108,7 @@ func (mdr *Modder) Vendor() error {
 		// Handle remote replaces
 
 		// Update version if needed
-		orig, ok := mdr.depsMap[rep.OldPath];
+		orig, ok := mdr.depsMap[rep.OldPath]
 		if ok {
 			if rep.OldVersion == "" {
 				rep.OldVersion = orig.Version
@@ -127,12 +126,12 @@ func (mdr *Modder) Vendor() error {
 		// TODO Later, after any real clone, during dep recursion or vendoring,
 		// We should fill this in to respect modules' .mvsconfig, or portions of it depending on what we are doing
 		m := &mod.Module{
-			Module:  rep.OldPath,
-			Version: rep.OldVersion,
+			Module:         rep.OldPath,
+			Version:        rep.OldVersion,
 			ReplaceModule:  rep.NewPath,
 			ReplaceVersion: rep.NewVersion,
-			Ref:     ref,
-			Refs:    refs,
+			Ref:            ref,
+			Refs:           refs,
 		}
 
 		// TODO ADD par.Work here - clone and ilook for sum..., then do checks and actions
@@ -142,7 +141,9 @@ func (mdr *Modder) Vendor() error {
 	// now process the requirements, should skip any that exist already because they are replaces
 
 	err = mdr.checkPrintErrors()
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	// XXX Actually want to recurse here
 	// XXX for now, write out any vendor
@@ -175,32 +176,32 @@ func (mdr *Modder) checkPrintErrors() error {
 
 func (mdr *Modder) addDependency(m *mod.Module) error {
 
-		// save module to depsMap
-		mdr.depsMap[m.Module] = m
+	// save module to depsMap
+	mdr.depsMap[m.Module] = m
 
-		// TODO ADD par.Work here - clone and ilook for sum..., then do checks and actions
+	// TODO ADD par.Work here - clone and ilook for sum..., then do checks and actions
 
-		// Should only happen with local replace right now
-		if m.Ref == nil {
-			clone, err := git.CloneLocalRepo(m.ReplaceModule)
-			m.Clone = clone
-			if err != nil {
-				return err
-			}
-			return nil
-		}
-
-		// clone the module and load
-		clone, err := git.CloneRepoRef(m.Module, m.Ref)
+	// Should only happen with local replace right now
+	if m.Ref == nil {
+		clone, err := git.CloneLocalRepo(m.ReplaceModule)
 		m.Clone = clone
 		if err != nil {
 			return err
 		}
+		return nil
+	}
 
-		// Pushi into parallel worker here?
-		// load dep module
-		// dm, err := mdr.LoadModule("...")
-		// if err != nil { return err }
+	// clone the module and load
+	clone, err := git.CloneRepoRef(m.Module, m.Ref)
+	m.Clone = clone
+	if err != nil {
+		return err
+	}
+
+	// Pushi into parallel worker here?
+	// load dep module
+	// dm, err := mdr.LoadModule("...")
+	// if err != nil { return err }
 
 	return nil
 }
@@ -221,7 +222,7 @@ func (mdr *Modder) writeVendor() error {
 
 		err = util.BillyCopyDir(baseDir, "/", m.Clone.FS)
 		if err != nil {
-		  return err
+			return err
 		}
 
 	}

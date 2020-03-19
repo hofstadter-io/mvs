@@ -40,7 +40,9 @@ func ProcessLangs(langs []string, method, module string) error {
 			err = Verify(lang)
 		}
 
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

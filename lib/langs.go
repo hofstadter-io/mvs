@@ -18,7 +18,7 @@ import (
 
 // FROM the USER's HOME dir
 const GLOBAL_MVS_CONFIG = ".mvs/config"
-const LOCAL_MVS_CONFIG  = ".mvsconfig"
+const LOCAL_MVS_CONFIG = ".mvsconfig"
 
 var (
 	// Default known modderr
@@ -69,7 +69,6 @@ var (
 		SumFile: "hof.sums",
 		ModsDir: "hof.mod/pkg",
 	}
-
 )
 
 const knownLangMessage = `
@@ -121,7 +120,9 @@ func LangInfo(lang string) (string, error) {
 	}
 
 	bytes, err := yaml.Marshal(modder)
-	if err != nil { return "", err }
+	if err != nil {
+		return "", err
+	}
 
 	return string(bytes), nil
 }
@@ -132,11 +133,15 @@ func InitLangs() {
 
 	// Global Language Modder Config
 	err = initFromFile(path.Join(homedir, GLOBAL_MVS_CONFIG))
-	if err != nil { fmt.Println(err) }
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	// Local Language Modder Config
 	err = initFromFile(LOCAL_MVS_CONFIG)
-	if err != nil { fmt.Println(err) }
+	if err != nil {
+		fmt.Println(err)
+	}
 
 }
 
@@ -153,7 +158,9 @@ func initFromFile(filepath string) error {
 
 	var modders map[string]custom.Modder
 	err = yaml.Unmarshal(bytes, &modders)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	for lang, modder := range modders {
 		LangModderMap[lang] = &modder
@@ -161,4 +168,3 @@ func initFromFile(filepath string) error {
 
 	return nil
 }
-

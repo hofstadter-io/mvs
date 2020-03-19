@@ -19,7 +19,7 @@ type Module struct {
 	Replace  []Replace
 
 	// If this module gets replaced
-	ReplaceModule string
+	ReplaceModule  string
 	ReplaceVersion string
 
 	// nested sum file

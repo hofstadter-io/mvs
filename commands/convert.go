@@ -9,11 +9,11 @@ import (
 	"github.com/hofstadter-io/mvs/lib"
 )
 
-var convertLong = `convert another package system to MVS, language flag is required`
+var convertLong = `convert another package system to MVS.`
 
 var ConvertCmd = &cobra.Command{
 
-	Use: "convert -l <lang> <file>",
+	Use: "convert <lang> <file>",
 
 	Short: "convert another package system to MVS.",
 
@@ -24,6 +24,20 @@ var ConvertCmd = &cobra.Command{
 		// Argument Parsing
 
 		if 0 >= len(args) {
+			fmt.Println("missing required argument: 'Lang'")
+			cmd.Usage()
+			os.Exit(1)
+		}
+
+		var lang string
+
+		if 0 < len(args) {
+
+			lang = args[0]
+
+		}
+
+		if 1 >= len(args) {
 			fmt.Println("missing required argument: 'Filename'")
 			cmd.Usage()
 			os.Exit(1)
@@ -31,18 +45,13 @@ var ConvertCmd = &cobra.Command{
 
 		var filename string
 
-		if 0 < len(args) {
+		if 1 < len(args) {
 
-			filename = args[0]
+			filename = args[1]
 
 		}
 
-		if RootLangPflag == "" {
-			fmt.Println("language flag is required for this command")
-			cmd.Usage()
-			os.Exit(1)
-		}
-		err := lib.Convert(RootLangPflag, filename)
+		err := lib.Convert(lang, filename)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
