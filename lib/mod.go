@@ -38,6 +38,8 @@ func ProcessLangs(langs []string, method, module string) error {
 			err = Vendor(lang)
 		case "verify":
 			err = Verify(lang)
+		default:
+			panic("unimplemented language in ProcessLangs for " + lang)
 		}
 
 		if err != nil {

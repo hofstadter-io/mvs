@@ -8,4 +8,3 @@ type Modder interface {
 	Verify() error
 	Load(dir string) error
 }
-

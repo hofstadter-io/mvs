@@ -55,19 +55,29 @@ var (
 	}
 
 	CuelangModder = &custom.Modder{
-		Name:    "cue",
-		Version: "0.0.15",
-		ModFile: "cue.mods",
-		SumFile: "cue.sums",
-		ModsDir: "cue.mod/pkg",
+		Name:     "cue",
+		Version:  "0.0.15",
+		ModFile:  "cue.mods",
+		SumFile:  "cue.sums",
+		ModsDir:  "cue.mod/pkg",
+		Checksum: "cue.mod/modules.txt",
+		InitTemplates: map[string]string{
+			"cue.mod/module.cue": `module: "{{ .Module }}"
+`,
+		},
 	}
 
 	HoflangModder = &custom.Modder{
-		Name:    "hof",
-		Version: "0.0.0",
-		ModFile: "hof.mods",
-		SumFile: "hof.sums",
-		ModsDir: "hof.mod/pkg",
+		Name:     "hof",
+		Version:  "0.0.0",
+		ModFile:  "hof.mods",
+		SumFile:  "hof.sums",
+		ModsDir:  "hof.mod/pkg",
+		Checksum: "hof.mod/modules.txt",
+		InitTemplates: map[string]string{
+			"hof.mod/module.cue": `module: "{{ .Module }}"
+`,
+		},
 	}
 )
 
@@ -167,7 +177,9 @@ func initFromFile(filepath string) error {
 	for lang, mdrIface := range yamlMods {
 		// fmt.Println("Lang", lang)
 		mdr, err := modderFromIface(mdrIface)
-		if err != nil { return fmt.Errorf("In %s for lang %q\n  %w", filepath, lang, err) }
+		if err != nil {
+			return fmt.Errorf("In %s for lang %q\n  %w", filepath, lang, err)
+		}
 		LangModderMap[lang] = mdr
 	}
 
@@ -181,18 +193,18 @@ func modderFromIface(mdrIface interface{}) (modder.Modder, error) {
 	}
 
 	// Exec type modder?
-	cmds, ok:= mdrMap["Commands"]
+	cmds, ok := mdrMap["Commands"]
 	if ok {
-		mdr := &exec.Modder {
-			Name: mdrMap["Name"].(string),
+		mdr := &exec.Modder{
+			Name:     mdrMap["Name"].(string),
 			Commands: cmds.(map[string][]string),
 		}
 		return mdr, nil
 	}
 
 	// Custom Modder
-	mdr := &custom.Modder {
-		Name: mdrMap["Name"].(string),
+	mdr := &custom.Modder{
+		Name:    mdrMap["Name"].(string),
 		Version: mdrMap["Version"].(string),
 
 		ModFile: mdrMap["ModFile"].(string),
@@ -202,4 +214,3 @@ func modderFromIface(mdrIface interface{}) (modder.Modder, error) {
 
 	return mdr, nil
 }
-

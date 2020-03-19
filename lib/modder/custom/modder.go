@@ -13,22 +13,23 @@ type Modder struct {
 	Version string `yaml:"Version"`
 
 	// Module information
-	ModFile string `yaml:"ModFile"`
-	SumFile string `yaml:"SumFile"`
-	ModsDir string `yaml:"ModsDir"`
+	ModFile  string `yaml:"ModFile"`
+	SumFile  string `yaml:"SumFile"`
+	ModsDir  string `yaml:"ModsDir"`
+	Checksum string `yaml:"Checksum"`
 
 	// Init related fields
 	// we need to create things like directories and files beyond the
-	InitTemplates    []string `yaml:"InitTemplates"`
-	InitPreCommands  []string `yaml:"InitPreCommands"`
-	InitPostCommands []string `yaml:"InitPostCommands"`
+	InitTemplates    map[string]string `yaml:"InitTemplates"`
+	InitPreCommands  []string          `yaml:"InitPreCommands"`
+	InitPostCommands []string          `yaml:"InitPostCommands"`
 
 	// Vendor related fields
 	// filesystem globs for discovering files we should copy over
 	VendorIncludeGlobs []string `yaml:"VendorIncludeGlobs"`
 	VendorExcludeGlobs []string `yaml:"VendorExcludeGlobs"`
 	// Any files we need to generate
-	VendorTemplates    []string `yaml:"VendorTemplates"`
+	VendorTemplates    map[string]string `yaml:"VendorTemplates"`
 	VendorPreCommands  []string `yaml:"VendorPreCommands"`
 	VendorPostCommands []string `yaml:"VendorPostCommands"`
 
