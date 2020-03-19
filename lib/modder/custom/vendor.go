@@ -220,6 +220,8 @@ func (mdr *Modder) writeVendor() error {
 
 		baseDir := path.Join(mdr.ModsDir, m.Module)
 
+		fmt.Println("Copying", baseDir)
+
 		err = util.BillyCopyDir(baseDir, "/", m.Clone.FS)
 		if err != nil {
 			return err

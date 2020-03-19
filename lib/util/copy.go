@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -81,9 +82,41 @@ func CopyDir(src string, dst string) error {
 	return nil
 }
 
+// Copies dir in FS onto the os filesystem at baseDir
+func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
+	fmt.Println("DIR:  ", baseDir, dir)
+	files, err := FS.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+    longname := path.Join(dir, file.Name())
+		outname := path.Join(baseDir, longname)
+		fmt.Println("DIR:  ", baseDir, dir, file.Name(), longname, outname)
+
+		if file.IsDir() {
+			os.MkdirAll(path.Dir(outname), 0755)
+			err = BillyCopyDir(baseDir, longname, FS)
+			if err != nil {
+				return err
+			}
+
+		} else {
+			err = BillyCopyFile(baseDir, longname, FS)
+			if err != nil { return err }
+
+		}
+	}
+
+	return nil
+}
+
 // Copies file in FS onto the os filesystem at baseDir
 func BillyCopyFile(baseDir string, file string, FS billy.Filesystem) error {
 	outName := path.Join(baseDir, file)
+	err := os.MkdirAll(path.Dir(outName), 0755)
+	if err != nil { return err }
 
 	bf, err := FS.Open(file)
 	if err != nil {
@@ -103,30 +136,3 @@ func BillyCopyFile(baseDir string, file string, FS billy.Filesystem) error {
 	return nil
 }
 
-// Copies dir in FS onto the os filesystem at baseDir
-func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
-	files, err := FS.ReadDir(dir)
-	if err != nil {
-		return err
-	}
-
-	for _, file := range files {
-
-		if file.IsDir() {
-			os.MkdirAll(path.Join(baseDir, dir, file.Name()), 0755)
-			err = BillyCopyDir(baseDir, path.Join(dir, file.Name()), FS)
-			if err != nil {
-				return err
-			}
-
-		} else {
-			err = BillyCopyFile(baseDir, path.Join(dir, file.Name()), FS)
-			if err != nil {
-				return err
-			}
-
-		}
-	}
-
-	return nil
-}
