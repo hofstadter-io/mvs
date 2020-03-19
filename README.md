@@ -60,7 +60,7 @@ go get github.com/hofstadter-io/mvs
 
 ```shell
 # Print known languages in the current directory
-mvs langinfo
+mvs info
 
 # Initialize this folder as a module
 mvs init <lang> <module-path>
@@ -68,8 +68,8 @@ mvs init <lang> <module-path>
 # Add your requirements
 vim <lang>.mods  # go.mod like file
 
-# Pull in dependencies
-mvs vendor [-l <lang>]
+# Pull in dependencies, no args discovers and runs all
+mvs vendor [langs...]
 
 # See all of the commands
 mvs help
@@ -120,11 +120,27 @@ cue:
   Version: "0.0.16"
   ModFile: "cue.mods"
   SumFile: "cue.sums"
-  ModsDir: "cue.mod"
+  ModsDir: "cue.mod/pkg"
   Checksum: "cue.mod/modules.txt"
   InitTemplates:
       cue.mod/module.cue: |
-          module: "{{ .Module }}"
+          module "{{ .Module }}"
+
+  VendorIncludeGlobs:
+    - "cue.mods"
+    - "cue.sums"
+    - "cue.mod/module.cue"
+    - "cue.mod/modules.txt"
+    - "**/*.cue"
+  VendorExcludeGlobs:
+    - "cue.mod/pkg"
+
+  IntrospectIncludeGlobs:
+    - "**/*.cue"
+  IntrospectExcludeGlobs:
+    - "cue.mod/pkg"
+  IntrospectExtractRegex:
+    - "tbd... same as go importk"
 ```
 
 See the [custom-modder docs](./docs/custom-modders.md)
@@ -143,8 +159,7 @@ We are mainly [developing with cuelang tip](https://github.com/cuelang/cue/blob/
 
 ```shell
 # Fetch deps (go and cue)
-go mod vendor  # or... mvs vendor -l go
-mvs vendor -l cue
+mvs vendor
 
 # Generate code
 cue gen        # Generate gocode for the cmd implementation
