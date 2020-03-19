@@ -95,7 +95,7 @@ func DiscoverLangs() (langs []string) {
 		// Let's check for a custom
 		_, err := os.Lstat(mdr.ModFile)
 		if err != nil {
-			if _, ok := err.(*os.PathError); !ok {
+			if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
 				fmt.Println(err)
 				// return err
 			}
@@ -177,7 +177,7 @@ func initFromFile(filepath string) error {
 
 	bytes, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		if _, ok := err.(*os.PathError); !ok {
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
 			return err
 		}
 		// The user has not setup a global $HOME/.mvs/mvsconfig file
