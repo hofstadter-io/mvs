@@ -24,6 +24,7 @@ cue:
           module "{{ .Module }}"
 
   VendorIncludeGlobs:
+    - ".mvsconfig.yaml"
     - "cue.mods"
     - "cue.sums"
     - "cue.mod/module.cue"
