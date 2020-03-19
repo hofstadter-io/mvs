@@ -53,6 +53,7 @@ var (
 `,
 		},
 		VendorIncludeGlobs: []string{
+			".mvsconfig.yaml",
 			"cue.mods",
 			"cue.sums",
 			"cue.mod/module.cue",
