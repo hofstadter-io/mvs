@@ -3,16 +3,16 @@
 A flexible MVS tool and library based on Go mods.
 
 Create module systems with [Minimum Version Selection](https://research.swtch.com/vgo-mvs) semantics
-for any language, and generally any set of git repositories.
+for any language, and generally any mix of git repositories and package managers.
 Manage polyglot and monorepo codebase dependencies with
-[100% reproducible builds from a single tool](https://github.com/golang/go/wiki/Modules#version-selection).
+[100% reproducible builds](https://github.com/golang/go/wiki/Modules#version-selection) from a single tool.
 
 
 ### Features
 
-- Based on go mods MVS system for better vendor stability.
-- Custom module systems with custom file names and vendor directories.
+- Based on go mods MVS system for 100% reproducible builds.
 - Recursive dependencies, version resolution, and code instrospection.
+- Custom module systems with custom file names and vendor directories.
 - Control configuration for naming, vendoring, and other behaviors.
 - Polyglot support for multiple module systems and multiple languages within one tool.
 - Works with any git system and supports the main features from go mods.
@@ -20,10 +20,10 @@ Manage polyglot and monorepo codebase dependencies with
 
 Language support:
 
-- [Golang](https://golang.org) - exec's out to go tool
-- [Cuelang](https://cuelang.org) - builtin in default using the custom module feature
-- [Hof-lang](https://hof-lang.org) - extends Cuelang with low-code capabilities (also a builtin custom)
-- Custom - Create your own locally or globally with `.mvsconfig` files
+- [golang](https://golang.org) - shells out and uses the go tool to run commands for convienence
+- [cuelang](https://cuelang.org) - builtin in default using the custom module feature
+- [hof-lang](https://hof-lang.org) - extends Cuelang with low-code capabilities (also a builtin custom)
+- [custom](./docs/custom-modders.md) - Create your own locally or globally with `.mvsconfig` files
 
 Upcoming languages: Python and JavaScript
 so they can have an MVS system and the benefits,
@@ -110,7 +110,11 @@ replace github.com/hof-lang/cuemod--cli-golang => ../../cuelibs/cuemod--cli-gola
 `.mvsconfig.yaml` allows you to define custom module systems.
 With some simple configuration, you can create and control
 and vendored module system based on `go mods`.
-You can also define global configurations
+You can also define global configurations.
+
+See the [custom-modder docs](./docs/custom-modders.md)
+to learn more about writing
+you own module systems.
 
 This is the current Cuelang Modder configuration:
 
@@ -140,19 +144,15 @@ cue:
   IntrospectExcludeGlobs:
     - "cue.mod/pkg"
   IntrospectExtractRegex:
-    - "tbd... same as go importk"
+    - "tbd... same as go imports"
 ```
-
-See the [custom-modder docs](./docs/custom-modders.md)
-to learn more about writing
-you own module systems.
 
 
 ### Development
 
 Want to help out?
 
-Here are sommands if you want to develop `mvs`.
+Here are some commands if you want to develop `mvs`.
 
 Make sure you have go 1.14 and [cue installed](https://cuelang.org/docs/install/).
 We are mainly [developing with cuelang tip](https://github.com/cuelang/cue/blob/master/doc/contribute.md#overview-1) (just step-1 at the link)
@@ -182,9 +182,9 @@ for now.
 
 ### Motivation
 
-- MVS has better semantics for vendoring and leads to more stable code
-- Prototype for Cuelang module and vendor management
+- MVS has better semantics for vendoring and gets us closer to 100% reproducible builds.
 - JS and Python can have MVS while still using the remainder of the tool chains.
+- Prototype for cuelang module and vendor management.
 - We need a module system for our [hof-lang](https://hof-lang.org) project.
 
 #### Links about go mods

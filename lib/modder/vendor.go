@@ -22,8 +22,7 @@ var (
 	}
 
 	// cross product these endings
-	endings = []string{ "" ,".md", ".txt" }
-
+	endings = []string{"", ".md", ".txt"}
 )
 
 /* Vendor reads in a module, determines dependencies, and writes out the vendor folder.
@@ -256,7 +255,7 @@ func (mdr *Modder) writeVendor() error {
 				}
 
 				// Found one!
-				err = util.BillyCopyFile(baseDir, "/" + fn + end, m.Clone.FS)
+				err = util.BillyCopyFile(baseDir, "/"+fn+end, m.Clone.FS)
 
 			}
 		}

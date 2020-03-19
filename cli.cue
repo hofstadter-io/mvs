@@ -72,13 +72,13 @@ CLI :: cli.Schema & {
           - an arg prints info about the language modder configuration that would be used
       """
 
-      Args: [
-        schema.Arg & {
-          Name: "lang"
-          Type: "string"
-          Help: "name of the language to print info about"
-        },
-      ]
+			Args: [
+				schema.Arg & {
+					Name: "lang"
+					Type: "string"
+					Help: "name of the language to print info about"
+				},
+			]
 
 			Imports: _CmdImports
 

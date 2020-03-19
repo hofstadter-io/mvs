@@ -29,8 +29,8 @@ type Modder struct {
 	// Init related fields
 	// we need to create things like directories and files beyond the
 	InitTemplates    map[string]string `yaml:"InitTemplates"`
-	InitPreCommands  []string          `yaml:"InitPreCommands"`
-	InitPostCommands []string          `yaml:"InitPostCommands"`
+	InitPreCommands  [][]string        `yaml:"InitPreCommands"`
+	InitPostCommands [][]string        `yaml:"InitPostCommands"`
 
 	// Vendor related fields
 	// filesystem globs for discovering files we should copy over
@@ -38,8 +38,12 @@ type Modder struct {
 	VendorExcludeGlobs []string `yaml:"VendorExcludeGlobs"`
 	// Any files we need to generate
 	VendorTemplates    map[string]string `yaml:"VendorTemplates"`
-	VendorPreCommands  []string          `yaml:"VendorPreCommands"`
-	VendorPostCommands []string          `yaml:"VendorPostCommands"`
+	VendorPreCommands  [][]string        `yaml:"VendorPreCommands"`
+	VendorPostCommands [][]string        `yaml:"VendorPostCommands"`
+
+	// Some more vendor controls
+	ManageFileOnly       bool `yaml:"ManageFileOnly"`
+	SymlinkLocalReplaces bool `yaml:"SymlinkLocalReplaces"`
 
 	// Introspection Configuration(s)
 	// filesystem globs for discovering files we should introspect
@@ -47,6 +51,8 @@ type Modder struct {
 	IntrospectIncludeGlobs []string `yaml:"IntrospectIncludeGlobs"`
 	IntrospectExcludeGlobs []string `yaml:"IntrospectExcludeGlobs"`
 	IntrospectExtractRegex []string `yaml:"IntrospectExtractRegex"`
+
+	PackageManagerDefaultPrefix string `yaml:"PackageManagerDefaultPrefix"`
 
 	// root module
 	module *mod.Module
