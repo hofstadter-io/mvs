@@ -63,7 +63,7 @@ func (m *Modder) LoadModule(dir string) (*mod.Module, error) {
 
 	sumBytes, err := ioutil.ReadFile(path.Join(dir, sumFn))
 	if err != nil {
-		if _, ok := err.(*os.PathError); !ok {
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
 			return nil, err
 		} else {
 			sumBytes = []byte{}
