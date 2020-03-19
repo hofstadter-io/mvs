@@ -157,3 +157,5 @@ for now.
 
 [Go and Versioning](https://research.swtch.com/vgo)
 
+[More about version selection](https://github.com/golang/go/wiki/Modules#version-selection)
+
