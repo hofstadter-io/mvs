@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-billy/v5/osfs"
 	gogit "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -43,6 +44,15 @@ func NewRemote(srcUrl string) (*GitRepo, error) {
 		Store:       st,
 		Remote:      remote,
 		ListOptions: lo,
+	}, nil
+}
+
+func CloneLocalRepo(location string) (*GitRepo, error) {
+	fs := osfs.New(location)
+
+	// Only returning the Billy FS in this case
+	return &GitRepo{
+		FS:    fs,
 	}, nil
 }
 

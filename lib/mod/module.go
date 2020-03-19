@@ -18,6 +18,10 @@ type Module struct {
 	Require  []Require
 	Replace  []Replace
 
+	// If this module gets replaced
+	ReplaceModule string
+	ReplaceVersion string
+
 	// nested sum file
 	SumMod *sumfile.Sum
 	// TODO modules.txt for checksums
