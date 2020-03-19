@@ -1,0 +1,14 @@
+foo:
+  Name:    "foo"
+  Version: "0.0.0"
+  ModFile: "foo.mods"
+  SumFile: "foo.sums"
+  ModsDir: "foo.mod/"
+
+moo:
+  Name:    "moo"
+  Version: "0.0.0"
+  ModFile: "MOO.mods"
+  SumFile: "MOO.sums"
+  ModsDir: "MOO.MOO/"
+

@@ -9,35 +9,35 @@ import (
 // The fields in this struct are alpha and are likely to change
 type Modder struct {
 	// MetaConfiguration
-	Name    string
-	Version string
+	Name    string `yaml:"Name"`
+	Version string `yaml:"Version"`
 
 	// Module information
-	ModFile string
-	SumFile string
-	ModsDir string
+	ModFile string `yaml:"ModFile"`
+	SumFile string `yaml:"SumFile"`
+	ModsDir string `yaml:"ModsDir"`
 
 	// Init related fields
 	// we need to create things like directories and files beyond the
-	InitTemplates    []string
-	InitPreCommands  []string
-	InitPostCommands []string
+	InitTemplates    []string `yaml:"InitTemplates"`
+	InitPreCommands  []string `yaml:"InitPreCommands"`
+	InitPostCommands []string `yaml:"InitPostCommands"`
 
 	// Vendor related fields
 	// filesystem globs for discovering files we should copy over
-	VendorIncludeGlobs []string
-	VendorExcludeGlobs []string
+	VendorIncludeGlobs []string `yaml:"VendorIncludeGlobs"`
+	VendorExcludeGlobs []string `yaml:"VendorExcludeGlobs"`
 	// Any files we need to generate
-	VendorTemplates    []string
-	VendorPreCommands  []string
-	VendorPostCommands []string
+	VendorTemplates    []string `yaml:"VendorTemplates"`
+	VendorPreCommands  []string `yaml:"VendorPreCommands"`
+	VendorPostCommands []string `yaml:"VendorPostCommands"`
 
 	// Introspection Configuration(s)
 	// filesystem globs for discovering files we should introspect
 	// regexs for extracting package information
-	IntrospectIncludeGlobs []string
-	IntrospectExcludeGlobs []string
-	IntrospectExtractRegex []string
+	IntrospectIncludeGlobs []string `yaml:"IntrospectIncludeGlobs"`
+	IntrospectExcludeGlobs []string `yaml:"IntrospectExcludeGlobs"`
+	IntrospectExtractRegex []string `yaml:"IntrospectExtractRegex"`
 
 	// root module
 	module *mod.Module

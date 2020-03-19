@@ -17,8 +17,8 @@ import (
 )
 
 // FROM the USER's HOME dir
-const GLOBAL_MVS_CONFIG = ".mvs/config"
-const LOCAL_MVS_CONFIG = ".mvsconfig"
+const GLOBAL_MVS_CONFIG = ".mvs/config.yaml"
+const LOCAL_MVS_CONFIG = ".mvsconfig.yaml"
 
 var (
 	// Default known modderr
@@ -156,15 +156,50 @@ func initFromFile(filepath string) error {
 		return nil
 	}
 
-	var modders map[string]custom.Modder
-	err = yaml.Unmarshal(bytes, &modders)
+	var yamlMods map[string]interface{}
+	err = yaml.Unmarshal(bytes, &yamlMods)
 	if err != nil {
 		return err
 	}
 
-	for lang, modder := range modders {
-		LangModderMap[lang] = &modder
+	// fmt.Println(yamlMods)
+
+	for lang, mdrIface := range yamlMods {
+		// fmt.Println("Lang", lang)
+		mdr, err := modderFromIface(mdrIface)
+		if err != nil { return fmt.Errorf("In %s for lang %q\n  %w", filepath, lang, err) }
+		LangModderMap[lang] = mdr
 	}
 
 	return nil
 }
+
+func modderFromIface(mdrIface interface{}) (modder.Modder, error) {
+	mdrMap, ok := mdrIface.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("Modder config is not a map/object type")
+	}
+
+	// Exec type modder?
+	cmds, ok:= mdrMap["Commands"]
+	if ok {
+		mdr := &exec.Modder {
+			Name: mdrMap["Name"].(string),
+			Commands: cmds.(map[string][]string),
+		}
+		return mdr, nil
+	}
+
+	// Custom Modder
+	mdr := &custom.Modder {
+		Name: mdrMap["Name"].(string),
+		Version: mdrMap["Version"].(string),
+
+		ModFile: mdrMap["ModFile"].(string),
+		SumFile: mdrMap["SumFile"].(string),
+		ModsDir: mdrMap["ModsDir"].(string),
+	}
+
+	return mdr, nil
+}
+
