@@ -11,6 +11,21 @@ import (
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
+var (
+	// Common files to copy from modules, also includes the .md version of the filename
+	definiteVendors = []string{
+		"README",
+		"LICENSE",
+		"PATENTS",
+		"CONTRIBUTORS",
+		"SECURITY",
+	}
+
+	// cross product these endings
+	endings = []string{ "" ,".md", ".txt" }
+
+)
+
 /* Vendor reads in a module, determines dependencies, and writes out the vendor folder.
 
 Will there be infinite recursion, or maybe just two levels?
@@ -227,9 +242,39 @@ func (mdr *Modder) writeVendor() error {
 
 		fmt.Println("Copying", baseDir)
 
-		err = util.BillyCopyDir(baseDir, "/", m.Clone.FS)
-		if err != nil {
-			return err
+		// copy special files
+		for _, fn := range definiteVendors {
+			for _, end := range endings {
+				_, err := m.Clone.FS.Stat(fn + end)
+				if err != nil {
+					if _, ok := err.(*os.PathError); !ok {
+						// some other error
+						return err
+					}
+					// not found
+					continue
+				}
+
+				// Found one!
+				err = util.BillyCopyFile(baseDir, "/" + fn + end, m.Clone.FS)
+
+			}
+		}
+
+		if len(mdr.VendorIncludeGlobs) > 0 || len(mdr.VendorExcludeGlobs) > 0 {
+			// Just copy everything
+			err = util.BillyGlobCopy(baseDir, "/", m.Clone.FS, mdr.VendorIncludeGlobs, mdr.VendorExcludeGlobs)
+			if err != nil {
+				return err
+			}
+
+		} else {
+			// Just copy everything
+			err = util.BillyCopyDir(baseDir, "/", m.Clone.FS)
+			if err != nil {
+				return err
+			}
+
 		}
 
 	}

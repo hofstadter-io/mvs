@@ -27,20 +27,6 @@ var (
 	}
 	// TODO, add custom Modders here (for simple) read from a ./.mvsconfig file
 
-	// Common files to copy from modules, also includes the .md version of the filename
-	CommonCopies = []string{
-		"README",
-		"README.md",
-		"LICENSE",
-		"LICENSE.md",
-		"PATENTS",
-		"PATENTS.md",
-		"CONTRIBUTORS",
-		"CONTRIBUTORS.md",
-		"SECURITY",
-		"SECURITY.md",
-	}
-
 	GolangModder = &modder.Modder{
 		Name:          "go",
 		Version:       "1.14",

@@ -24,10 +24,12 @@ cue:
           module "{{ .Module }}"
 
   VendorIncludeGlobs:
+    - ".mvsconfig.yaml"
     - "cue.mods"
     - "cue.sums"
     - "cue.mod/module.cue"
     - "cue.mod/modules.txt"
+    - "*.cue"
     - "**/*.cue"
   VendorExcludeGlobs:
     - "cue.mod/pkg"
