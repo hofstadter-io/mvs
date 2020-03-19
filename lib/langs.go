@@ -65,6 +65,16 @@ var (
 			"cue.mod/module.cue": `module: "{{ .Module }}"
 `,
 		},
+		VendorIncludeGlobs: []string {
+			"cue.mods",
+			"cue.sums",
+			"cue.mod/module.cue",
+			"cue.mod/modules.txt",
+			"**/*.cue",
+		},
+		VendorExcludeGlobs: []string {
+      "cue.mod/pkg",
+		},
 	}
 
 	HoflangModder = &custom.Modder{
@@ -166,51 +176,17 @@ func initFromFile(filepath string) error {
 		return nil
 	}
 
-	var yamlMods map[string]interface{}
-	err = yaml.Unmarshal(bytes, &yamlMods)
+	var mdrMap map[string]custom.Modder
+	err = yaml.Unmarshal(bytes, &mdrMap)
 	if err != nil {
 		return err
 	}
 
-	// fmt.Println(yamlMods)
-
-	for lang, mdrIface := range yamlMods {
-		// fmt.Println("Lang", lang)
-		mdr, err := modderFromIface(mdrIface)
-		if err != nil {
-			return fmt.Errorf("In %s for lang %q\n  %w", filepath, lang, err)
-		}
-		LangModderMap[lang] = mdr
+	for lang, _ := range mdrMap {
+		mdr := mdrMap[lang]
+		LangModderMap[lang] = &mdr
 	}
 
 	return nil
 }
 
-func modderFromIface(mdrIface interface{}) (modder.Modder, error) {
-	mdrMap, ok := mdrIface.(map[string]interface{})
-	if !ok {
-		return nil, fmt.Errorf("Modder config is not a map/object type")
-	}
-
-	// Exec type modder?
-	cmds, ok := mdrMap["Commands"]
-	if ok {
-		mdr := &exec.Modder{
-			Name:     mdrMap["Name"].(string),
-			Commands: cmds.(map[string][]string),
-		}
-		return mdr, nil
-	}
-
-	// Custom Modder
-	mdr := &custom.Modder{
-		Name:    mdrMap["Name"].(string),
-		Version: mdrMap["Version"].(string),
-
-		ModFile: mdrMap["ModFile"].(string),
-		SumFile: mdrMap["SumFile"].(string),
-		ModsDir: mdrMap["ModsDir"].(string),
-	}
-
-	return mdr, nil
-}

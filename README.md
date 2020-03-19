@@ -59,8 +59,11 @@ go get github.com/hofstadter-io/mvs
 ### Usage
 
 ```shell
+# Print known languages in the current directory
+mvs langinfo
+
 # Initialize this folder as a module
-mvs init -l <lang> <module-path>
+mvs init <lang> <module-path>
 
 # Add your requirements
 vim <lang>.mods  # go.mod like file
@@ -104,11 +107,29 @@ replace github.com/hof-lang/cuemod--cli-golang => ../../cuelibs/cuemod--cli-gola
 
 ### Custom Module Systems
 
-`.mvsconfig` allows you to define custom module systems.
+`.mvsconfig.yaml` allows you to define custom module systems.
 With some simple configuration, you can create and control
 and vendored module system based on `go mods`.
+You can also define global configurations
 
-Coming soon
+This is the current Cuelang Modder configuration:
+
+```yaml
+cue:
+  Name: "cue"
+  Version: "0.0.16"
+  ModFile: "cue.mods"
+  SumFile: "cue.sums"
+  ModsDir: "cue.mod"
+  Checksum: "cue.mod/modules.txt"
+  InitTemplates:
+      cue.mod/module.cue: |
+          module: "{{ .Module }}"
+```
+
+See the [custom-modder docs](./docs/custom-modders.md)
+to learn more about writing
+you own module systems.
 
 
 ### Development

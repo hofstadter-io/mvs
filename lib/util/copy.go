@@ -91,7 +91,7 @@ func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
 	}
 
 	for _, file := range files {
-    longname := path.Join(dir, file.Name())
+		longname := path.Join(dir, file.Name())
 		outname := path.Join(baseDir, longname)
 		fmt.Println("DIR:  ", baseDir, dir, file.Name(), longname, outname)
 
@@ -104,7 +104,9 @@ func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
 
 		} else {
 			err = BillyCopyFile(baseDir, longname, FS)
-			if err != nil { return err }
+			if err != nil {
+				return err
+			}
 
 		}
 	}
@@ -116,7 +118,9 @@ func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
 func BillyCopyFile(baseDir string, file string, FS billy.Filesystem) error {
 	outName := path.Join(baseDir, file)
 	err := os.MkdirAll(path.Dir(outName), 0755)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	bf, err := FS.Open(file)
 	if err != nil {
@@ -135,4 +139,3 @@ func BillyCopyFile(baseDir string, file string, FS billy.Filesystem) error {
 
 	return nil
 }
-

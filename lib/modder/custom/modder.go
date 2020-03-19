@@ -30,8 +30,8 @@ type Modder struct {
 	VendorExcludeGlobs []string `yaml:"VendorExcludeGlobs"`
 	// Any files we need to generate
 	VendorTemplates    map[string]string `yaml:"VendorTemplates"`
-	VendorPreCommands  []string `yaml:"VendorPreCommands"`
-	VendorPostCommands []string `yaml:"VendorPostCommands"`
+	VendorPreCommands  []string          `yaml:"VendorPreCommands"`
+	VendorPostCommands []string          `yaml:"VendorPostCommands"`
 
 	// Introspection Configuration(s)
 	// filesystem globs for discovering files we should introspect

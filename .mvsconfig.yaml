@@ -12,3 +12,22 @@ moo:
   SumFile: "MOO.sums"
   ModsDir: "MOO.MOO/"
 
+cue:
+  Name: "cue"
+  Version: "0.0.16"
+  ModFile: "cue.mods"
+  SumFile: "cue.sums"
+  ModsDir: "cue.mod"
+  Checksum: "cue.mod/modules.txt"
+  InitTemplates:
+      cue.mod/module.cue: |
+          module "{{ .Module }}"
+  VendorIncludeGlobs:
+    - "cue.mods"
+    - "cue.sums"
+    - "cue.mod/module.cue"
+    - "cue.mod/modules.txt"
+    - "**/*.cue"
+  VendorExcludeGlobs:
+    - "cue.mod/pkg"
+
