@@ -13,7 +13,7 @@ var tidyLong = `add missinad and remove unused modules`
 
 var TidyCmd = &cobra.Command{
 
-	Use: "tidy",
+	Use: "tidy [langs...]",
 
 	Short: "add missinad and remove unused modules",
 
@@ -23,7 +23,7 @@ var TidyCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		err := lib.Tidy(RootLangPflag)
+		err := lib.ProcessLangs("tidy", args)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

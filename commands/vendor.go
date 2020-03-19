@@ -13,7 +13,7 @@ var vendorLong = `make a vendored copy of dependencies`
 
 var VendorCmd = &cobra.Command{
 
-	Use: "vendor",
+	Use: "vendor [langs...]",
 
 	Short: "make a vendored copy of dependencies",
 
@@ -23,7 +23,7 @@ var VendorCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		err := lib.Vendor(RootLangPflag)
+		err := lib.ProcessLangs("vendor", args)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

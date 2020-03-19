@@ -17,11 +17,12 @@ cue:
   Version: "0.0.16"
   ModFile: "cue.mods"
   SumFile: "cue.sums"
-  ModsDir: "cue.mod"
+  ModsDir: "cue.mod/pkg"
   Checksum: "cue.mod/modules.txt"
   InitTemplates:
       cue.mod/module.cue: |
           module "{{ .Module }}"
+
   VendorIncludeGlobs:
     - "cue.mods"
     - "cue.sums"
@@ -31,3 +32,9 @@ cue:
   VendorExcludeGlobs:
     - "cue.mod/pkg"
 
+  IntrospectIncludeGlobs:
+    - "**/*.cue"
+  IntrospectExcludeGlobs:
+    - "cue.mod/pkg"
+  IntrospectExtractRegex:
+    - "tbd... same as go importk"

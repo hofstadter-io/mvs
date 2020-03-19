@@ -65,15 +65,15 @@ var (
 			"cue.mod/module.cue": `module: "{{ .Module }}"
 `,
 		},
-		VendorIncludeGlobs: []string {
+		VendorIncludeGlobs: []string{
 			"cue.mods",
 			"cue.sums",
 			"cue.mod/module.cue",
 			"cue.mod/modules.txt",
 			"**/*.cue",
 		},
-		VendorExcludeGlobs: []string {
-      "cue.mod/pkg",
+		VendorExcludeGlobs: []string{
+			"cue.mod/pkg",
 		},
 	}
 
@@ -98,8 +98,31 @@ Known Languages:
 
 For more info on a language:
 
-  mvs langinfo <lang>
+  mvs info <lang>
 `
+
+func DiscoverLangs() (langs []string) {
+
+	for lang, mdrI := range LangModderMap {
+		mdr, ok := mdrI.(*custom.Modder)
+		// TODO switch on type, need to give exec modder more fields
+		if !ok {
+			continue
+		}
+		_, err := os.Lstat(mdr.ModFile)
+		if err != nil {
+			if _, ok := err.(*os.PathError); !ok {
+				fmt.Println(err)
+				// return err
+			}
+			// file not found, but error
+			continue
+		}
+		langs = append(langs, lang)
+	}
+
+	return langs
+}
 
 func KnownLangs() string {
 	langs := []string{}
@@ -125,7 +148,7 @@ Please check the following files for definitions
 
 To see a list of known languages from the current directory:
 
-  mvs langinfo
+  mvs info
 `
 
 func LangInfo(lang string) (string, error) {
@@ -189,4 +212,3 @@ func initFromFile(filepath string) error {
 
 	return nil
 }
-

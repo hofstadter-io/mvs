@@ -63,8 +63,8 @@ CLI :: cli.Schema & {
 
 	Commands: [
 		schema.Command & {
-			Name:  "langinfo"
-			Usage: "langinfo [language]"
+			Name:  "info"
+			Usage: "info [language]"
 			Short: "print info about languages and modders known to mvs"
 			Long: """
         print info about languages and modders known to mvs
@@ -72,13 +72,13 @@ CLI :: cli.Schema & {
           - an arg prints info about the language modder configuration that would be used
       """
 
-			Args: [
-				schema.Arg & {
-					Name: "lang"
-					Type: "string"
-					Help: "name of the language to print info about"
-				},
-			]
+      Args: [
+        schema.Arg & {
+          Name: "lang"
+          Type: "string"
+          Help: "name of the language to print info about"
+        },
+      ]
 
 			Imports: _CmdImports
 
@@ -131,7 +131,7 @@ CLI :: cli.Schema & {
 			Imports: _CmdImports
 
 			Body: """
-      err := lib.Graph(RootLangPflag)
+      err := lib.ProcessLangs("graph", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -171,14 +171,14 @@ CLI :: cli.Schema & {
 		},
 		schema.Command & {
 			Name:  "tidy"
-			Usage: "tidy"
+			Usage: "tidy [langs...]"
 			Short: "add missinad and remove unused modules"
 			Long:  Short
 
 			Imports: _CmdImports
 
 			Body: """
-      err := lib.Tidy(RootLangPflag)
+      err := lib.ProcessLangs("tidy", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -187,14 +187,14 @@ CLI :: cli.Schema & {
 		},
 		schema.Command & {
 			Name:  "vendor"
-			Usage: "vendor"
+			Usage: "vendor [langs...]"
 			Short: "make a vendored copy of dependencies"
 			Long:  Short
 
 			Imports: _CmdImports
 
 			Body: """
-      err := lib.Vendor(RootLangPflag)
+      err := lib.ProcessLangs("vendor", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -203,14 +203,14 @@ CLI :: cli.Schema & {
 		},
 		schema.Command & {
 			Name:  "verify"
-			Usage: "verify"
+			Usage: "verify [langs...]"
 			Short: "verify dependencies have expected content"
 			Long:  Short
 
 			Imports: _CmdImports
 
 			Body: """
-      err := lib.Verify(RootLangPflag)
+      err := lib.ProcessLangs("verify", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)

@@ -50,7 +50,7 @@ var RootCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(LanginfoCmd)
+	RootCmd.AddCommand(InfoCmd)
 	RootCmd.AddCommand(ConvertCmd)
 	RootCmd.AddCommand(GraphCmd)
 	RootCmd.AddCommand(InitCmd)

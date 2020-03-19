@@ -23,7 +23,7 @@ var GraphCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		err := lib.Graph(RootLangPflag)
+		err := lib.ProcessLangs("graph", args)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

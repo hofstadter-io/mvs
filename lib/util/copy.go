@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -84,7 +83,7 @@ func CopyDir(src string, dst string) error {
 
 // Copies dir in FS onto the os filesystem at baseDir
 func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
-	fmt.Println("DIR:  ", baseDir, dir)
+	// fmt.Println("DIR:  ", baseDir, dir)
 	files, err := FS.ReadDir(dir)
 	if err != nil {
 		return err
@@ -93,7 +92,7 @@ func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
 	for _, file := range files {
 		longname := path.Join(dir, file.Name())
 		outname := path.Join(baseDir, longname)
-		fmt.Println("DIR:  ", baseDir, dir, file.Name(), longname, outname)
+		// fmt.Println("DIR:  ", baseDir, dir, file.Name(), longname, outname)
 
 		if file.IsDir() {
 			os.MkdirAll(path.Dir(outname), 0755)

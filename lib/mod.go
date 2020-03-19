@@ -18,18 +18,17 @@ func getModder(lang string) (modder.Modder, error) {
 }
 
 // This is a convienence function for calling the other mod functions with a list of languages
-func ProcessLangs(langs []string, method, module string) error {
+func ProcessLangs(method string, langs []string) error {
 
+	// discover and update slice
 	if len(langs) == 0 {
-		// discover and update slice
+		langs = DiscoverLangs()
 	}
 
 	var err error
 
 	for _, lang := range langs {
-		switch lang {
-		case "init":
-			err = Init(lang, module)
+		switch method {
 		case "graph":
 			err = Graph(lang)
 		case "tidy":
