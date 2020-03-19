@@ -11,8 +11,6 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/hofstadter-io/mvs/lib/modder"
-	"github.com/hofstadter-io/mvs/lib/modder/custom"
-	"github.com/hofstadter-io/mvs/lib/modder/exec"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
@@ -22,7 +20,7 @@ const LOCAL_MVS_CONFIG = ".mvsconfig.yaml"
 
 var (
 	// Default known modderr
-	LangModderMap = map[string]modder.Modder{
+	LangModderMap = map[string]*modder.Modder{
 		"go":  GolangModder,
 		"cue": CuelangModder,
 		"hof": HoflangModder,
@@ -43,23 +41,21 @@ var (
 		"SECURITY.md",
 	}
 
-	GolangModder = &exec.Modder{
+	GolangModder = &modder.Modder{
 		Name:     "go",
 		Version:  "1.14",
 		ModFile:  "go.mod",
 		SumFile:  "go.sum",
 		ModsDir:  "vendor",
 		Checksum: "vendor/modules.txt",
-		Commands: map[string][]string{
-			"init":   []string{"go", "mod", "init"},
-			"graph":  []string{"go", "mod", "graph"},
-			"tidy":   []string{"go", "mod", "tidy"},
-			"vendor": []string{"go", "mod", "vendor"},
-			"verify": []string{"go", "mod", "verify"},
-		},
+		CommandInit: []string{"go", "mod", "init"},
+		CommandGraph:  []string{"go", "mod", "graph"},
+		CommandTidy:   []string{"go", "mod", "tidy"},
+		CommandVendor: []string{"go", "mod", "vendor"},
+		CommandVerify: []string{"go", "mod", "verify"},
 	}
 
-	CuelangModder = &custom.Modder{
+	CuelangModder = &modder.Modder{
 		Name:     "cue",
 		Version:  "0.0.15",
 		ModFile:  "cue.mods",
@@ -82,7 +78,7 @@ var (
 		},
 	}
 
-	HoflangModder = &custom.Modder{
+	HoflangModder = &modder.Modder{
 		Name:     "hof",
 		Version:  "0.0.0",
 		ModFile:  "hof.mods",
@@ -108,41 +104,19 @@ For more info on a language:
 
 func DiscoverLangs() (langs []string) {
 
-	for lang, mdrI := range LangModderMap {
-		mdr, ok := mdrI.(*custom.Modder)
-		if ok {
-			// Let's check for a custom
-			_, err := os.Lstat(mdr.ModFile)
-			if err != nil {
-				if _, ok := err.(*os.PathError); !ok {
-					fmt.Println(err)
-					// return err
-				}
-				// file not found, but error
-				continue
+	for lang, mdr := range LangModderMap {
+		// Let's check for a custom
+		_, err := os.Lstat(mdr.ModFile)
+		if err != nil {
+			if _, ok := err.(*os.PathError); !ok {
+				fmt.Println(err)
+				// return err
 			}
-			// we found a mod file
-			langs = append(langs, lang)
-		} else {
-
-			// Let's try an exev modder
-			emdr, ok := mdrI.(*exec.Modder)
-			if ok {
-				_, err := os.Lstat(emdr.ModFile)
-				if err != nil {
-					if _, ok := err.(*os.PathError); !ok {
-						fmt.Println(err)
-						// return err
-					}
-					// file not found, but error
-					continue
-				}
-				// we found a mod file
-				langs = append(langs, lang)
-			}
+			// file not found
 			continue
 		}
-
+		// we found a mod file
+		langs = append(langs, lang)
 	}
 
 	return langs
@@ -223,15 +197,16 @@ func initFromFile(filepath string) error {
 		return nil
 	}
 
-	var mdrMap map[string]custom.Modder
+	var mdrMap map[string]*modder.Modder
 	err = yaml.Unmarshal(bytes, &mdrMap)
 	if err != nil {
 		return err
 	}
+	fmt.Printf("%#+v\n", mdrMap)
 
 	for lang, _ := range mdrMap {
 		mdr := mdrMap[lang]
-		LangModderMap[lang] = &mdr
+		LangModderMap[lang] = mdr
 	}
 
 	return nil

@@ -4,8 +4,8 @@ A flexible MVS tool and library based on Go mods.
 
 Create module systems with [Minimum Version Selection](https://research.swtch.com/vgo-mvs) semantics
 for any language, and generally any set of git repositories.
-Manage polyglot and monorepo codebase dependencies
-with more stability from a single tool.
+Manage polyglot and monorepo codebase dependencies with
+[100% reproducible builds from a single tool](https://github.com/golang/go/wiki/Modules#version-selection).
 
 
 ### Features
@@ -22,7 +22,7 @@ Language support:
 
 - [Golang](https://golang.org) - exec's out to go tool
 - [Cuelang](https://cuelang.org) - builtin in default using the custom module feature
-- [Hoflang](https://hof-lang.org) - extends Cuelang with low-code capabilities (also a builtin custom)
+- [Hof-lang](https://hof-lang.org) - extends Cuelang with low-code capabilities (also a builtin custom)
 - Custom - Create your own locally or globally with `.mvsconfig` files
 
 Upcoming languages: Python and JavaScript

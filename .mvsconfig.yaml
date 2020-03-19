@@ -37,4 +37,4 @@ cue:
   IntrospectExcludeGlobs:
     - "cue.mod/pkg"
   IntrospectExtractRegex:
-    - "tbd... same as go importk"
+    - "tbd... same as go import"

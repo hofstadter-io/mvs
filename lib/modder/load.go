@@ -1,4 +1,4 @@
-package custom
+package modder
 
 import (
 	"io/ioutil"
@@ -31,6 +31,9 @@ func (mdr *Modder) Load(dir string) error {
 }
 
 func (m *Modder) LoadModule(dir string) (*mod.Module, error) {
+	if m.NoLoad {
+		return nil, nil
+	}
 
 	modFn := m.ModFile
 	sumFn := m.SumFile

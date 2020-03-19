@@ -1,4 +1,4 @@
-package custom
+package modder
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"github.com/hofstadter-io/mvs/lang/modfile"
+	"github.com/hofstadter-io/mvs/lib/util"
 )
 
 /* TODO
@@ -15,6 +16,13 @@ import (
 */
 
 func (mdr *Modder) Init(module string) error {
+	// exec commands override configurable behavior
+	if len(mdr.CommandInit) > 0 {
+		out, err := util.Exec(mdr.CommandInit)
+		fmt.Println(out)
+		return err
+	}
+
 	var err error
 
 	err = mdr.initModFile(module)

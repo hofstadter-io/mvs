@@ -1,4 +1,4 @@
-package common
+package modder
 
 import (
 	"fmt"

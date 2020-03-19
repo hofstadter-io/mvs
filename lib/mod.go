@@ -6,7 +6,7 @@ import (
 	"github.com/hofstadter-io/mvs/lib/modder"
 )
 
-func getModder(lang string) (modder.Modder, error) {
+func getModder(lang string) (*modder.Modder, error) {
 	// TODO try to detect language by looking for
 	// a [lang].mod file
 	mod, ok := LangModderMap[lang]

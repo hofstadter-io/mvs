@@ -1,4 +1,4 @@
-package custom
+package modder
 
 import (
 	"fmt"
@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/hofstadter-io/mvs/lib/mod"
-	"github.com/hofstadter-io/mvs/lib/modder/common"
 	"github.com/hofstadter-io/mvs/lib/remote/git"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
@@ -42,6 +41,12 @@ This module & deps
 		b) write out if necessary
 */
 func (mdr *Modder) Vendor() error {
+	if len(mdr.CommandVendor) > 0 {
+		out, err := util.Exec(mdr.CommandVendor)
+		fmt.Println(out)
+		return err
+	}
+
 	M, err := mdr.LoadModule(".")
 	if err != nil {
 		return err
@@ -57,7 +62,7 @@ func (mdr *Modder) Vendor() error {
 
 	// First process the require directives
 	for _, req := range mdr.module.Require {
-		ref, refs, err := common.IndexGit(req.Path, req.Version)
+		ref, refs, err := IndexGit(req.Path, req.Version)
 		if err != nil {
 			// Build up errors
 			mdr.module.Errors = append(mdr.module.Errors, err)
@@ -116,7 +121,7 @@ func (mdr *Modder) Vendor() error {
 		}
 
 		// pretty normal module dep handling now
-		ref, refs, err := common.IndexGit(rep.NewPath, rep.NewVersion)
+		ref, refs, err := IndexGit(rep.NewPath, rep.NewVersion)
 		if err != nil {
 			// Build up errors
 			mdr.module.Errors = append(mdr.module.Errors, err)
