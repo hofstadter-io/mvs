@@ -19,10 +19,10 @@ type Modder struct {
 	Checksum string `yaml:"Checksum"`
 
 	// Commands override default, configuragble processing
-	NoLoad bool `yaml:"NoLoad"`// for things like golang
-	CommandInit []string `yaml:"CommandInit"`
-	CommandGraph []string `yaml:"CommandGraph"`
-	CommandTidy []string `yaml:"CommandTidy"`
+	NoLoad        bool     `yaml:"NoLoad"` // for things like golang
+	CommandInit   []string `yaml:"CommandInit"`
+	CommandGraph  []string `yaml:"CommandGraph"`
+	CommandTidy   []string `yaml:"CommandTidy"`
 	CommandVendor []string `yaml:"CommandVendor"`
 	CommandVerify []string `yaml:"CommandVerify"`
 

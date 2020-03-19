@@ -42,13 +42,13 @@ var (
 	}
 
 	GolangModder = &modder.Modder{
-		Name:     "go",
-		Version:  "1.14",
-		ModFile:  "go.mod",
-		SumFile:  "go.sum",
-		ModsDir:  "vendor",
-		Checksum: "vendor/modules.txt",
-		CommandInit: []string{"go", "mod", "init"},
+		Name:          "go",
+		Version:       "1.14",
+		ModFile:       "go.mod",
+		SumFile:       "go.sum",
+		ModsDir:       "vendor",
+		Checksum:      "vendor/modules.txt",
+		CommandInit:   []string{"go", "mod", "init"},
 		CommandGraph:  []string{"go", "mod", "graph"},
 		CommandTidy:   []string{"go", "mod", "tidy"},
 		CommandVendor: []string{"go", "mod", "vendor"},
