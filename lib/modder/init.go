@@ -19,23 +19,20 @@ func (mdr *Modder) Init(module string) error {
 	// exec commands override configurable behavior
 	if len(mdr.CommandInit) > 0 {
 		out, err := util.Exec(mdr.CommandInit)
+		if err != nil {
+			return err
+		}
 		fmt.Println(out)
-		return err
+	} else {
+		// or load from file
+		err := mdr.initModFile(module)
+		if err != nil {
+			return err
+		}
 	}
 
-	var err error
-
-	err = mdr.initModFile(module)
-	if err != nil {
-		return err
-	}
-
-	// err = os.MkdirAll(mdr.ModsDir, 0755)
-	if err != nil {
-		return err
-	}
-
-	err = mdr.writeInitTemplates(module)
+	// Run init templates regardless of the init main method
+	err := mdr.writeInitTemplates(module)
 	if err != nil {
 		return err
 	}

@@ -13,5 +13,5 @@ func (mdr *Modder) Graph() error {
 		return err
 	}
 
-	return fmt.Errorf("%s ComplexModder - Graph not implemented", mdr.Name)
+	return fmt.Errorf("%s Modder - Graph not implemented", mdr.Name)
 }

@@ -13,5 +13,5 @@ func (mdr *Modder) Tidy() error {
 		return err
 	}
 
-	return fmt.Errorf("%s ComplexModder - Tidy not implemented", mdr.Name)
+	return fmt.Errorf("%s Modder - Tidy not implemented", mdr.Name)
 }

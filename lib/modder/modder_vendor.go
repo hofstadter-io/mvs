@@ -2,26 +2,10 @@ package modder
 
 import (
 	"fmt"
-	"os"
-	"path"
 	"strings"
 
-	"github.com/hofstadter-io/mvs/lib/repos/git"
 	"github.com/hofstadter-io/mvs/lib/util"
-)
-
-var (
-	// Common files to copy from modules, also includes the .md version of the filename
-	definiteVendors = []string{
-		"README",
-		"LICENSE",
-		"PATENTS",
-		"CONTRIBUTORS",
-		"SECURITY",
-	}
-
-	// cross product these endings
-	endings = []string{"", ".md", ".txt"}
+	"github.com/hofstadter-io/mvs/lib/repos/git"
 )
 
 /* Vendor reads in a module, determines dependencies, and writes out the vendor folder.
@@ -105,43 +89,6 @@ func (mdr *Modder) VendorMVS() error {
 	return mdr.WriteVendor()
 }
 
-func (mdr *Modder) PrintSelfDeps() error {
-	fmt.Println("Merged self deps for", mdr.module.Module)
-	for path, R := range mdr.module.SelfDeps {
-		fmt.Println("   ", path, "~", R.OldPath, R.OldVersion, "=>", R.NewPath, R.NewVersion)
-	}
-
-	return nil
-}
-
-func (mdr *Modder) LoadSelfDeps() error {
-	fmt.Println("Loading self deps for", mdr.module.Module)
-	for path, R := range mdr.module.SelfDeps {
-		fmt.Println("   ", path, "~", R.OldPath, R.OldVersion, "=>", R.NewPath, R.NewVersion)
-
-		// XXX is this the right place for this?
-		// TODO Check if already good (i.e. ??? if in vendor and ok)
-		// TODO Check mvs system cache in $HOME/.mvs/cache
-
-		// We probably need to start module creating here
-
-		// Handle local replaces
-		if strings.HasPrefix(R.NewPath, "./") || strings.HasPrefix(R.NewPath, "../") {
-			fmt.Println("Local Replace:", R.OldPath, R.OldVersion, "=>", R.NewPath, R.NewVersion)
-			// is it git or not?
-
-			return nil
-		}
-
-		// OTHERWISE... it's a remote repository
-
-		// is it git or a package repository? TBD
-
-	}
-
-	return nil
-}
-
 func (mdr *Modder) LoadRequires() error {
 	// TODO Check if already good
 
@@ -149,7 +96,7 @@ func (mdr *Modder) LoadRequires() error {
 
 	// First process the require directives
 	for _, req := range mdr.module.Require {
-		ref, refs, err := IndexGit(req.Path, req.Version)
+		ref, refs, err := git.IndexGitRemote(req.Path, req.Version)
 		if err != nil {
 			// Build up errors
 			mdr.module.Errors = append(mdr.module.Errors, err)
@@ -216,7 +163,7 @@ func (mdr *Modder) LoadReplaces() error {
 		}
 
 		// pretty normal module dep handling now
-		ref, refs, err := IndexGit(rep.NewPath, rep.NewVersion)
+		ref, refs, err := git.IndexGitRemote(rep.NewPath, rep.NewVersion)
 		if err != nil {
 			// Build up errors
 			mdr.module.Errors = append(mdr.module.Errors, err)
@@ -244,107 +191,3 @@ func (mdr *Modder) LoadReplaces() error {
 
 }
 
-// This sets or overwrites the module
-func (mdr *Modder) ReplaceDependency(m *Module) error {
-	// save module to depsMap, that's it? (yes)
-	mdr.depsMap[m.Module] = m
-
-	return nil
-}
-
-// If not set, justs adds. If set, takes the one with the greater version.
-func (mdr *Modder) MergeDependency(m *Module) error {
-
-	// TODO check for existing module, version comparison
-	mdr.depsMap[m.Module] = m
-
-	return nil
-}
-
-// TODO, break this function appart
-func (mdr *Modder) addDependency(m *Module) error {
-	// save module to depsMap
-	mdr.depsMap[m.Module] = m
-
-	// TODO ADD par.Work here - clone and ilook for sum..., then do checks and actions
-
-	// Should only happen with local replace right now
-	if m.Ref == nil {
-		clone, err := git.CloneLocalRepo(m.ReplaceModule)
-		m.Clone = clone
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-
-	// clone the module and load
-	clone, err := git.CloneRepoRef(m.Module, m.Ref)
-	m.Clone = clone
-	if err != nil {
-		return err
-	}
-
-	// Pushi into parallel worker here?
-	// load dep module
-	// dm, err := mdr.LoadModule("...")
-	// if err != nil { return err }
-
-	return nil
-}
-
-func (mdr *Modder) WriteVendor() error {
-	// TODO calc and update imported module "hashes"" here
-
-	// make vendor dir if not present
-	err := os.MkdirAll(mdr.ModsDir, 0755)
-	if err != nil {
-		return err
-	}
-
-	// write out each dep
-	for _, m := range mdr.depsMap {
-
-		baseDir := path.Join(mdr.ModsDir, m.Module)
-
-		fmt.Println("Copying", baseDir)
-
-		// copy special files
-		for _, fn := range definiteVendors {
-			for _, end := range endings {
-				_, err := m.Clone.FS.Stat(fn + end)
-				if err != nil {
-					if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
-						// some other error
-						return err
-					}
-					// not found
-					continue
-				}
-
-				// Found one!
-				err = util.BillyCopyFile(baseDir, "/"+fn+end, m.Clone.FS)
-
-			}
-		}
-
-		if len(mdr.VendorIncludeGlobs) > 0 || len(mdr.VendorExcludeGlobs) > 0 {
-			// Just copy everything
-			err = util.BillyGlobCopy(baseDir, "/", m.Clone.FS, mdr.VendorIncludeGlobs, mdr.VendorExcludeGlobs)
-			if err != nil {
-				return err
-			}
-
-		} else {
-			// Just copy everything
-			err = util.BillyCopyDir(baseDir, "/", m.Clone.FS)
-			if err != nil {
-				return err
-			}
-
-		}
-
-	}
-
-	return nil
-}

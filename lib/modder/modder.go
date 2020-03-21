@@ -31,6 +31,7 @@ type Modder struct {
 	CommandTidy   []string `yaml:"CommandTidy"`
 	CommandVendor []string `yaml:"CommandVendor"`
 	CommandVerify []string `yaml:"CommandVerify"`
+	CommandStatus []string `yaml:"CommandStatus"`
 
 	// Init related fields
 	// we need to create things like directories and files beyond the

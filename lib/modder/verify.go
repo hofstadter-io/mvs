@@ -13,5 +13,5 @@ func (mdr *Modder) Verify() error {
 		return err
 	}
 
-	return fmt.Errorf("%s ComplexModder - Verify not implemented", mdr.Name)
+	return fmt.Errorf("%s Modder - Verify not implemented", mdr.Name)
 }
