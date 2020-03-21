@@ -127,23 +127,24 @@ cue: {
   ModsDir: "cue.mod/pkg"
   Checksum: "cue.mod/modules.txt"
   InitTemplates: {
-      cue.mod/module.cue: """
-          module "{{ .Module }}"
-          """
-  }
+    "cue.mod/module.cue": """
+      module "{{ .Module }}"
+      """
+    }
 
   VendorIncludeGlobs: [
+    ".mvsconfig.cue",
     "cue.mods",
     "cue.sums",
     "cue.mod/module.cue",
     "cue.mod/modules.txt",
     "**/*.cue"
-    ]
+  ]
   VendorExcludeGlobs: ["cue.mod/pkg"]
 
   IntrospectIncludeGlobs: ["**/*.cue"]
   IntrospectExcludeGlobs: ["cue.mod/pkg"]
-  IntrospectExtractRegex: ["tbd... same as go imports"]
+  IntrospectExtractRegex: ["tbd... same as go import"]
 }
 ```
 

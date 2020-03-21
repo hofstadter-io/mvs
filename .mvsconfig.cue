@@ -22,10 +22,10 @@ cue: {
   ModsDir: "cue.mod/pkg"
   Checksum: "cue.mod/modules.txt"
   InitTemplates: {
-    cue.mod/module.cue: """
-		module "{{ .Module }}"
-		"""
-	}
+    "cue.mod/module.cue": """
+      module "{{ .Module }}"
+      """
+    }
 
   VendorIncludeGlobs: [
     ".mvsconfig.cue",
@@ -34,7 +34,7 @@ cue: {
     "cue.mod/module.cue",
     "cue.mod/modules.txt",
     "**/*.cue"
-		]
+  ]
   VendorExcludeGlobs: ["cue.mod/pkg"]
 
   IntrospectIncludeGlobs: ["**/*.cue"]

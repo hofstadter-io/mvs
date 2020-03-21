@@ -53,8 +53,8 @@ func (m *Module) MergeSelfDeps() error {
 		if _, ok := m.SelfDeps[req.Path]; ok {
 			return fmt.Errorf("Dependency %q required twice in %q", req.Path, m.Module)
 		}
-		m.SelfDeps[req.Path] = Replace {
-			NewPath: req.Path,
+		m.SelfDeps[req.Path] = Replace{
+			NewPath:    req.Path,
 			NewVersion: req.Version,
 		}
 	}

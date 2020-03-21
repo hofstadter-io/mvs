@@ -1,29 +1,3 @@
-# Custom Modders
-
-MVS gives you the ability to create
-custom module systems, called Modders.
-Modder is the struct name for the
-internal code which controls how
-modules and vendoring is handled.
-You can configure as many of these as you like,
-by providing global or local `.mvsconfig.cue` files.
-
-See the following two files for the configuration options
-and defaults built into the tool:
-
-- Definition: [lib/modder/modder.go](../lib/modder/modder.go)
-- Defaults: [lib/langs.go](../lib/langs.go) and [.mvsconfig.cue](../.mvsconfig.cue)
-
-You create your own modders by createing `.mvsconfig.cue` files.
-MVS will look for these in two places before any commands are run.
-
-- A global `$HOME/.mvs/config.cue`
-- A local `./.mvsconfig.cue`
-
-### MVS config file format
-
-
-```cue
 // These two need to be the same
 cue: {
 	Name: "cue"
@@ -98,6 +72,3 @@ cue: {
 	// This is currently futurology for building MVS for Python and JavaScript
 	PackageManagerDefaultPrefix: "npm.js"
 }
-```
-
-
