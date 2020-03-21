@@ -97,7 +97,7 @@ func DiscoverLangs() (langs []string) {
 		if err != nil {
 			if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
 				fmt.Println(err)
-				// return err
+				// return err // more of a warning right now
 			}
 			// file not found
 			continue
@@ -189,7 +189,7 @@ func initFromFile(filepath string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%#+v\n", mdrMap)
+	// fmt.Printf("%#+v\n", mdrMap)
 
 	for lang, _ := range mdrMap {
 		mdr := mdrMap[lang]
