@@ -17,6 +17,10 @@ type Module struct {
 	Require  []Require
 	Replace  []Replace
 
+	// Merged version of local require / replace
+	// Requires as replaces will not have the old fields set
+	SelfDeps map[string]Replace
+
 	// If this module gets replaced
 	ReplaceModule  string
 	ReplaceVersion string

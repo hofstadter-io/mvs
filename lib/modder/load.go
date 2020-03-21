@@ -1,6 +1,7 @@
 package modder
 
 import (
+  "fmt"
 	"os"
 
 	"github.com/go-git/go-billy/v5/osfs"
@@ -39,6 +40,29 @@ func (mdr *Modder) LoadModuleFromFS(dir string) error {
 	if err != nil {
 		return err
 	}
+
+	// Now merge self deps
+	m := mdr.module
+	m.SelfDeps = map[string]Replace{}
+	for _, req := range m.Require {
+		if _, ok := m.SelfDeps[req.Path]; ok {
+			return fmt.Errorf("Dependency %q required twice in %q", req.Path, m.Module)
+		}
+		m.SelfDeps[req.Path] = Replace {
+			NewPath: req.Path,
+			NewVersion: req.Version,
+		}
+	}
+
+	dblReplace := map[string]Replace{}
+	for _, rep := range m.Replace {
+		if _, ok := dblReplace[rep.OldPath]; ok {
+			return fmt.Errorf("Dependency %q replaced twice in %q", rep.OldPath, m.Module)
+		}
+		dblReplace[rep.OldPath] = rep
+		m.SelfDeps[rep.OldPath] = rep
+	}
+
 
 	return nil
 }

@@ -1,7 +1,13 @@
 package modder
 
 import (
+  "fmt"
+	"os"
+
+	"gopkg.in/yaml.v3"
 	"github.com/go-git/go-billy/v5"
+
+	"github.com/hofstadter-io/mvs/lib/util"
 )
 
 // This modder is for more complex, yet configurable module processing.
@@ -65,4 +71,30 @@ type Modder struct {
 	// dependencies shoule respect any .mvsconfig it finds along side the module files
 	// module writers can then have local control over how their module is handeled during vendoring
 	depsMap map[string]*Module `yaml:"-"`
+}
+
+
+func NewFromFile(lang, filepath string, FS billy.Filesystem) (*Modder, error) {
+
+	bytes, err := util.BillyReadAll(filepath, FS)
+	if err != nil {
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
+			return nil, err
+		}
+		// The user has not setup a global $HOME/.mvs/mvsconfig file
+		return nil, nil
+	}
+
+	var mdrMap map[string]*Modder
+	err = yaml.Unmarshal(bytes, &mdrMap)
+	if err != nil {
+		return nil, err
+	}
+
+	mdr, ok := mdrMap[lang]
+	if !ok {
+	  return nil, fmt.Errorf("lang %q not found in %s", lang, filepath)
+	}
+
+	return mdr, nil
 }

@@ -74,6 +74,15 @@ func (mdr *Modder) VendorMVS() error {
 		return err
 	}
 
+	// XXX This is where we need to start changing behavior
+	// right now, the below just loads and clones without much intelligence
+	// Want to go dep by dep, performing the same checks
+
+	mdr.ResolveDependencies()
+
+
+	// XXX OLD BELOW
+
 	err = mdr.LoadRequires()
 	if err != nil {
 		return err
@@ -92,10 +101,19 @@ func (mdr *Modder) VendorMVS() error {
 	return mdr.WriteVendor()
 }
 
-func (mdr *Modder) LoadRequires() error {
-	// TODO START par.Work here
+func (mdr *Modder) ResolveDependencies() error {
+	for path, R := range mdr.module.SelfDeps {
+		// What kind of dep
+		fmt.Printf("%s %#+v", path, R)
+	}
 
-	// TODO compare to sum file
+	return nil
+}
+
+func (mdr *Modder) LoadRequires() error {
+	// TODO Check if already good
+
+	// TODO Check mvs system cache in $HOME/.mvs/cache
 
 	// First process the require directives
 	for _, req := range mdr.module.Require {
