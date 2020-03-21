@@ -133,6 +133,10 @@ func (mdr *Modder) LoadSelfDeps() error {
 			return nil
 		}
 
+		// OTHERWISE... it's a remote repository
+
+		// is it git or a package repository? TBD
+
 	}
 
 	return nil
