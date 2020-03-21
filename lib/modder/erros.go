@@ -41,4 +41,3 @@ func (mdr *Modder) PrintErrors() error {
 
 	return wasError
 }
-

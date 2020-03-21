@@ -11,11 +11,11 @@ import (
 )
 
 /* Reads the module files in
-		- ModFile
-		- SumFile
-		- MappingFile
+- ModFile
+- SumFile
+- MappingFile
 */
-func (mdr *Modder) LoadModuleFromFS(dir string) (error) {
+func (mdr *Modder) LoadModuleFromFS(dir string) error {
 	// Shortcut for no load modules, forget the reason for no load...
 	if mdr.NoLoad {
 		return nil

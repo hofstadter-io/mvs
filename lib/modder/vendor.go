@@ -74,6 +74,25 @@ func (mdr *Modder) VendorMVS() error {
 		return err
 	}
 
+	err = mdr.LoadRequires()
+	if err != nil {
+		return err
+	}
+
+	err = mdr.LoadReplaces()
+	if err != nil {
+		return err
+	}
+
+	err = mdr.PrintErrors()
+	if err != nil {
+		return err
+	}
+
+	return mdr.WriteVendor()
+}
+
+func (mdr *Modder) LoadRequires() error {
 	// TODO START par.Work here
 
 	// TODO compare to sum file
@@ -110,6 +129,10 @@ func (mdr *Modder) VendorMVS() error {
 
 	}
 
+	return nil
+}
+
+func (mdr *Modder) LoadReplaces() error {
 	// Now replace any dependencies, and possibly add new ones (user not required to specify both orig require and replace source)
 	for _, rep := range mdr.module.Replace {
 
@@ -165,16 +188,10 @@ func (mdr *Modder) VendorMVS() error {
 		mdr.addDependency(m)
 	}
 
+	return nil
+
 	// now process the requirements, should skip any that exist already because they are replaces
 
-	err = mdr.PrintErrors()
-	if err != nil {
-		return err
-	}
-
-	// XXX Actually want to recurse here
-	// XXX for now, write out any vendor
-	return mdr.WriteVendor()
 }
 
 // This sets or overwrites the module
