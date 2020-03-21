@@ -62,7 +62,13 @@ func (mdr *Modder) Vendor() error {
 	}
 
 	// Otherwise, MVS venodiring
-	return mdr.VendorMVS()
+	err := mdr.VendorMVS()
+	if err != nil {
+		mdr.PrintErrors()
+		return err
+	}
+
+	return nil
 }
 
 // The entrypoint to the MVS internal vendoring process
@@ -78,9 +84,11 @@ func (mdr *Modder) VendorMVS() error {
 	// right now, the below just loads and clones without much intelligence
 	// Want to go dep by dep, performing the same checks
 
-	mdr.MergeSelfDeps()
-
-	mdr.LoadSelfDeps()
+	// mdr.PrintSelfDeps()
+	err = mdr.LoadSelfDeps()
+	if err != nil {
+		return err
+	}
 
 	// XXX OLD BELOW
 
@@ -94,25 +102,38 @@ func (mdr *Modder) VendorMVS() error {
 		return err
 	}
 
-	err = mdr.PrintErrors()
-	if err != nil {
-		return err
-	}
-
 	return mdr.WriteVendor()
 }
 
-func (mdr *Modder) MergeSelfDeps() error {
+func (mdr *Modder) PrintSelfDeps() error {
 	fmt.Println("Merged self deps for", mdr.module.Module)
 	for path, R := range mdr.module.SelfDeps {
-		// What kind of dep
-		fmt.Printf(" %s %#+v\n", path, R)
+		fmt.Println("   ", path, "~", R.OldPath, R.OldVersion, "=>", R.NewPath, R.NewVersion)
 	}
 
 	return nil
 }
 
 func (mdr *Modder) LoadSelfDeps() error {
+	fmt.Println("Loading self deps for", mdr.module.Module)
+	for path, R := range mdr.module.SelfDeps {
+		fmt.Println("   ", path, "~", R.OldPath, R.OldVersion, "=>", R.NewPath, R.NewVersion)
+
+		// XXX is this the right place for this?
+		// TODO Check if already good (i.e. ??? if in vendor and ok)
+		// TODO Check mvs system cache in $HOME/.mvs/cache
+
+		// We probably need to start module creating here
+
+		// Handle local replaces
+		if strings.HasPrefix(R.NewPath, "./") || strings.HasPrefix(R.NewPath, "../") {
+			fmt.Println("Local Replace:", R.OldPath, R.OldVersion, "=>", R.NewPath, R.NewVersion)
+			// is it git or not?
+
+			return nil
+		}
+
+	}
 
 	return nil
 }
