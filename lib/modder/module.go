@@ -4,8 +4,8 @@ import (
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 
-	"github.com/hofstadter-io/mvs/lang/modfile"
-	"github.com/hofstadter-io/mvs/lang/sumfile"
+	"github.com/hofstadter-io/mvs/lib/parse/modfile"
+	"github.com/hofstadter-io/mvs/lib/parse/sumfile"
 	"github.com/hofstadter-io/mvs/lib/remote/git"
 )
 

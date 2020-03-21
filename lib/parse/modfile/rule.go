@@ -14,7 +14,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/hofstadter-io/mvs/lang/lazyregexp"
+	"github.com/hofstadter-io/mvs/lib/parse/lazyregexp"
 	"golang.org/x/mod/module"
 )
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hofstadter-io/mvs/lang/modfile"
-	"github.com/hofstadter-io/mvs/lang/sumfile"
+	"github.com/hofstadter-io/mvs/lib/parse/modfile"
+	"github.com/hofstadter-io/mvs/lib/parse/sumfile"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
