@@ -6,7 +6,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/hofstadter-io/mvs/lib/remote/git"
+	"github.com/hofstadter-io/mvs/lib/repos/git"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
