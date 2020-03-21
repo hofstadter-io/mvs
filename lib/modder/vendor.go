@@ -78,8 +78,7 @@ func (mdr *Modder) VendorMVS() error {
 	// right now, the below just loads and clones without much intelligence
 	// Want to go dep by dep, performing the same checks
 
-	mdr.ResolveDependencies()
-
+	mdr.MergeSelfDeps()
 
 	// XXX OLD BELOW
 
@@ -101,10 +100,11 @@ func (mdr *Modder) VendorMVS() error {
 	return mdr.WriteVendor()
 }
 
-func (mdr *Modder) ResolveDependencies() error {
+func (mdr *Modder) MergeSelfDeps() error {
+	fmt.Println("Merged self deps for", mdr.module.Module)
 	for path, R := range mdr.module.SelfDeps {
 		// What kind of dep
-		fmt.Printf("%s %#+v", path, R)
+		fmt.Printf(" %s %#+v\n", path, R)
 	}
 
 	return nil

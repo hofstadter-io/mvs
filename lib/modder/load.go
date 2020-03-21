@@ -56,10 +56,18 @@ func (mdr *Modder) LoadModuleFromFS(dir string) error {
 
 	dblReplace := map[string]Replace{}
 	for _, rep := range m.Replace {
+		// Check if replaced twice
 		if _, ok := dblReplace[rep.OldPath]; ok {
 			return fmt.Errorf("Dependency %q replaced twice in %q", rep.OldPath, m.Module)
 		}
 		dblReplace[rep.OldPath] = rep
+
+		// Pull in require info if not in replace
+		if req, ok := m.SelfDeps[rep.OldPath]; ok {
+			if rep.OldVersion == "" {
+				rep.OldVersion = req.NewVersion
+			}
+		}
 		m.SelfDeps[rep.OldPath] = rep
 	}
 
