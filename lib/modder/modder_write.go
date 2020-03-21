@@ -37,7 +37,6 @@ func (mdr *Modder) WriteVendor() error {
 		baseDir := path.Join(mdr.ModsDir, m.Module)
 		// TODO make billy FS here
 
-
 		fmt.Println("Copying", baseDir)
 
 		// copy definite files always

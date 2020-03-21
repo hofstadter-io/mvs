@@ -7,7 +7,6 @@ import (
 	"github.com/hofstadter-io/mvs/lib/repos/git"
 )
 
-
 func (mdr *Modder) PrintSelfDeps() error {
 	fmt.Println("Merged self deps for", mdr.module.Module)
 	for path, R := range mdr.module.SelfDeps {
@@ -93,4 +92,3 @@ func (mdr *Modder) addDependency(m *Module) error {
 
 	return nil
 }
-

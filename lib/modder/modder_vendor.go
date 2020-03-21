@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hofstadter-io/mvs/lib/util"
 	"github.com/hofstadter-io/mvs/lib/repos/git"
+	"github.com/hofstadter-io/mvs/lib/util"
 )
 
 /* Vendor reads in a module, determines dependencies, and writes out the vendor folder.
@@ -190,4 +190,3 @@ func (mdr *Modder) LoadReplaces() error {
 	// now process the requirements, should skip any that exist already because they are replaces
 
 }
-
