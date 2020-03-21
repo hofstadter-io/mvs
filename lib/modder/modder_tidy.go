@@ -7,11 +7,35 @@ import (
 )
 
 func (mdr *Modder) Tidy() error {
+
+	// Tidy Command Override
 	if len(mdr.CommandTidy) > 0 {
 		out, err := util.Exec(mdr.CommandTidy)
 		fmt.Println(out)
+		if err != nil {
+			return err
+		}
+	} else {
+		// Otherwise, MVS venodiring
+		err := mdr.TidyMVS()
+		if err != nil {
+			mdr.PrintErrors()
+			return err
+		}
+	}
+
+	return nil
+}
+
+// The entrypoint to the MVS internal verify process
+func (mdr *Modder) TidyMVS() error {
+
+	// Load minimal root module
+	err := mdr.LoadMinimalFromFS(".")
+	if err != nil {
 		return err
 	}
 
-	return fmt.Errorf("%s Modder - Tidy not implemented", mdr.Name)
+	return nil
 }
+

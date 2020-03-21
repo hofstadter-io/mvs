@@ -64,25 +64,19 @@ func (mdr *Modder) Vendor() error {
 // The entrypoint to the MVS internal vendoring process
 func (mdr *Modder) VendorMVS() error {
 
-	// Load the current module
-	err := mdr.LoadModuleFromFS(".")
+	// Load minimal root module
+	err := mdr.LoadMinimalFromFS(".")
 	if err != nil {
 		return err
 	}
 
-	// XXX This is where we need to start changing behavior
-	// right now, the below just loads and clones without much intelligence
-	// Want to go dep by dep, performing the same checks
+	return nil
+}
 
-	// mdr.PrintSelfDeps()
-	err = mdr.LoadSelfDeps()
-	if err != nil {
-		return err
-	}
-
+func (mdr *Modder) OldVendorMVS() error {
 	// XXX OLD BELOW
 
-	err = mdr.LoadRequires()
+	err := mdr.LoadRequires()
 	if err != nil {
 		return err
 	}

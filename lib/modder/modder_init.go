@@ -19,10 +19,10 @@ func (mdr *Modder) Init(module string) error {
 	// exec commands override configurable behavior
 	if len(mdr.CommandInit) > 0 {
 		out, err := util.Exec(mdr.CommandInit)
+		fmt.Println(out)
 		if err != nil {
 			return err
 		}
-		fmt.Println(out)
 	} else {
 		// or load from file
 		err := mdr.initModFile(module)
