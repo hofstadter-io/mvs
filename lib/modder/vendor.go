@@ -80,6 +80,8 @@ func (mdr *Modder) VendorMVS() error {
 
 	mdr.MergeSelfDeps()
 
+	mdr.LoadSelfDeps()
+
 	// XXX OLD BELOW
 
 	err = mdr.LoadRequires()
@@ -106,6 +108,11 @@ func (mdr *Modder) MergeSelfDeps() error {
 		// What kind of dep
 		fmt.Printf(" %s %#+v\n", path, R)
 	}
+
+	return nil
+}
+
+func (mdr *Modder) LoadSelfDeps() error {
 
 	return nil
 }
