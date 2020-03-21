@@ -1,12 +1,12 @@
 package modder
 
 import (
-  "fmt"
+	"fmt"
 	"os"
 
-	"gopkg.in/yaml.v3"
 	"github.com/go-git/go-billy/v5"
 
+	"cuelang.org/go/cue"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
@@ -73,7 +73,6 @@ type Modder struct {
 	depsMap map[string]*Module `yaml:"-"`
 }
 
-
 func NewFromFile(lang, filepath string, FS billy.Filesystem) (*Modder, error) {
 
 	bytes, err := util.BillyReadAll(filepath, FS)
@@ -86,14 +85,20 @@ func NewFromFile(lang, filepath string, FS billy.Filesystem) (*Modder, error) {
 	}
 
 	var mdrMap map[string]*Modder
-	err = yaml.Unmarshal(bytes, &mdrMap)
+
+	var r cue.Runtime
+	i, err := r.Compile(filepath, string(bytes))
+	if err != nil {
+		return nil, err
+	}
+	err = i.Value().Decode(&mdrMap)
 	if err != nil {
 		return nil, err
 	}
 
 	mdr, ok := mdrMap[lang]
 	if !ok {
-	  return nil, fmt.Errorf("lang %q not found in %s", lang, filepath)
+		return nil, fmt.Errorf("lang %q not found in %s", lang, filepath)
 	}
 
 	return mdr, nil
