@@ -1,80 +1,95 @@
 package modder
 
 import (
-	"io/ioutil"
 	"os"
-	"path"
+
+	"github.com/go-git/go-billy/v5/osfs"
 
 	"github.com/hofstadter-io/mvs/lang/modfile"
 	"github.com/hofstadter-io/mvs/lang/sumfile"
-	"github.com/hofstadter-io/mvs/lib/mod"
+	"github.com/hofstadter-io/mvs/lib/util"
 )
 
-func (mdr *Modder) Load(dir string) error {
-	panic("modder.Load no longer used")
-	/*
-		m, err := mdr.LoadModule(dir)
-		if err != nil {
-			return err
-		}
-		mdr.module = m
-
-		content, err := yaml.Marshal(m)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("Module Contents:\n%s\n", string(content))
-
+/* Reads the module files in
+		- ModFile
+		- SumFile
+		- MappingFile
+*/
+func (mdr *Modder) LoadModuleFromFS(dir string) (error) {
+	// Shortcut for no load modules, forget the reason for no load...
+	if mdr.NoLoad {
 		return nil
-	*/
+	}
+
+	// Initialize filesystem
+	mdr.FS = osfs.New(dir)
+
+	// Initialzie Module related fields
+	mdr.module = &Module{}
+	mdr.depsMap = map[string]*Module{}
+
+	// Load module files
+	var err error
+	err = mdr.LoadModFile()
+	if err != nil {
+		return err
+	}
+
+	err = mdr.LoadSumFile()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (m *Modder) LoadModule(dir string) (*mod.Module, error) {
-	if m.NoLoad {
-		return nil, nil
-	}
+func (mdr *Modder) LoadModFile() error {
+	fn := mdr.ModFile
+	m := mdr.module
 
-	modFn := m.ModFile
-	sumFn := m.SumFile
-
-	var modMod mod.Module
-	modBytes, err := ioutil.ReadFile(path.Join(dir, modFn))
-	if err != nil {
-		return nil, err
-	} else {
-		f, err := modfile.Parse(modFn, modBytes, nil)
-		if err != nil {
-			return nil, err
-		}
-		modMod.Language = f.Language.Name
-		modMod.LangVer = f.Language.Version
-		modMod.Module = f.Module.Mod.Path
-		modMod.Version = f.Module.Mod.Version
-		for _, req := range f.Require {
-			m := mod.Require{Path: req.Mod.Path, Version: req.Mod.Version}
-			modMod.Require = append(modMod.Require, m)
-		}
-		for _, rep := range f.Replace {
-			m := mod.Replace{OldPath: rep.Old.Path, OldVersion: rep.Old.Version, NewPath: rep.New.Path, NewVersion: rep.New.Version}
-			modMod.Replace = append(modMod.Replace, m)
-		}
-	}
-
-	sumBytes, err := ioutil.ReadFile(path.Join(dir, sumFn))
+	modBytes, err := util.BillyReadAll(fn, mdr.FS)
 	if err != nil {
 		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
-			return nil, err
-		} else {
-			sumBytes = []byte{}
+			return err
 		}
 	} else {
-		sumMod, err := sumfile.ParseSum(sumBytes, path.Join(dir, sumFn))
+		f, err := modfile.Parse(fn, modBytes, nil)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		modMod.SumMod = &sumMod
+		m.Language = f.Language.Name
+		m.LangVer = f.Language.Version
+		m.Module = f.Module.Mod.Path
+		m.Version = f.Module.Mod.Version
+		for _, req := range f.Require {
+			r := Require{Path: req.Mod.Path, Version: req.Mod.Version}
+			m.Require = append(m.Require, r)
+		}
+		for _, rep := range f.Replace {
+			r := Replace{OldPath: rep.Old.Path, OldVersion: rep.Old.Version, NewPath: rep.New.Path, NewVersion: rep.New.Version}
+			m.Replace = append(m.Replace, r)
+		}
 	}
 
-	return &modMod, nil
+	return nil
+}
+
+func (mdr *Modder) LoadSumFile() error {
+	fn := mdr.SumFile
+	m := mdr.module
+
+	sumBytes, err := util.BillyReadAll(fn, mdr.FS)
+	if err != nil {
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
+			return err
+		}
+	} else {
+		sumMod, err := sumfile.ParseSum(sumBytes, fn)
+		if err != nil {
+			return err
+		}
+		m.SumMod = &sumMod
+	}
+
+	return nil
 }

@@ -6,7 +6,6 @@ import (
 	"path"
 	"strings"
 
-	"github.com/hofstadter-io/mvs/lib/mod"
 	"github.com/hofstadter-io/mvs/lib/remote/git"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
@@ -55,20 +54,25 @@ This module & deps
 		b) write out if necessary
 */
 func (mdr *Modder) Vendor() error {
+	// Vendor Command Override
 	if len(mdr.CommandVendor) > 0 {
 		out, err := util.Exec(mdr.CommandVendor)
 		fmt.Println(out)
 		return err
 	}
 
-	M, err := mdr.LoadModule(".")
+	// Otherwise, MVS venodiring
+	return mdr.VendorMVS()
+}
+
+// The entrypoint to the MVS internal vendoring process
+func (mdr *Modder) VendorMVS() error {
+
+	// Load the current module
+	err := mdr.LoadModuleFromFS(".")
 	if err != nil {
 		return err
 	}
-
-	mdr.module = M
-	fmt.Printf("Root Module: %v\n", M)
-	mdr.depsMap = map[string]*mod.Module{}
 
 	// TODO START par.Work here
 
@@ -85,7 +89,7 @@ func (mdr *Modder) Vendor() error {
 
 		// TODO Later, after any real clone, during dep recursion or vendoring,
 		// We should fill this in to respect modules' .mvsconfig, or portions of it depending on what we are doing
-		m := &mod.Module{
+		m := &Module{
 			Module:  req.Path,
 			Version: req.Version,
 			Ref:     ref,
@@ -112,7 +116,9 @@ func (mdr *Modder) Vendor() error {
 		// Handle local replaces
 		if strings.HasPrefix(rep.NewPath, "./") || strings.HasPrefix(rep.NewPath, "../") {
 			fmt.Println("Local replace:", rep)
-			m := &mod.Module{
+			m := &Module{
+				// TODO Think about Replace syntax options and the existence of git
+				// XXX  How does go mod handle this question
 				Module:         rep.OldPath,
 				Version:        rep.OldVersion,
 				ReplaceModule:  rep.NewPath,
@@ -128,6 +134,8 @@ func (mdr *Modder) Vendor() error {
 
 		// Update version if needed
 		orig, ok := mdr.depsMap[rep.OldPath]
+		// TODO Think about this some more with versions and the existence of git
+		// XXX  How does go mod handle this question
 		if ok {
 			if rep.OldVersion == "" {
 				rep.OldVersion = orig.Version
@@ -144,7 +152,7 @@ func (mdr *Modder) Vendor() error {
 
 		// TODO Later, after any real clone, during dep recursion or vendoring,
 		// We should fill this in to respect modules' .mvsconfig, or portions of it depending on what we are doing
-		m := &mod.Module{
+		m := &Module{
 			Module:         rep.OldPath,
 			Version:        rep.OldVersion,
 			ReplaceModule:  rep.NewPath,
@@ -159,42 +167,35 @@ func (mdr *Modder) Vendor() error {
 
 	// now process the requirements, should skip any that exist already because they are replaces
 
-	err = mdr.checkPrintErrors()
+	err = mdr.PrintErrors()
 	if err != nil {
 		return err
 	}
 
 	// XXX Actually want to recurse here
 	// XXX for now, write out any vendor
-	return mdr.writeVendor()
+	return mdr.WriteVendor()
 }
 
-func (mdr *Modder) checkPrintErrors() error {
-	var wasError error
+// This sets or overwrites the module
+func (mdr *Modder) ReplaceDependency(m *Module) error {
+	// save module to depsMap, that's it? (yes)
+	mdr.depsMap[m.Module] = m
 
-	if len(mdr.module.Errors) > 0 {
-		wasError = fmt.Errorf("Exiting due to errors during vendoring.")
-		for _, err := range mdr.module.Errors {
-			fmt.Println(err)
-		}
-	}
-
-	for _, dep := range mdr.depsMap {
-		if len(dep.Errors) > 0 {
-			if wasError != nil {
-				wasError = fmt.Errorf("Exiting due to errors during vendoring.")
-			}
-			for _, err := range dep.Errors {
-				fmt.Println(err)
-			}
-		}
-	}
-
-	return wasError
+	return nil
 }
 
-func (mdr *Modder) addDependency(m *mod.Module) error {
+// If not set, justs adds. If set, takes the one with the greater version.
+func (mdr *Modder) MergeDependency(m *Module) error {
 
+	// TODO check for existing module, version comparison
+	mdr.depsMap[m.Module] = m
+
+	return nil
+}
+
+// TODO, break this function appart
+func (mdr *Modder) addDependency(m *Module) error {
 	// save module to depsMap
 	mdr.depsMap[m.Module] = m
 
@@ -225,7 +226,7 @@ func (mdr *Modder) addDependency(m *mod.Module) error {
 	return nil
 }
 
-func (mdr *Modder) writeVendor() error {
+func (mdr *Modder) WriteVendor() error {
 	// TODO calc and update imported module "hashes"" here
 
 	// make vendor dir if not present

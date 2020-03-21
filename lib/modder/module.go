@@ -1,13 +1,12 @@
-package mod
+package modder
 
 import (
+	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 
 	"github.com/hofstadter-io/mvs/lang/sumfile"
 	"github.com/hofstadter-io/mvs/lib/remote/git"
 )
-
-type ModSet map[string]*Module
 
 type Module struct {
 	// From mod/sum files
@@ -24,12 +23,18 @@ type Module struct {
 
 	// nested sum file
 	SumMod *sumfile.Sum
-	// TODO modules.txt for checksums
+	// TODO modules.txt for mapping imports to vendors
+	// TODO also a checksum?
+
+	// TODO, is this modder a good idea for our nested
+	//   .mvsconfig processing and vendoring
+	Mdr *Modder
 
 	Errors []error
 	Ref    *plumbing.Reference
 	Refs   []*plumbing.Reference
 	Clone  *git.GitRepo
+	FS     billy.Filesystem
 }
 
 type Require struct {

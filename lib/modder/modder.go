@@ -1,7 +1,7 @@
 package modder
 
 import (
-	"github.com/hofstadter-io/mvs/lib/mod"
+	"github.com/go-git/go-billy/v5"
 )
 
 // This modder is for more complex, yet configurable module processing.
@@ -54,12 +54,15 @@ type Modder struct {
 
 	PackageManagerDefaultPrefix string `yaml:"PackageManagerDefaultPrefix"`
 
+	// filesystem
+	FS billy.Filesystem `yaml:"-"`
+
 	// root module
-	module *mod.Module
-	errors []error
+	module *Module `yaml:"-"`
+	errors []error `yaml:"-"`
 
 	// dependency modules (requires/replace)
 	// dependencies shoule respect any .mvsconfig it finds along side the module files
 	// module writers can then have local control over how their module is handeled during vendoring
-	depsMap map[string]*mod.Module
+	depsMap map[string]*Module `yaml:"-"`
 }
