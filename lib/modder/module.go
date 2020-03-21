@@ -6,7 +6,7 @@ import (
 
 	"github.com/hofstadter-io/mvs/lib/parse/modfile"
 	"github.com/hofstadter-io/mvs/lib/parse/sumfile"
-	"github.com/hofstadter-io/mvs/lib/remote/git"
+	"github.com/hofstadter-io/mvs/lib/repos/git"
 )
 
 type Module struct {

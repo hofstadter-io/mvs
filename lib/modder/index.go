@@ -6,7 +6,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 	"golang.org/x/mod/semver"
 
-	"github.com/hofstadter-io/mvs/lib/remote/git"
+	"github.com/hofstadter-io/mvs/lib/repos/git"
 )
 
 // given a git url, and a req (required) version

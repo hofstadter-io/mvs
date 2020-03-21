@@ -11,6 +11,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"cuelang.org/go/cue"
+	"github.com/hofstadter-io/mvs/lib/langs"
 	"github.com/hofstadter-io/mvs/lib/modder"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
@@ -21,63 +22,7 @@ const LOCAL_MVS_CONFIG = ".mvsconfig.cue"
 
 var (
 	// Default known modderr
-	LangModderMap = map[string]*modder.Modder{
-		"go":  GolangModder,
-		"cue": CuelangModder,
-		"hof": HoflangModder,
-	}
-	// TODO, add custom Modders here (for simple) read from a ./.mvsconfig file
-
-	GolangModder = &modder.Modder{
-		Name:          "go",
-		Version:       "1.14",
-		ModFile:       "go.mod",
-		SumFile:       "go.sum",
-		ModsDir:       "vendor",
-		Checksum:      "vendor/modules.txt",
-		CommandInit:   []string{"go", "mod", "init"},
-		CommandGraph:  []string{"go", "mod", "graph"},
-		CommandTidy:   []string{"go", "mod", "tidy"},
-		CommandVendor: []string{"go", "mod", "vendor"},
-		CommandVerify: []string{"go", "mod", "verify"},
-	}
-
-	CuelangModder = &modder.Modder{
-		Name:     "cue",
-		Version:  "0.0.15",
-		ModFile:  "cue.mods",
-		SumFile:  "cue.sums",
-		ModsDir:  "cue.mod/pkg",
-		Checksum: "cue.mod/modules.txt",
-		InitTemplates: map[string]string{
-			"cue.mod/module.cue": `module: "{{ .Module }}"
-`,
-		},
-		VendorIncludeGlobs: []string{
-			".mvsconfig.cue",
-			"cue.mods",
-			"cue.sums",
-			"cue.mod/module.cue",
-			"cue.mod/modules.txt",
-			"**/*.cue",
-		},
-		VendorExcludeGlobs: []string{
-			"cue.mod/pkg",
-		},
-	}
-
-	HoflangModder = &modder.Modder{
-		Name:     "hof",
-		Version:  "0.0.0",
-		ModFile:  "hof.mods",
-		SumFile:  "hof.sums",
-		ModsDir:  "hof.mod/pkg",
-		Checksum: "hof.mod/modules.txt",
-		InitTemplates: map[string]string{
-			"hof.mod/module.cue": `module: "{{ .Module }}"
-`,
-		},
-	}
+	LangModderMap = langs.DefaultModders
 )
 
 const knownLangMessage = `
