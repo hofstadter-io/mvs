@@ -29,13 +29,37 @@ func (mdr *Modder) Status() error {
 
 // The entrypoint to the MVS internal verify process
 func (mdr *Modder) StatusMVS() error {
+	var err error
 
 	// Load minimal root module
-	err := mdr.LoadMinimalFromFS(".")
+	err = mdr.LoadMinimalFromFS(".")
 	if err != nil {
 		return err
 	}
 
+
+	fmt.Println("==================")
+
+	mod := mdr.module
+	sf := mod.SumFile
+
+	err = mod.PrintSelfDeps()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("==================")
+
+	if sf != nil {
+		err = sf.Print()
+		if err != nil {
+			return err
+		}
+
+	} else {
+		fmt.Printf("No sum file %q found for lang %q\n", mdr.SumFile, mdr.Name)
+	}
+	fmt.Println("==================")
+
 	return nil
 }
-

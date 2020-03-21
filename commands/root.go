@@ -53,6 +53,7 @@ func init() {
 	RootCmd.AddCommand(InfoCmd)
 	RootCmd.AddCommand(ConvertCmd)
 	RootCmd.AddCommand(GraphCmd)
+	RootCmd.AddCommand(StatusCmd)
 	RootCmd.AddCommand(InitCmd)
 	RootCmd.AddCommand(TidyCmd)
 	RootCmd.AddCommand(VendorCmd)

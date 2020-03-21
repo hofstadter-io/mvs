@@ -38,4 +38,3 @@ func (mdr *Modder) TidyMVS() error {
 
 	return nil
 }
-

@@ -7,6 +7,7 @@ package sumfile
 import (
 	"bytes"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -55,4 +56,25 @@ func ParseSum(data []byte, file string) (Sum, error) {
 	}
 
 	return sum, nil
+}
+
+func (sum *Sum) Print() error {
+	// build up slice
+	var sorted []Version
+	for ver, _ := range sum.Mods {
+		sorted = append(sorted, ver)
+	}
+
+	// sort slice by ver.Path
+	sort.Slice(sorted, func(i, j int) bool {
+		return sorted[i].Path < sorted[j].Path
+	})
+
+	// print
+	for _, ver := range sorted {
+		list := sum.Mods[ver]
+		fmt.Println(ver.Path, ver.Version, list)
+	}
+
+	return nil
 }

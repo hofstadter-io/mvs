@@ -36,6 +36,11 @@ func (mdr *Modder) VerifyMVS() error {
 		return err
 	}
 
+	// Load the root module's deps
+	err = mdr.CompareModToSum()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
-

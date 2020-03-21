@@ -1,4 +1,4 @@
-foo: {
+joo: {
   Name:    "foo"
   Version: "0.0.0"
   ModFile: "foo.mods"
@@ -40,4 +40,18 @@ cue: {
   IntrospectIncludeGlobs: ["**/*.cue"]
   IntrospectExcludeGlobs: ["cue.mod/pkg"]
   IntrospectExtractRegex: ["tbd... same as go import"]
+}
+
+go: {
+  Name:          "go",
+  Version:       "1.14",
+  ModFile:       "go.mod",
+  SumFile:       "go.sum",
+  ModsDir:       "vendor",
+  Checksum:      "vendor/modules.txt",
+  CommandInit:   ["go", "mod", "init"],
+  CommandGraph:  ["go", "mod", "graph"],
+  CommandTidy:   ["go", "mod", "tidy"],
+  CommandVendor: ["go", "mod", "vendor"],
+  // CommandVerify: ["go", "mod", "verify"],
 }

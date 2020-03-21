@@ -31,6 +31,8 @@ func ProcessLangs(method string, langs []string) error {
 		switch method {
 		case "graph":
 			err = Graph(lang)
+		case "status":
+			err = Status(lang)
 		case "tidy":
 			err = Tidy(lang)
 		case "vendor":
@@ -63,6 +65,14 @@ func Graph(lang string) error {
 		return err
 	}
 	return mdr.Graph()
+}
+
+func Status(lang string) error {
+	mdr, err := getModder(lang)
+	if err != nil {
+		return err
+	}
+	return mdr.Status()
 }
 
 func Tidy(lang string) error {
