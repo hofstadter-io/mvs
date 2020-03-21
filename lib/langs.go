@@ -10,13 +10,14 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"cuelang.org/go/cue"
 	"github.com/hofstadter-io/mvs/lib/modder"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
 // FROM the USER's HOME dir
-const GLOBAL_MVS_CONFIG = ".mvs/config.yaml"
-const LOCAL_MVS_CONFIG = ".mvsconfig.yaml"
+const GLOBAL_MVS_CONFIG = ".mvs/config.cue"
+const LOCAL_MVS_CONFIG = ".mvsconfig.cue"
 
 var (
 	// Default known modderr
@@ -53,7 +54,7 @@ var (
 `,
 		},
 		VendorIncludeGlobs: []string{
-			".mvsconfig.yaml",
+			".mvsconfig.cue",
 			"cue.mods",
 			"cue.sums",
 			"cue.mod/module.cue",
@@ -147,6 +148,7 @@ func LangInfo(lang string) (string, error) {
 		return "", fmt.Errorf(unknownLangMessage, lang, LOCAL_MVS_CONFIG, GLOBAL_MVS_CONFIG)
 	}
 
+	// TODO output as cue
 	bytes, err := yaml.Marshal(modder)
 	if err != nil {
 		return "", err
@@ -174,7 +176,6 @@ func InitLangs() {
 }
 
 func initFromFile(filepath string) error {
-
 	bytes, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
@@ -185,11 +186,16 @@ func initFromFile(filepath string) error {
 	}
 
 	var mdrMap map[string]*modder.Modder
-	err = yaml.Unmarshal(bytes, &mdrMap)
+
+	var r cue.Runtime
+	i, err := r.Compile(filepath, string(bytes))
 	if err != nil {
 		return err
 	}
-	// fmt.Printf("%#+v\n", mdrMap)
+	err = i.Value().Decode(&mdrMap)
+	if err != nil {
+		return err
+	}
 
 	for lang, _ := range mdrMap {
 		mdr := mdrMap[lang]

@@ -107,7 +107,7 @@ replace github.com/hof-lang/cuemod--cli-golang => ../../cuelibs/cuemod--cli-gola
 
 ### Custom Module Systems
 
-`.mvsconfig.yaml` allows you to define custom module systems.
+`.mvsconfig.cue` allows you to define custom module systems.
 With some simple configuration, you can create and control
 and vendored module system based on `go mods`.
 You can also define global configurations.
@@ -118,33 +118,34 @@ you own module systems.
 
 This is the current Cuelang Modder configuration:
 
-```yaml
-cue:
+```cue
+cue: {
   Name: "cue"
   Version: "0.0.16"
   ModFile: "cue.mods"
   SumFile: "cue.sums"
   ModsDir: "cue.mod/pkg"
   Checksum: "cue.mod/modules.txt"
-  InitTemplates:
-      cue.mod/module.cue: |
-          module "{{ .Module }}"
+  InitTemplates: {
+    "cue.mod/module.cue": """
+      module "{{ .Module }}"
+      """
+    }
 
-  VendorIncludeGlobs:
-    - "cue.mods"
-    - "cue.sums"
-    - "cue.mod/module.cue"
-    - "cue.mod/modules.txt"
-    - "**/*.cue"
-  VendorExcludeGlobs:
-    - "cue.mod/pkg"
+  VendorIncludeGlobs: [
+    ".mvsconfig.cue",
+    "cue.mods",
+    "cue.sums",
+    "cue.mod/module.cue",
+    "cue.mod/modules.txt",
+    "**/*.cue"
+  ]
+  VendorExcludeGlobs: ["cue.mod/pkg"]
 
-  IntrospectIncludeGlobs:
-    - "**/*.cue"
-  IntrospectExcludeGlobs:
-    - "cue.mod/pkg"
-  IntrospectExtractRegex:
-    - "tbd... same as go imports"
+  IntrospectIncludeGlobs: ["**/*.cue"]
+  IntrospectExcludeGlobs: ["cue.mod/pkg"]
+  IntrospectExtractRegex: ["tbd... same as go import"]
+}
 ```
 
 
