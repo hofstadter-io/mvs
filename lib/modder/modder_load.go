@@ -4,7 +4,7 @@ import (
 	"github.com/go-git/go-billy/v5/osfs"
 )
 
-/* Reads the module files in
+/* Reads the module files relative to the supplied dir from local FS
 - ModFile
 - SumFile
 - MappingFile
@@ -39,6 +39,7 @@ func (mdr *Modder) LoadModuleFromFS(dir string) error {
 	return nil
 }
 
+// Loads the root modules mod file
 func (mdr *Modder) LoadModFile() error {
 	fn := mdr.ModFile
 	m := mdr.module
@@ -51,6 +52,7 @@ func (mdr *Modder) LoadModFile() error {
 	return nil
 }
 
+// Loads the root modules sum file
 func (mdr *Modder) LoadSumFile() error {
 	fn := mdr.SumFile
 	m := mdr.module

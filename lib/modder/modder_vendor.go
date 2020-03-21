@@ -38,19 +38,25 @@ This module & deps
 		b) write out if necessary
 */
 func (mdr *Modder) Vendor() error {
+	// TODO, run pre vendor commands here
+
 	// Vendor Command Override
 	if len(mdr.CommandVendor) > 0 {
 		out, err := util.Exec(mdr.CommandVendor)
 		fmt.Println(out)
-		return err
+		if err != nil {
+			return err
+		}
+	} else {
+		// Otherwise, MVS venodiring
+		err := mdr.VendorMVS()
+		if err != nil {
+			mdr.PrintErrors()
+			return err
+		}
 	}
 
-	// Otherwise, MVS venodiring
-	err := mdr.VendorMVS()
-	if err != nil {
-		mdr.PrintErrors()
-		return err
-	}
+	// TODO, run post vendor commands here
 
 	return nil
 }
