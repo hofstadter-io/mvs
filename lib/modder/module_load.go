@@ -25,8 +25,8 @@ func (m *Module) LoadModFile(fn string) error {
 		m.ModFile = f
 		m.Language = f.Language.Name
 		m.LangVer = f.Language.Version
-		m.Module = f.Module.Mod.Path
-		m.Version = f.Module.Mod.Version
+		// m.Module = f.Module.Mod.Path
+		// m.Version = f.Module.Mod.Version
 
 		for _, req := range f.Require {
 			r := Require{Path: req.Mod.Path, Version: req.Mod.Version}
