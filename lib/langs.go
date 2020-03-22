@@ -178,9 +178,11 @@ func initFromFile(filepath string) error {
 
 	iMerged := i
 	for lang, _ := range mdrMap {
-		langModder, ok := langs.DefaultModders[lang]
+		_, ok := langs.DefaultModders[lang]
 		if ok {
-			iMerged = cue.Merge(i, langModder.CueInstance)
+			cueSpec, _ := r.Compile("spec.cue", modder.ModderCue)
+			langSpec, _ := r.Compile("lang.cue", langs.DefaultModdersCue["cue"])
+			iMerged = cue.Merge(cueSpec, langSpec, i)
 		}
 	}
 	bytes, _ = format.Node(iMerged.Value().Syntax())
