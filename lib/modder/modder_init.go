@@ -18,10 +18,12 @@ import (
 func (mdr *Modder) Init(module string) error {
 	// exec commands override configurable behavior
 	if len(mdr.CommandInit) > 0 {
-		out, err := util.Exec(mdr.CommandInit)
-		fmt.Println(out)
-		if err != nil {
-			return err
+		for _, cmd := range mdr.CommandGraph {
+			out, err := util.Exec(cmd)
+			fmt.Println(out)
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		// or load from file

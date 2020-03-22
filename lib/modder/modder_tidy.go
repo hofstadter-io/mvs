@@ -10,10 +10,12 @@ func (mdr *Modder) Tidy() error {
 
 	// Tidy Command Override
 	if len(mdr.CommandTidy) > 0 {
-		out, err := util.Exec(mdr.CommandTidy)
-		fmt.Println(out)
-		if err != nil {
-			return err
+		for _, cmd := range mdr.CommandGraph {
+			out, err := util.Exec(cmd)
+			fmt.Println(out)
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		// Otherwise, MVS venodiring

@@ -10,10 +10,12 @@ func (mdr *Modder) Status() error {
 
 	// Status Command Override
 	if len(mdr.CommandStatus) > 0 {
-		out, err := util.Exec(mdr.CommandStatus)
-		fmt.Println(out)
-		if err != nil {
-			return err
+		for _, cmd := range mdr.CommandGraph {
+			out, err := util.Exec(cmd)
+			fmt.Println(out)
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		// Otherwise, MVS venodiring
@@ -36,7 +38,6 @@ func (mdr *Modder) StatusMVS() error {
 	if err != nil {
 		return err
 	}
-
 
 	fmt.Println("==================")
 

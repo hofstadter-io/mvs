@@ -19,19 +19,19 @@ type Modder struct {
 	Version string `yaml:"Version"`
 
 	// Module information
-	ModFile  string `yaml:"ModFile"`
-	SumFile  string `yaml:"SumFile"`
-	ModsDir  string `yaml:"ModsDir"`
+	ModFile     string `yaml:"ModFile"`
+	SumFile     string `yaml:"SumFile"`
+	ModsDir     string `yaml:"ModsDir"`
 	MappingFile string `yaml:"MappingFile"`
 
 	// Commands override default, configuragble processing
-	NoLoad        bool     `yaml:"NoLoad"` // for things like golang
-	CommandInit   []string `yaml:"CommandInit"`
-	CommandGraph  []string `yaml:"CommandGraph"`
-	CommandTidy   []string `yaml:"CommandTidy"`
-	CommandVendor []string `yaml:"CommandVendor"`
-	CommandVerify []string `yaml:"CommandVerify"`
-	CommandStatus []string `yaml:"CommandStatus"`
+	NoLoad        bool       `yaml:"NoLoad"` // for things like golang
+	CommandInit   [][]string `yaml:"CommandInit"`
+	CommandGraph  [][]string `yaml:"CommandGraph"`
+	CommandTidy   [][]string `yaml:"CommandTidy"`
+	CommandVendor [][]string `yaml:"CommandVendor"`
+	CommandVerify [][]string `yaml:"CommandVerify"`
+	CommandStatus [][]string `yaml:"CommandStatus"`
 
 	// Init related fields
 	// we need to create things like directories and files beyond the
