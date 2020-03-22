@@ -63,9 +63,22 @@ func (mdr *Modder) Vendor() error {
 
 // The entrypoint to the MVS internal vendoring process
 func (mdr *Modder) VendorMVS() error {
+	var err error
 
 	// Load minimal root module
-	err := mdr.LoadMinimalFromFS(".")
+	err = mdr.LoadMinimalFromFS(".")
+	if err != nil {
+		fmt.Println(err)
+		// return err
+	}
+
+	err = mdr.CheckAndFetchRootDeps()
+	if err != nil {
+		fmt.Println(err)
+		// return err
+	}
+
+	err =  mdr.WriteVendor()
 	if err != nil {
 		return err
 	}

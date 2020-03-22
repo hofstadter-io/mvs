@@ -4,6 +4,7 @@ import (
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 
+	"github.com/hofstadter-io/mvs/lib/parse/mappingfile"
 	"github.com/hofstadter-io/mvs/lib/parse/modfile"
 	"github.com/hofstadter-io/mvs/lib/parse/sumfile"
 	"github.com/hofstadter-io/mvs/lib/repos/git"
@@ -27,8 +28,9 @@ type Module struct {
 	ReplaceVersion string
 
 	// Module files in memory
-	ModFile *modfile.File
-	SumFile *sumfile.Sum
+	ModFile  *modfile.File
+	SumFile  *sumfile.Sum
+	Mappings *mappingfile.Mappings
 	// TODO modules.txt for mapping imports to vendors
 	// TODO also a checksum?
 

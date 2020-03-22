@@ -26,6 +26,23 @@ func (mod *Module) LoadSelfDeps() error {
 		// We probably need to start module creating here
 
 		// Handle local replaces
+		/*
+		if strings.HasPrefix(rep.NewPath, "./") || strings.HasPrefix(rep.NewPath, "../") {
+			fmt.Println("Local replace:", rep)
+			m := &Module{
+				// TODO Think about Replace syntax options and the existence of git
+				// XXX  How does go mod handle this question
+				Module:         rep.OldPath,
+				Version:        rep.OldVersion,
+				ReplaceModule:  rep.NewPath,
+				ReplaceVersion: rep.NewVersion,
+			}
+
+			// TODO ADD par.Work here - clone and ilook for sum..., then do checks and actions
+			mdr.addDependency(m)
+			continue
+		}
+		*/
 		if strings.HasPrefix(R.NewPath, "./") || strings.HasPrefix(R.NewPath, "../") {
 			fmt.Println("Local Replace:", R.OldPath, R.OldVersion, "=>", R.NewPath, R.NewVersion)
 			// is it git or not?

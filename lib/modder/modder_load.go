@@ -64,6 +64,11 @@ func (mdr *Modder) LoadRootFromFS(dir string) error {
 		return err
 	}
 
+	err = mdr.LoadRootMappingsFile()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -86,6 +91,19 @@ func (mdr *Modder) LoadRootSumFile() error {
 	m := mdr.module
 
 	err := m.LoadSumFile(fn)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Loads the root modules mapping file
+func (mdr *Modder) LoadRootMappingsFile() error {
+	fn := mdr.MappingFile
+	m := mdr.module
+
+	err := m.LoadMappingFile(fn)
 	if err != nil {
 		return err
 	}

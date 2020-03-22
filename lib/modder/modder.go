@@ -22,7 +22,7 @@ type Modder struct {
 	ModFile  string `yaml:"ModFile"`
 	SumFile  string `yaml:"SumFile"`
 	ModsDir  string `yaml:"ModsDir"`
-	Checksum string `yaml:"Checksum"`
+	MappingFile string `yaml:"MappingFile"`
 
 	// Commands override default, configuragble processing
 	NoLoad        bool     `yaml:"NoLoad"` // for things like golang
