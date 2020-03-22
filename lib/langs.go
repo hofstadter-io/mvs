@@ -11,6 +11,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"cuelang.org/go/cue"
+	"cuelang.org/go/cue/format"
 	"github.com/hofstadter-io/mvs/lib/langs"
 	"github.com/hofstadter-io/mvs/lib/modder"
 	"github.com/hofstadter-io/mvs/lib/util"
@@ -104,6 +105,39 @@ func LangInfo(lang string) (string, error) {
 
 func InitLangs() {
 	var err error
+	var r cue.Runtime
+
+	cueSpec, err := r.Compile("spec.cue", modder.ModderCue)
+	if err != nil {
+		panic(err)
+	}
+	err = cueSpec.Value().Validate()
+	if err != nil {
+		panic(err)
+	}
+	for lang, cueString := range langs.DefaultModdersCue {
+		var mdrMap map[string]*modder.Modder
+		cueLang, err := r.Compile(lang, cueString)
+		if err != nil {
+			panic(err)
+		}
+		cueLangMerged := cue.Merge(cueSpec, cueLang)
+		err = cueLangMerged.Value().Validate()
+		if err != nil {
+			panic(err)
+		}
+		err = cueLang.Value().Decode(&mdrMap)
+		if err != nil {
+			panic(err)
+		}
+		_, ok := mdrMap[lang]
+		if !ok || len(mdrMap) != 1 {
+			panic(fmt.Errorf("invalid builtin language default %s", lang))
+		}
+		mdrMap[lang].CueInstance = cueLangMerged
+		langs.DefaultModders[lang] = mdrMap[lang]
+	}
+
 	homedir := util.UserHomeDir()
 
 	// Global Language Modder Config
@@ -142,8 +176,21 @@ func initFromFile(filepath string) error {
 		return err
 	}
 
+	iMerged := i
 	for lang, _ := range mdrMap {
-		mdr := mdrMap[lang]
+		langModder, ok := langs.DefaultModders[lang]
+		if ok {
+			iMerged = cue.Merge(i, langModder.CueInstance)
+		}
+	}
+	bytes, _ = format.Node(iMerged.Value().Syntax())
+	fmt.Println(string(bytes))
+	err = iMerged.Value().Decode(&mdrMap)
+	if err != nil {
+		return err
+	}
+
+	for lang, mdr := range mdrMap {
 		LangModderMap[lang] = mdr
 	}
 

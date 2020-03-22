@@ -72,7 +72,55 @@ type Modder struct {
 	// dependencies shoule respect any .mvsconfig it finds along side the module files
 	// module writers can then have local control over how their module is handeled during vendoring
 	depsMap map[string]*Module `yaml:"-"`
+
+	// compiled cue, used for merging
+	CueInstance *cue.Instance
 }
+
+var ModderCue = `
+{
+	[N=string]: {
+		Name: N,
+		Version: string,
+
+		ModFile:  string,
+		SumFile:  string,
+		ModsDir:  string,
+		MappingFile: string,
+
+		NoLoad: bool,
+		CommandInit: [...[...string]],
+		CommandGraph: [...[...string]],
+		CommandTidy: [...[...string]],
+		CommandVendor: [...[...string]],
+		CommandVerify: [...[...string]],
+		CommandStatus: [...[...string]],
+
+		InitTemplates: {
+			[string]: string
+		},
+		InitPreCommands: [...[...string]],
+		InitPostCommands: [...[...string]],
+
+		VendorIncludeGlobs: [...string],
+		VendorExcludeGlobs: [...string],
+		VendorTemplates: {
+			[string]: string
+		},
+		VendorPreCommands: [...[...string]],
+		VendorPostCommands: [...[...string]],
+
+		ManageFileOnly: bool,
+		SymlinkLocalReplaces: bool,
+
+		IntrospectIncludeGlobs: [...string],
+		IntrospectExcludeGlobs: [...string],
+		IntrospectExtractRegex: [...string],
+
+		PackageManagerDefaultPrefix: string,
+	}
+}
+`
 
 func NewFromFile(lang, filepath string, FS billy.Filesystem) (*Modder, error) {
 
