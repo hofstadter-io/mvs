@@ -31,6 +31,8 @@ func ProcessLangs(method string, langs []string) error {
 		switch method {
 		case "graph":
 			err = Graph(lang)
+		case "status":
+			err = Status(lang)
 		case "tidy":
 			err = Tidy(lang)
 		case "vendor":
@@ -50,42 +52,49 @@ func ProcessLangs(method string, langs []string) error {
 }
 
 func Init(lang, module string) error {
-	mod, err := getModder(lang)
+	mdr, err := getModder(lang)
 	if err != nil {
 		return err
 	}
-	return mod.Init(module)
+	return mdr.Init(module)
 }
 
 func Graph(lang string) error {
-	mod, err := getModder(lang)
+	mdr, err := getModder(lang)
 	if err != nil {
 		return err
 	}
-	return mod.Graph()
+	return mdr.Graph()
+}
+
+func Status(lang string) error {
+	mdr, err := getModder(lang)
+	if err != nil {
+		return err
+	}
+	return mdr.Status()
 }
 
 func Tidy(lang string) error {
-	mod, err := getModder(lang)
+	mdr, err := getModder(lang)
 	if err != nil {
 		return err
 	}
-	return mod.Tidy()
+	return mdr.Tidy()
 }
 
 func Vendor(lang string) error {
-	// TODO, if lang == "" { look for all and process }
-	mod, err := getModder(lang)
+	mdr, err := getModder(lang)
 	if err != nil {
 		return err
 	}
-	return mod.Vendor()
+	return mdr.Vendor()
 }
 
 func Verify(lang string) error {
-	mod, err := getModder(lang)
+	mdr, err := getModder(lang)
 	if err != nil {
 		return err
 	}
-	return mod.Verify()
+	return mdr.Verify()
 }

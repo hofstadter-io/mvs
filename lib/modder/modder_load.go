@@ -4,12 +4,40 @@ import (
 	"github.com/go-git/go-billy/v5/osfs"
 )
 
-/* Reads the module files in
+/* Reads the module files relative to the supplied dir from local FS
 - ModFile
 - SumFile
 - MappingFile
 */
-func (mdr *Modder) LoadModuleFromFS(dir string) error {
+
+func (mdr *Modder) LoadMinimalFromFS(dir string) error {
+	// Load the root module
+	err := mdr.LoadRootFromFS(".")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (mdr *Modder) LoadIndexDepsFromFS(dir string) error {
+	// Load the root module
+	err := mdr.LoadRootFromFS(".")
+	if err != nil {
+		return err
+	}
+
+	// Load the root module's deps
+	err = mdr.LoadRootDeps()
+	if err != nil {
+		return err
+	}
+	// Recurse
+
+	return nil
+}
+
+func (mdr *Modder) LoadRootFromFS(dir string) error {
 	// Shortcut for no load modules, forget the reason for no load...
 	if mdr.NoLoad {
 		return nil
@@ -26,12 +54,17 @@ func (mdr *Modder) LoadModuleFromFS(dir string) error {
 
 	// Load module files
 	var err error
-	err = mdr.LoadModFile()
+	err = mdr.LoadRootModFile()
 	if err != nil {
 		return err
 	}
 
-	err = mdr.LoadSumFile()
+	err = mdr.LoadRootSumFile()
+	if err != nil {
+		return err
+	}
+
+	err = mdr.LoadRootMappingsFile()
 	if err != nil {
 		return err
 	}
@@ -39,7 +72,8 @@ func (mdr *Modder) LoadModuleFromFS(dir string) error {
 	return nil
 }
 
-func (mdr *Modder) LoadModFile() error {
+// Loads the root modules mod file
+func (mdr *Modder) LoadRootModFile() error {
 	fn := mdr.ModFile
 	m := mdr.module
 
@@ -51,11 +85,25 @@ func (mdr *Modder) LoadModFile() error {
 	return nil
 }
 
-func (mdr *Modder) LoadSumFile() error {
+// Loads the root modules sum file
+func (mdr *Modder) LoadRootSumFile() error {
 	fn := mdr.SumFile
 	m := mdr.module
 
 	err := m.LoadSumFile(fn)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Loads the root modules mapping file
+func (mdr *Modder) LoadRootMappingsFile() error {
+	fn := mdr.MappingFile
+	m := mdr.module
+
+	err := m.LoadMappingFile(fn)
 	if err != nil {
 		return err
 	}

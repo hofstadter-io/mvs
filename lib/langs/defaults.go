@@ -12,12 +12,12 @@ var (
 	}
 
 	GolangModder = &modder.Modder{
-		Name:          "go",
-		Version:       "1.14",
-		ModFile:       "go.mod",
-		SumFile:       "go.sum",
-		ModsDir:       "vendor",
-		Checksum:      "vendor/modules.txt",
+		Name:             "go",
+		Version:          "1.14",
+		ModFile:          "go.mod",
+		SumFile:          "go.sum",
+		ModsDir:          "vendor",
+		MappingFile:      "vendor/modules.txt",
 		CommandInit:   []string{"go", "mod", "init"},
 		CommandGraph:  []string{"go", "mod", "graph"},
 		CommandTidy:   []string{"go", "mod", "tidy"},
@@ -26,12 +26,12 @@ var (
 	}
 
 	CuelangModder = &modder.Modder{
-		Name:     "cue",
-		Version:  "0.0.15",
-		ModFile:  "cue.mods",
-		SumFile:  "cue.sums",
-		ModsDir:  "cue.mod/pkg",
-		Checksum: "cue.mod/modules.txt",
+		Name:        "cue",
+		Version:     "0.0.15",
+		ModFile:     "cue.mods",
+		SumFile:     "cue.sums",
+		ModsDir:     "cue.mod/pkg",
+		MappingFile: "cue.mod/modules.txt",
 		InitTemplates: map[string]string{
 			"cue.mod/module.cue": `module: "{{ .Module }}"
 `,
@@ -55,7 +55,7 @@ var (
 		ModFile:       "python.mod",
 		SumFile:       "requirements.txt",
 		ModsDir:       "vendor",
-		Checksum:      "vendor/modules.txt",
+		MappingFile:   "vendor/modules.txt",
 		CommandInit:   []string{"python", "-m", "venv", "venv"},
 		CommandVendor: []string{"bash", "-c", ". ./venv/bin/activate && pip install -r requirements.txt"},
 	}
