@@ -15,7 +15,7 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 	mod := mdr.module
 	sf := mod.SumFile
 
-	fmt.Println("==================")
+	fmt.Println("=====  Root  =====")
 
 	for path, R := range mod.SelfDeps {
 		if sf == nil {
@@ -107,6 +107,22 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 
 	fmt.Println("==================")
 	return nil
+}
+
+func (mdr *Modder) CheckAndFetchDepsDeps(deps map[string]*Module) (map[string]*Module, error) {
+	// var err error
+	// mod := mdr.module
+	// sf := mod.SumFile
+
+	fmt.Println("=====  Deps  =====")
+
+	newDeps := map[string]*Module{}
+	for path, M := range deps {
+		fmt.Println(" ", path, M.Module, M.Version)
+	}
+
+	fmt.Println("==================")
+	return newDeps, nil
 }
 
 func (mdr *Modder) CompareModToSum() error {
