@@ -7,6 +7,7 @@ import (
 	"github.com/go-git/go-billy/v5/osfs"
 
 	"github.com/hofstadter-io/mvs/lib/parse/sumfile"
+	"github.com/hofstadter-io/mvs/lib/repos/git"
 )
 
 func (mdr *Modder) CheckAndFetchRootDeps() error {
@@ -20,6 +21,7 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 		if sf == nil {
 			fmt.Printf("missing in mod file, fetch %s %#+v\n", path, R)
 
+			// Local REPLACE
 			if strings.HasPrefix(R.NewPath, "./") || strings.HasPrefix(R.NewPath, "../") {
 				fmt.Println("Local replace:", R)
 				m := &Module{
@@ -39,7 +41,47 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 				}
 
 				fmt.Printf("  module: %#+v\n", m)
+
+				continue
 			}
+
+			// HANDLE remote and non-local replace the same way
+			ref, refs, err := git.IndexGitRemote(R.NewPath, R.NewVersion)
+			if err != nil {
+				// Build up errors
+				mod.Errors = append(mod.Errors, err)
+				continue
+			}
+
+			// TODO Later, after any real clone, during dep recursion or vendoring,
+			// We should fill this in to respect modules' .mvsconfig, or portions of it depending on what we are doing
+			m := &Module{
+				Module:  R.NewPath,
+				Version: R.NewVersion,
+				Ref:     ref,
+				Refs:    refs,
+			}
+			// is this module already in the map
+			//   a) from replaces
+			//   b) duplicate entry
+			//   c) if not replace, greater version required? (we eventually want the minimum download, given the maximum required)
+			if _, ok := mdr.depsMap[m.Module]; ok {
+				return fmt.Errorf("Dependency %q required twice", m.Module)
+			}
+
+			clone, err := git.CloneRepoRef(m.Module, m.Ref)
+			m.Clone = clone
+			if err != nil {
+				return err
+			}
+			m.FS = m.Clone.FS
+
+			err = mdr.MvsMergeDependency(m)
+			if err != nil {
+				return err
+			}
+
+			fmt.Printf("  module: %#+v\n", m)
 
 			continue
 		}
