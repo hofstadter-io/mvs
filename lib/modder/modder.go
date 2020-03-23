@@ -91,8 +91,7 @@ func NewFromFile(lang, filepath string, FS billy.Filesystem) (*Modder, error) {
 
 	var mdrMap map[string]*Modder
 
-	var r cue.Runtime
-	i, err := r.Compile(filepath, string(bytes))
+	i, err := util.CueRuntime.Compile(filepath, string(bytes))
 	if err != nil {
 		return nil, err
 	}

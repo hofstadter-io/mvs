@@ -11,7 +11,6 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"cuelang.org/go/cue"
-	"cuelang.org/go/cue/format"
 	"github.com/hofstadter-io/mvs/lib/langs"
 	"github.com/hofstadter-io/mvs/lib/modder"
 	"github.com/hofstadter-io/mvs/lib/util"
@@ -107,9 +106,8 @@ func LangInfo(lang string) (string, error) {
 
 func InitLangs() {
 	var err error
-	var r cue.Runtime
 
-	cueSpec, err := r.Compile("spec.cue", langs.ModderSpec)
+	cueSpec, err := util.CueRuntime.Compile("spec.cue", langs.ModderSpec)
 	if err != nil {
 		panic(err)
 	}
@@ -119,7 +117,7 @@ func InitLangs() {
 	}
 	for lang, cueString := range langs.DefaultModdersCue {
 		var mdrMap map[string]*modder.Modder
-		cueLang, err := r.Compile(lang, cueString)
+		cueLang, err := util.CueRuntime.Compile(lang, cueString)
 		if err != nil {
 			panic(err)
 		}
@@ -170,8 +168,7 @@ func initFromFile(filepath string) error {
 	var mdrMap map[string]*modder.Modder
 
 	// Compile the config into cue
-	var r cue.Runtime
-	i, err := r.Compile(filepath, string(bytes))
+	i, err := util.CueRuntime.Compile(filepath, string(bytes))
 	if err != nil {
 		return err
 	}
@@ -186,27 +183,17 @@ func initFromFile(filepath string) error {
 		// TODO, do we want to merge every language in the config with the spec?
 
 		// If we find this is a language override,
-		// merge with the spec and builtin defaults
+		// merge with the spec and builtin defaults (which were previously merged)
 		// TODO, maybe check for some value in the config which controls merging with defaults?
 		_, ok := langs.DefaultModders[lang]
 		if ok {
-			cueSpec, err := r.Compile("spec.cue", langs.ModderSpec)
-			if err != nil {
-				return err
-			}
-			langSpec, err := r.Compile("lang.cue", langs.DefaultModdersCue["cue"])
-			if err != nil {
-				return err
-			}
-			iMerged = cue.Merge(cueSpec, langSpec, i)
+			langSpec := langs.DefaultModders[lang].CueInstance
+			iMerged = cue.Merge(i, langSpec)
+		} else {
+			fmt.Printf("trying to customize unknown language %s\n", lang)
 		}
 	}
-
-	bytes, err = format.Node(iMerged.Value().Syntax())
-	if err != nil {
-		return err
-	}
-	// fmt.Println(string(bytes))
+	// util.PrintCueInstance(iMerged)
 
 	err = iMerged.Value().Decode(&mdrMap)
 	if err != nil {
