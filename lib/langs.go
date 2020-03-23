@@ -94,6 +94,8 @@ func LangInfo(lang string) (string, error) {
 		return "", fmt.Errorf(unknownLangMessage, lang, LOCAL_MVS_CONFIG, GLOBAL_MVS_CONFIG)
 	}
 
+	// fmt.Printf("=====\n%#+v\n=====\n", modder)
+
 	// TODO output as cue
 	bytes, err := yaml.Marshal(modder)
 	if err != nil {
@@ -107,7 +109,7 @@ func InitLangs() {
 	var err error
 	var r cue.Runtime
 
-	cueSpec, err := r.Compile("spec.cue", modder.ModderCue)
+	cueSpec, err := r.Compile("spec.cue", langs.ModderSpec)
 	if err != nil {
 		panic(err)
 	}
@@ -180,12 +182,21 @@ func initFromFile(filepath string) error {
 	for lang, _ := range mdrMap {
 		_, ok := langs.DefaultModders[lang]
 		if ok {
-			cueSpec, _ := r.Compile("spec.cue", modder.ModderCue)
-			langSpec, _ := r.Compile("lang.cue", langs.DefaultModdersCue["cue"])
+			cueSpec, err := r.Compile("spec.cue", langs.ModderSpec)
+			if err != nil {
+				return err
+			}
+			langSpec, err := r.Compile("lang.cue", langs.DefaultModdersCue["cue"])
+			if err != nil {
+				return err
+			}
 			iMerged = cue.Merge(cueSpec, langSpec, i)
 		}
 	}
-	bytes, _ = format.Node(iMerged.Value().Syntax())
+	bytes, err = format.Node(iMerged.Value().Syntax())
+	if err != nil {
+		return err
+	}
 	fmt.Println(string(bytes))
 	err = iMerged.Value().Decode(&mdrMap)
 	if err != nil {
