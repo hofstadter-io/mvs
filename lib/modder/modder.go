@@ -16,50 +16,51 @@ import (
 type Modder struct {
 	// MetaConfiguration
 	Name    string `yaml:"Name"`
-	Version string `yaml:"Version"`
+	Version string `yaml:"Version",omitempty`
 
 	// Module information
-	ModFile  string `yaml:"ModFile"`
-	SumFile  string `yaml:"SumFile"`
-	ModsDir  string `yaml:"ModsDir"`
-	MappingFile string `yaml:"MappingFile"`
+	ModFile     string `yaml:"ModFile",omitempty`
+	SumFile     string `yaml:"SumFile",omitempty`
+	ModsDir     string `yaml:"ModsDir",omitempty`
+	MappingFile string `yaml:"MappingFile",omitempty`
 
 	// Commands override default, configuragble processing
-	NoLoad        bool     `yaml:"NoLoad"` // for things like golang
-	CommandInit   []string `yaml:"CommandInit"`
-	CommandGraph  []string `yaml:"CommandGraph"`
-	CommandTidy   []string `yaml:"CommandTidy"`
-	CommandVendor []string `yaml:"CommandVendor"`
-	CommandVerify []string `yaml:"CommandVerify"`
-	CommandStatus []string `yaml:"CommandStatus"`
+	// for things like golang
+	NoLoad        bool       `yaml:"NoLoad",omitempty`
+	CommandInit   [][]string `yaml:"CommandInit",omitempty`
+	CommandGraph  [][]string `yaml:"CommandGraph",omitempty`
+	CommandTidy   [][]string `yaml:"CommandTidy",omitempty`
+	CommandVendor [][]string `yaml:"CommandVendor",omitempty`
+	CommandVerify [][]string `yaml:"CommandVerify",omitempty`
+	CommandStatus [][]string `yaml:"CommandStatus",omitempty`
 
 	// Init related fields
 	// we need to create things like directories and files beyond the
-	InitTemplates    map[string]string `yaml:"InitTemplates"`
-	InitPreCommands  [][]string        `yaml:"InitPreCommands"`
-	InitPostCommands [][]string        `yaml:"InitPostCommands"`
+	InitTemplates    map[string]string `yaml:"InitTemplates",omitempty`
+	InitPreCommands  [][]string        `yaml:"InitPreCommands",omitempty`
+	InitPostCommands [][]string        `yaml:"InitPostCommands",omitempty`
 
 	// Vendor related fields
 	// filesystem globs for discovering files we should copy over
-	VendorIncludeGlobs []string `yaml:"VendorIncludeGlobs"`
-	VendorExcludeGlobs []string `yaml:"VendorExcludeGlobs"`
+	VendorIncludeGlobs []string `yaml:"VendorIncludeGlobs",omitempty`
+	VendorExcludeGlobs []string `yaml:"VendorExcludeGlobs",omitempty`
 	// Any files we need to generate
-	VendorTemplates    map[string]string `yaml:"VendorTemplates"`
-	VendorPreCommands  [][]string        `yaml:"VendorPreCommands"`
-	VendorPostCommands [][]string        `yaml:"VendorPostCommands"`
+	VendorTemplates    map[string]string `yaml:"VendorTemplates",omitempty`
+	VendorPreCommands  [][]string        `yaml:"VendorPreCommands",omitempty`
+	VendorPostCommands [][]string        `yaml:"VendorPostCommands",omitempty`
 
 	// Some more vendor controls
-	ManageFileOnly       bool `yaml:"ManageFileOnly"`
-	SymlinkLocalReplaces bool `yaml:"SymlinkLocalReplaces"`
+	ManageFileOnly       bool `yaml:"ManageFileOnly",omitempty`
+	SymlinkLocalReplaces bool `yaml:"SymlinkLocalReplaces",omitempty`
 
 	// Introspection Configuration(s)
 	// filesystem globs for discovering files we should introspect
 	// regexs for extracting package information
-	IntrospectIncludeGlobs []string `yaml:"IntrospectIncludeGlobs"`
-	IntrospectExcludeGlobs []string `yaml:"IntrospectExcludeGlobs"`
-	IntrospectExtractRegex []string `yaml:"IntrospectExtractRegex"`
+	IntrospectIncludeGlobs []string `yaml:"IntrospectIncludeGlobs",omitempty`
+	IntrospectExcludeGlobs []string `yaml:"IntrospectExcludeGlobs",omitempty`
+	IntrospectExtractRegex []string `yaml:"IntrospectExtractRegex",omitempty`
 
-	PackageManagerDefaultPrefix string `yaml:"PackageManagerDefaultPrefix"`
+	PackageManagerDefaultPrefix string `yaml:"PackageManagerDefaultPrefix",omitempty`
 
 	// filesystem
 	FS billy.Filesystem `yaml:"-"`
@@ -72,6 +73,9 @@ type Modder struct {
 	// dependencies shoule respect any .mvsconfig it finds along side the module files
 	// module writers can then have local control over how their module is handeled during vendoring
 	depsMap map[string]*Module `yaml:"-"`
+
+	// compiled cue, used for merging
+	CueInstance *cue.Instance `yaml:"-"`
 }
 
 func NewFromFile(lang, filepath string, FS billy.Filesystem) (*Modder, error) {

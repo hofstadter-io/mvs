@@ -11,6 +11,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"cuelang.org/go/cue"
+	"cuelang.org/go/cue/format"
 	"github.com/hofstadter-io/mvs/lib/langs"
 	"github.com/hofstadter-io/mvs/lib/modder"
 	"github.com/hofstadter-io/mvs/lib/util"
@@ -93,6 +94,8 @@ func LangInfo(lang string) (string, error) {
 		return "", fmt.Errorf(unknownLangMessage, lang, LOCAL_MVS_CONFIG, GLOBAL_MVS_CONFIG)
 	}
 
+	// fmt.Printf("=====\n%#+v\n=====\n", modder)
+
 	// TODO output as cue
 	bytes, err := yaml.Marshal(modder)
 	if err != nil {
@@ -104,6 +107,39 @@ func LangInfo(lang string) (string, error) {
 
 func InitLangs() {
 	var err error
+	var r cue.Runtime
+
+	cueSpec, err := r.Compile("spec.cue", langs.ModderSpec)
+	if err != nil {
+		panic(err)
+	}
+	err = cueSpec.Value().Validate()
+	if err != nil {
+		panic(err)
+	}
+	for lang, cueString := range langs.DefaultModdersCue {
+		var mdrMap map[string]*modder.Modder
+		cueLang, err := r.Compile(lang, cueString)
+		if err != nil {
+			panic(err)
+		}
+		cueLangMerged := cue.Merge(cueSpec, cueLang)
+		err = cueLangMerged.Value().Validate()
+		if err != nil {
+			panic(err)
+		}
+		err = cueLang.Value().Decode(&mdrMap)
+		if err != nil {
+			panic(err)
+		}
+		_, ok := mdrMap[lang]
+		if !ok || len(mdrMap) != 1 {
+			panic(fmt.Errorf("invalid builtin language default %s", lang))
+		}
+		mdrMap[lang].CueInstance = cueLangMerged
+		langs.DefaultModders[lang] = mdrMap[lang]
+	}
+
 	homedir := util.UserHomeDir()
 
 	// Global Language Modder Config
@@ -121,6 +157,7 @@ func InitLangs() {
 }
 
 func initFromFile(filepath string) error {
+	// Reand an MVS config file (cue format)
 	bytes, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
@@ -132,6 +169,7 @@ func initFromFile(filepath string) error {
 
 	var mdrMap map[string]*modder.Modder
 
+	// Compile the config into cue
 	var r cue.Runtime
 	i, err := r.Compile(filepath, string(bytes))
 	if err != nil {
@@ -142,8 +180,40 @@ func initFromFile(filepath string) error {
 		return err
 	}
 
+	iMerged := i
+	// For each language in the local config file
 	for lang, _ := range mdrMap {
-		mdr := mdrMap[lang]
+		// TODO, do we want to merge every language in the config with the spec?
+
+		// If we find this is a language override,
+		// merge with the spec and builtin defaults
+		// TODO, maybe check for some value in the config which controls merging with defaults?
+		_, ok := langs.DefaultModders[lang]
+		if ok {
+			cueSpec, err := r.Compile("spec.cue", langs.ModderSpec)
+			if err != nil {
+				return err
+			}
+			langSpec, err := r.Compile("lang.cue", langs.DefaultModdersCue["cue"])
+			if err != nil {
+				return err
+			}
+			iMerged = cue.Merge(cueSpec, langSpec, i)
+		}
+	}
+
+	bytes, err = format.Node(iMerged.Value().Syntax())
+	if err != nil {
+		return err
+	}
+	// fmt.Println(string(bytes))
+
+	err = iMerged.Value().Decode(&mdrMap)
+	if err != nil {
+		return err
+	}
+
+	for lang, mdr := range mdrMap {
 		LangModderMap[lang] = mdr
 	}
 

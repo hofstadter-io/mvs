@@ -10,10 +10,12 @@ func (mdr *Modder) Graph() error {
 
 	// Graph Command Override
 	if len(mdr.CommandGraph) > 0 {
-		out, err := util.Exec(mdr.CommandGraph)
-		fmt.Println(out)
-		if err != nil {
-			return err
+		for _, cmd := range mdr.CommandGraph {
+			out, err := util.Exec(cmd)
+			fmt.Println(out)
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		// Otherwise, MVS venodiring

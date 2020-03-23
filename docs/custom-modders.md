@@ -44,6 +44,7 @@ cue: {
 	CommandTidy: [[string]]
 	CommandVendor: [[string]]
 	CommandVerify: [[string]]
+	CommandStatus: [[string]]
 
 	// Runs on init for this language
 	// filename/content key/pair values

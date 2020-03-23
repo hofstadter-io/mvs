@@ -8,7 +8,7 @@ cue: {
 	ModFile:  "<lang>.mods"
 	SumFile:  "<lang>.sums"
 	ModsDir:  "<lang>.mod/pkg"
-	Checksum: "<lang>.mod/checksum.txt"
+	MappingFile: "<lang>.mod/checksum.txt"
 
 	// Controls for modders that want to shell out
 	// to common tools for certain commands
@@ -18,6 +18,7 @@ cue: {
 	CommandTidy: [[string]]
 	CommandVendor: [[string]]
 	CommandVerify: [[string]]
+	CommandStatus: [[string]]
 
 	// Runs on init for this language
 	// filename/content key/pair values
