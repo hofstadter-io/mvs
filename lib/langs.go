@@ -157,6 +157,7 @@ func InitLangs() {
 }
 
 func initFromFile(filepath string) error {
+	// Reand an MVS config file (cue format)
 	bytes, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
@@ -168,6 +169,7 @@ func initFromFile(filepath string) error {
 
 	var mdrMap map[string]*modder.Modder
 
+	// Compile the config into cue
 	var r cue.Runtime
 	i, err := r.Compile(filepath, string(bytes))
 	if err != nil {
@@ -179,7 +181,13 @@ func initFromFile(filepath string) error {
 	}
 
 	iMerged := i
+	// For each language in the local config file
 	for lang, _ := range mdrMap {
+		// TODO, do we want to merge every language in the config with the spec?
+
+		// If we find this is a language override,
+		// merge with the spec and builtin defaults
+		// TODO, maybe check for some value in the config which controls merging with defaults?
 		_, ok := langs.DefaultModders[lang]
 		if ok {
 			cueSpec, err := r.Compile("spec.cue", langs.ModderSpec)
@@ -193,11 +201,13 @@ func initFromFile(filepath string) error {
 			iMerged = cue.Merge(cueSpec, langSpec, i)
 		}
 	}
+
 	bytes, err = format.Node(iMerged.Value().Syntax())
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(bytes))
+	// fmt.Println(string(bytes))
+
 	err = iMerged.Value().Decode(&mdrMap)
 	if err != nil {
 		return err
