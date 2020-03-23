@@ -2,7 +2,7 @@ package langs
 
 var ModderSpec = `
 {
-	Spec :: [N=string]: {
+	[N=string]: {
 		Name: N,
 		Version: string,
 
