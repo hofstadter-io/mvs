@@ -82,6 +82,8 @@ func (mdr *Modder) LoadRootModFile() error {
 		return err
 	}
 
+	m.Module = m.ModFile.Module.Mod.Path
+
 	return nil
 }
 
