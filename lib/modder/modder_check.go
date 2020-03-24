@@ -156,11 +156,16 @@ func (mdr *Modder) CheckAndFetchDepsDeps(deps map[string]*Module) (map[string]*M
 	fmt.Println("=====  Deps  =====")
 
 	newDeps := map[string]*Module{}
-	for _, M := range deps {
-		// fmt.Printf("  %s  %#+v\n", path, M)
-
+	for path, M := range deps {
+		fmt.Printf("  %q %q %q\n", path, mdr.module.Module, M.Module)
 		for _, dep := range M.SelfDeps {
 			fmt.Println("    ", dep.NewPath, dep.NewVersion)
+			// Don't add the root module to the dependencies
+			if mdr.module.Module == dep.NewPath || mdr.module.Module == dep.OldPath {
+				continue
+				// return nil
+			}
+
 			/*
 				// TODO shortcut with sum and/or mapping files
 				if sf == nil {

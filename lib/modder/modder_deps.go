@@ -28,6 +28,10 @@ func (mdr *Modder) LoadRootDeps() error {
 
 // This sets or overwrites the module
 func (mdr *Modder) ReplaceDependency(m *Module) error {
+	// Don't add the root module to the dependencies
+	if mdr.module.Module == m.Module {
+		return nil
+	}
 	// save module to depsMap, that's it? (yes)
 	mdr.depsMap[m.Module] = m
 
@@ -36,6 +40,10 @@ func (mdr *Modder) ReplaceDependency(m *Module) error {
 
 // If not set, justs adds. If set, takes the one with the greater version.
 func (mdr *Modder) MvsMergeDependency(m *Module) error {
+	// Don't add the root module to the dependencies
+	if mdr.module.Module == m.Module {
+		return nil
+	}
 
 	// TODO check for existing module, version comparison
 	mdr.depsMap[m.Module] = m
@@ -45,6 +53,10 @@ func (mdr *Modder) MvsMergeDependency(m *Module) error {
 
 // TODO, break this function appart
 func (mdr *Modder) addDependency(m *Module) error {
+	// Don't add the root module to the dependencies
+	if mdr.module.Module == m.Module {
+		return nil
+	}
 	// save module to depsMap
 	mdr.depsMap[m.Module] = m
 
