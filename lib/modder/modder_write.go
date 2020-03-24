@@ -24,7 +24,6 @@ var (
 		"NOTICE",
 		"PATENTS",
 	}
-
 )
 
 func (mdr *Modder) WriteVendor() error {

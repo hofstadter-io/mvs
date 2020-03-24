@@ -15,11 +15,10 @@ cue: {
 		...
 	}
 	VendorIncludeGlobs: [...string] | *[
-		".mvsconfig.cue",
-		"cue.mods",
-		"cue.sums",
-		"cue.mod/module.cue",
-		"cue.mod/modules.txt",
+		"/cue.mods",
+		"/cue.sums",
+		"/cue.mod/module.cue",
+		"/cue.mod/modules.txt",
 		"**/*.cue"
 	]
 	VendorExcludeGlobs: [...string] | *["**/cue.mod/pkg/**"]
