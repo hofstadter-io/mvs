@@ -20,7 +20,7 @@ func Hack(lang string, args []string) error {
 		}
 		i, err := util.CueRuntime.Build(bi)
 		if err != nil {
-			fmt.Println(bi.Err.Error())
+			fmt.Println(err.Error())
 			os.Exit(1)
 		}
 		fmt.Println("trying to find a")
