@@ -21,16 +21,6 @@ mod file format:
   replace <module path> => <local path>
   ...`
 
-var (
-	RootLangPflag string
-)
-
-func init() {
-
-	RootCmd.PersistentFlags().StringVarP(&RootLangPflag, "lang", "l", "", "The language or system prefix to process. The default is to discover and process all known.")
-
-}
-
 var RootCmd = &cobra.Command{
 
 	Use: "mvs",
@@ -43,7 +33,7 @@ var RootCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		// fmt.Println("PersistentPrerun", RootLangPflag, args)
+		// fmt.Println("PersistentPrerun", args)
 		lib.InitLangs()
 
 	},

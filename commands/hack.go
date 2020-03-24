@@ -25,7 +25,7 @@ var HackCmd = &cobra.Command{
 
 		// Argument Parsing
 
-		err := lib.Hack(RootLangPflag, args)
+		err := lib.Hack("", args)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

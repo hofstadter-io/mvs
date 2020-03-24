@@ -52,24 +52,13 @@ CLI : cli.Schema & {
 
 	OmitRun: true
 
-	Pflags: [
-		schema.Flag & {
-			Name:    "lang"
-			Type:    "string"
-			Default: ""
-			Help:    "The language or system prefix to process. The default is to discover and process all known."
-			Long:    "lang"
-			Short:   "l"
-		},
-	]
-
 	Imports: [
 		schema.Import & {Path: CLI.Package + "/lib"},
 	]
 
 	PersistentPrerun: true
 	PersistentPrerunBody: """
-    // fmt.Println("PersistentPrerun", RootLangPflag, args)
+    // fmt.Println("PersistentPrerun", args)
     lib.InitLangs()
   """
 
@@ -255,7 +244,7 @@ CLI : cli.Schema & {
 			Imports: _CmdImports
 
 			Body: """
-      err := lib.Hack(RootLangPflag, args)
+      err := lib.Hack("", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
