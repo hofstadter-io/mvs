@@ -1,4 +1,4 @@
-package cli
+package mvs
 
 import (
 	"github.com/hofstadter-io/cuemod--cli-golang:cli"
@@ -37,6 +37,18 @@ CLI : cli.Schema & {
     replace <module path> => <local path>
     ...
   """
+
+  Releases: schema.GoReleaser & {
+    Author: "Tony Worm"
+    Homepage: "https://github.com/hofstadter-io/mvs"
+
+    Brew: {
+      GitHubOwner: "hofstadter-io"
+      GitHubRepoName: "homebrew-tap"
+      GitHubUsername: "verdverm"
+      GitHubEmail: "tony@hofstadter.io"
+    }
+  }
 
 	OmitRun: true
 
@@ -253,15 +265,4 @@ CLI : cli.Schema & {
 
 	]
 
-  GoReleaser: schema.GoReleaser & {
-    Author: "Tony Worm"
-    Homepage: "https://github.com/hofstadter-io/mvs"
-
-    Brew: {
-      GitHubOwner: "hofstadter-io"
-      GitHubRepoName: "homebrew-tap"
-      GitHubUsername: "verdverm"
-      GitHubEmail: "tony@hofstadter.io"
-    }
-  }
 }
