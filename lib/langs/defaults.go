@@ -12,4 +12,3 @@ var DefaultModdersCue = map[string]string{
 	"cue":    CuelangModder,
 	"python": PythonModder,
 }
-

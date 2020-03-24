@@ -1,1 +1,1 @@
-module: "github.com/hofstadter-io/hof"
+module: "github.com/hofstadter-io/mvs"

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/hofstadter-io/mvs/lib/util"
 )
@@ -12,18 +13,21 @@ var (
 	// Common files to copy from modules, also includes the .md version of the filename
 	definiteVendors = []string{
 		"README",
-		"LICENSE",
-		"PATENTS",
-		"CONTRIBUTORS",
 		"SECURITY",
+		"AUTHORS",
+		"CONTRIBUTORS",
+		"COPYLEFT",
+		"COPYING",
+		"COPYRIGHT",
+		"LEGAL",
+		"LICENSE",
+		"NOTICE",
+		"PATENTS",
 	}
-
-	// cross product these endings
-	endings = []string{"", ".md", ".txt"}
 )
 
 func (mdr *Modder) WriteVendor() error {
-	// TODO calc and update imported module "hashes"" here
+	os.RemoveAll(mdr.ModsDir)
 
 	// make vendor dir if not present
 	err := os.MkdirAll(mdr.ModsDir, 0755)
@@ -40,21 +44,20 @@ func (mdr *Modder) WriteVendor() error {
 		fmt.Println("Copying", baseDir)
 
 		// copy definite files always
-		for _, fn := range definiteVendors {
-			for _, end := range endings {
-				_, err := m.FS.Stat(fn + end)
-				if err != nil {
-					if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
-						// some other error
+		files, err := m.FS.ReadDir("/")
+		if err != nil {
+			return err
+		}
+		for _, file := range files {
+			for _, fn := range definiteVendors {
+				// Found one!
+				if strings.HasPrefix(strings.ToUpper(file.Name()), fn) {
+					// TODO, these functions should just take 2 billy FS
+					err = util.BillyCopyFile(baseDir, "/"+file.Name(), m.FS)
+					if err != nil {
 						return err
 					}
-					// not found
-					continue
 				}
-
-				// Found one!
-				// TODO, these functions should just take 2 billy FS
-				err = util.BillyCopyFile(baseDir, "/"+fn+end, m.FS)
 
 			}
 		}

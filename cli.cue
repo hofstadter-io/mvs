@@ -1,13 +1,13 @@
-package cli
+package mvs
 
 import (
-	"github.com/hof-lang/cuemod--cli-golang:cli"
-	"github.com/hof-lang/cuemod--cli-golang/schema"
+	"github.com/hofstadter-io/cuemod--cli-golang:cli"
+	"github.com/hofstadter-io/cuemod--cli-golang/schema:schema"
 )
 
 Outdir: "./"
 
-GEN :: cli.Generator & {
+GEN : cli.Generator & {
 	Cli: CLI
 }
 
@@ -15,14 +15,14 @@ _CmdImports :: [
 	schema.Import & {Path: CLI.Package + "/lib"},
 ]
 
-CLI :: cli.Schema & {
+CLI : cli.Schema & {
 	Name:    "mvs"
 	Package: "github.com/hofstadter-io/mvs"
 
 	Usage: "mvs"
-	Short: "MVS is a polyglot vendor management tool based on go mods"
+	Short: "MVS is a polyglot dependency management tool based on go mods"
 	Long: """
-  MVS is a polyglot vendor management tool based on go mods.
+  MVS is a polyglot dependency management tool based on go mods.
 
   mod file format:
 
@@ -38,18 +38,19 @@ CLI :: cli.Schema & {
     ...
   """
 
-	OmitRun: true
+  Releases: schema.GoReleaser & {
+    Author: "Tony Worm"
+    Homepage: "https://github.com/hofstadter-io/mvs"
 
-	Pflags: [
-		schema.Flag & {
-			Name:    "lang"
-			Type:    "string"
-			Default: ""
-			Help:    "The language or system prefix to process. The default is to discover and process all known."
-			Long:    "lang"
-			Short:   "l"
-		},
-	]
+    Brew: {
+      GitHubOwner: "hofstadter-io"
+      GitHubRepoName: "homebrew-tap"
+      GitHubUsername: "verdverm"
+      GitHubEmail: "tony@hofstadter.io"
+    }
+  }
+
+	OmitRun: true
 
 	Imports: [
 		schema.Import & {Path: CLI.Package + "/lib"},
@@ -57,7 +58,7 @@ CLI :: cli.Schema & {
 
 	PersistentPrerun: true
 	PersistentPrerunBody: """
-    // fmt.Println("PersistentPrerun", RootLangPflag, args)
+    // fmt.Println("PersistentPrerun", args)
     lib.InitLangs()
   """
 
@@ -243,7 +244,7 @@ CLI :: cli.Schema & {
 			Imports: _CmdImports
 
 			Body: """
-      err := lib.Hack(RootLangPflag, args)
+      err := lib.Hack("", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -252,4 +253,5 @@ CLI :: cli.Schema & {
 		},
 
 	]
+
 }

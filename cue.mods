@@ -3,8 +3,6 @@ module github.com/hofstadter-io/mvs
 cue 0.0.15
 
 require (
-  github.com/hofstadter-io/cuelib v0.0.4
-  github.com/hofstadter-io/cuemod--cli-golang v0.1.2
+  github.com/hofstadter-io/cuelib v0.0.5
+  github.com/hofstadter-io/cuemod--cli-golang v0.1.4
 )
-
-// replace github.com/hofstadter-io/cuemod--cli-golang => ../cuemod--cli-golang

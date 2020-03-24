@@ -2,26 +2,25 @@ package langs
 
 const CuelangModder = `
 cue: {
-	Name:        "cue",
-	Version:     string | *"0.0.15",
-	ModFile:     string | * "cue.mods",
-	SumFile:     string | * "cue.sums",
-	ModsDir:     string | * "cue.mod/pkg",
-	MappingFile: string | * "cue.mod/modules.txt",
+	Name:        "cue"
+	Version:     string | *"0.0.15"
+	ModFile:     string | * "cue.mods"
+	SumFile:     string | * "cue.sums"
+	ModsDir:     string | * "cue.mod/pkg"
+	MappingFile: string | * "cue.mod/modules.txt"
 	InitTemplates: {...} | *{
 		"cue.mod/module.cue": """
 			module: "{{ .Module }}"
 		"""
 		...
-	},
+	}
 	VendorIncludeGlobs: [...string] | *[
-		".mvsconfig.cue",
-		"cue.mods",
-		"cue.sums",
-		"cue.mod/module.cue",
-		"cue.mod/modules.txt",
+		"/cue.mods",
+		"/cue.sums",
+		"/cue.mod/module.cue",
+		"/cue.mod/modules.txt",
 		"**/*.cue"
-	],
-	VendorExcludeGlobs: [...string] | *["cue.mod/pkg"],
+	]
+	VendorExcludeGlobs: [...string] | *["**/cue.mod/pkg/**"]
 }
 `
