@@ -36,7 +36,26 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 
 				m.FS = osfs.New(R.NewPath)
 
-				err := mdr.MvsMergeDependency(m)
+				var err error
+
+				err = m.LoadModFile(mdr.ModFile)
+				if err != nil {
+					return err
+				}
+
+				err = m.LoadSumFile(mdr.SumFile)
+				if err != nil {
+					// fmt.Println(err)
+					// return err
+				}
+
+				err = m.LoadMappingFile(mdr.MappingFile)
+				if err != nil {
+					// fmt.Println(err)
+					// return err
+				}
+
+				err = mdr.MvsMergeDependency(m)
 				if err != nil {
 					return err
 				}
