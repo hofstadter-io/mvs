@@ -6,7 +6,7 @@ import (
 	"github.com/hofstadter-io/mvs/lib"
 )
 
-var mvsLong = `MVS is a polyglot vendor management tool based on go mods.
+var mvsLong = `MVS is a polyglot dependency management tool based on go mods.
 
 mod file format:
 
@@ -35,7 +35,7 @@ var RootCmd = &cobra.Command{
 
 	Use: "mvs",
 
-	Short: "MVS is a polyglot vendor management tool based on go mods",
+	Short: "MVS is a polyglot dependency management tool based on go mods",
 
 	Long: mvsLong,
 

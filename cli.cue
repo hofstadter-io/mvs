@@ -1,13 +1,13 @@
 package cli
 
 import (
-	"github.com/hof-lang/cuemod--cli-golang:cli"
-	"github.com/hof-lang/cuemod--cli-golang/schema"
+	"github.com/hofstadter-io/cuemod--cli-golang:cli"
+	"github.com/hofstadter-io/cuemod--cli-golang/schema:schema"
 )
 
 Outdir: "./"
 
-GEN :: cli.Generator & {
+GEN : cli.Generator & {
 	Cli: CLI
 }
 
@@ -15,14 +15,14 @@ _CmdImports :: [
 	schema.Import & {Path: CLI.Package + "/lib"},
 ]
 
-CLI :: cli.Schema & {
+CLI : cli.Schema & {
 	Name:    "mvs"
 	Package: "github.com/hofstadter-io/mvs"
 
 	Usage: "mvs"
-	Short: "MVS is a polyglot vendor management tool based on go mods"
+	Short: "MVS is a polyglot dependency management tool based on go mods"
 	Long: """
-  MVS is a polyglot vendor management tool based on go mods.
+  MVS is a polyglot dependency management tool based on go mods.
 
   mod file format:
 
@@ -252,4 +252,16 @@ CLI :: cli.Schema & {
 		},
 
 	]
+
+  GoReleaser: schema.GoReleaser & {
+    Author: "Tony Worm"
+    Homepage: "https://github.com/hofstadter-io/mvs"
+
+    Brew: {
+      GitHubOwner: "hofstadter-io"
+      GitHubRepoName: "homebrew-tap"
+      GitHubUsername: "verdverm"
+      GitHubEmail: "tony@hofstadter.io"
+    }
+  }
 }

@@ -8,4 +8,5 @@ cue: {
     "cue.mod/modules.txt",
     "**/*.cue"
   ]
+	VendorExcludeGlobs: ["**/cue.mod/pkg/**"]
 }

@@ -106,8 +106,8 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 			continue
 		}
 
-		ver := sumfile.Version {
-			Path: path,
+		ver := sumfile.Version{
+			Path:    path,
 			Version: R.NewVersion,
 		}
 
@@ -143,10 +143,10 @@ func (mdr *Modder) CheckAndFetchDepsDeps(deps map[string]*Module) (map[string]*M
 		for _, dep := range M.SelfDeps {
 			fmt.Println("    ", dep.NewPath, dep.NewVersion)
 			/*
-			// TODO shortcut with sum and/or mapping files
-			if sf == nil {
-				fmt.Printf("missing mod file, fetch %s %#+v\n", path, R)
-			}
+				// TODO shortcut with sum and/or mapping files
+				if sf == nil {
+					fmt.Printf("missing mod file, fetch %s %#+v\n", path, R)
+				}
 			*/
 
 			mod, ok := mdr.depsMap[dep.NewPath]
@@ -233,8 +233,8 @@ func (mdr *Modder) CompareModToSum() error {
 	fmt.Println("==================")
 
 	for path, R := range mod.SelfDeps {
-		ver := sumfile.Version {
-			Path: path,
+		ver := sumfile.Version{
+			Path:    path,
 			Version: R.NewVersion,
 		}
 
@@ -254,7 +254,6 @@ func (mdr *Modder) CompareModToSum() error {
 }
 
 func (mdr *Modder) CompareSumToVendor() error {
-
 
 	return nil
 }
