@@ -15,7 +15,7 @@ command: gen: {
 		stdout: string
 	}
 	task: step_2: exec.Run & {
-		$after: task.step_1
+		deps: [ task.step_1.stdout ]
 		cmd: ["cue", "format"]
 		stdout: string
 	}
@@ -27,7 +27,7 @@ command: render: {
 		outdir: Outdir
 	}
 
-	for i, F in GEN.Out {
+	for i, F in GenCli.Out {
 
     if F.Filename != _|_ {
       TMP = {
@@ -54,7 +54,7 @@ command: render: {
 
       task: "print-\(i)": cli.Print & {
         deps: [ task["write-\(i)"].stdout]
-        text: task["write-\(i)"].filename
+        text: F.Filename
       }
     } 
 

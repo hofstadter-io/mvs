@@ -7,7 +7,7 @@ import (
 
 Outdir: "./"
 
-GEN : cli.Generator & {
+GenCli : cli.Generator & {
 	Cli: CLI
 }
 
