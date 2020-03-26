@@ -1,11 +1,11 @@
 package commands
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 
 	"fmt"
-
-	"os"
 
 	"github.com/hofstadter-io/mvs/lib"
 )

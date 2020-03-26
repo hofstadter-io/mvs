@@ -7,17 +7,17 @@ import (
 
 Outdir: "./"
 
-GenCli : cli.HofGenerator & {
+GenCli: cli.HofGenerator & {
 	Cli: CLI
 }
 
 _CmdImports :: [
-  {Path: "fmt", ...},
-  {Path: "os", ...},
-  {Path: CLI.Package + "/lib", ...},
+	{Path: "fmt", ...},
+	{Path: "os", ...},
+	{Path: CLI.Package + "/lib", ...},
 ]
 
-CLI : cli.Schema & {
+CLI: cli.Schema & {
 	Name:    "mvs"
 	Package: "github.com/hofstadter-io/mvs"
 
@@ -40,17 +40,17 @@ CLI : cli.Schema & {
     ...
   """
 
-  Releases: schema.GoReleaser & {
-    Author: "Tony Worm"
-    Homepage: "https://github.com/hofstadter-io/mvs"
+	Releases: schema.GoReleaser & {
+		Author:   "Tony Worm"
+		Homepage: "https://github.com/hofstadter-io/mvs"
 
-    Brew: {
-      GitHubOwner: "hofstadter-io"
-      GitHubRepoName: "homebrew-tap"
-      GitHubUsername: "verdverm"
-      GitHubEmail: "tony@hofstadter.io"
-    }
-  }
+		Brew: {
+			GitHubOwner:    "hofstadter-io"
+			GitHubRepoName: "homebrew-tap"
+			GitHubUsername: "verdverm"
+			GitHubEmail:    "tony@hofstadter.io"
+		}
+	}
 
 	OmitRun: true
 
@@ -115,7 +115,10 @@ CLI : cli.Schema & {
 				},
 			]
 
-			Imports: _CmdImports
+			Imports: [
+				{Path: "fmt", ...},
+				{Path: CLI.Package + "/lib", ...},
+			]
 
 			Body: """
       err := lib.Convert(lang, filename)
@@ -178,7 +181,10 @@ CLI : cli.Schema & {
 				},
 			]
 
-			Imports: _CmdImports
+			Imports: [
+				{Path: "fmt", ...},
+				{Path: CLI.Package + "/lib", ...},
+			]
 
 			Body: """
       err := lib.Init(lang, module)
