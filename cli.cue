@@ -7,12 +7,14 @@ import (
 
 Outdir: "./"
 
-GenCli : cli.Generator & {
+GenCli : cli.HofGenerator & {
 	Cli: CLI
 }
 
 _CmdImports :: [
-	schema.Import & {Path: CLI.Package + "/lib"},
+  {Path: "fmt", ...},
+  {Path: "os", ...},
+  {Path: CLI.Package + "/lib", ...},
 ]
 
 CLI : cli.Schema & {
