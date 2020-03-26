@@ -10,7 +10,7 @@ import (
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
-func (m *Module) LoadModFile(fn string) error {
+func (m *Module) LoadModFile(fn string, ignoreReplace bool) error {
 
 	modBytes, err := util.BillyReadAll(fn, m.FS)
 	if err != nil {
@@ -32,12 +32,16 @@ func (m *Module) LoadModFile(fn string) error {
 			r := Require{Path: req.Mod.Path, Version: req.Mod.Version}
 			m.Require = append(m.Require, r)
 		}
-		for _, rep := range f.Replace {
-			r := Replace{OldPath: rep.Old.Path, OldVersion: rep.Old.Version, NewPath: rep.New.Path, NewVersion: rep.New.Version}
-			m.Replace = append(m.Replace, r)
+
+		// Let's just not load them for now to be sure
+		if !ignoreReplace {
+			for _, rep := range f.Replace {
+				r := Replace{OldPath: rep.Old.Path, OldVersion: rep.Old.Version, NewPath: rep.New.Path, NewVersion: rep.New.Version}
+				m.Replace = append(m.Replace, r)
+			}
 		}
 
-		err = m.MergeSelfDeps()
+		err = m.MergeSelfDeps(ignoreReplace)
 		if err != nil {
 			return err
 		}
@@ -47,7 +51,7 @@ func (m *Module) LoadModFile(fn string) error {
 	return nil
 }
 
-func (m *Module) MergeSelfDeps() error {
+func (m *Module) MergeSelfDeps(ignoreReplace bool) error {
 	// Now merge self deps
 	m.SelfDeps = map[string]Replace{}
 	for _, req := range m.Require {
@@ -60,21 +64,24 @@ func (m *Module) MergeSelfDeps() error {
 		}
 	}
 
-	dblReplace := map[string]Replace{}
-	for _, rep := range m.Replace {
-		// Check if replaced twice
-		if _, ok := dblReplace[rep.OldPath]; ok {
-			return fmt.Errorf("Dependency %q replaced twice in %q", rep.OldPath, m.Module)
-		}
-		dblReplace[rep.OldPath] = rep
-
-		// Pull in require info if not in replace
-		if req, ok := m.SelfDeps[rep.OldPath]; ok {
-			if rep.OldVersion == "" {
-				rep.OldVersion = req.NewVersion
+	// we typically ignore replaces from when not the root module
+	if !ignoreReplace {
+		dblReplace := map[string]Replace{}
+		for _, rep := range m.Replace {
+			// Check if replaced twice
+			if _, ok := dblReplace[rep.OldPath]; ok {
+				return fmt.Errorf("Dependency %q replaced twice in %q", rep.OldPath, m.Module)
 			}
+			dblReplace[rep.OldPath] = rep
+
+			// Pull in require info if not in replace
+			if req, ok := m.SelfDeps[rep.OldPath]; ok {
+				if rep.OldVersion == "" {
+					rep.OldVersion = req.NewVersion
+				}
+			}
+			m.SelfDeps[rep.OldPath] = rep
 		}
-		m.SelfDeps[rep.OldPath] = rep
 	}
 
 	return nil
@@ -111,6 +118,33 @@ func (m *Module) LoadMappingFile(fn string) error {
 			return err
 		}
 		m.Mappings = &mapMod
+	}
+
+	return nil
+}
+
+func (m *Module) LoadMetaFiles(modname, sumname, mapname string, ignoreReplace bool) error {
+	var err error
+
+	// TODO load the modules .mvsconfig if present
+
+	err = m.LoadModFile(modname, ignoreReplace)
+	if err != nil {
+		return err
+	}
+
+	// Supressing the next to errors here
+	//   because we can handle them not being around else where
+	err = m.LoadSumFile(sumname)
+	if err != nil {
+		// fmt.Println(err)
+		// return err
+	}
+
+	err = m.LoadMappingFile(mapname)
+	if err != nil {
+		// fmt.Println(err)
+		// return err
 	}
 
 	return nil

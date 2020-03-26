@@ -77,7 +77,7 @@ func (mdr *Modder) LoadRootModFile() error {
 	fn := mdr.ModFile
 	m := mdr.module
 
-	err := m.LoadModFile(fn)
+	err := m.LoadModFile(fn, false /* Do load replace directives! */)
 	if err != nil {
 		return err
 	}

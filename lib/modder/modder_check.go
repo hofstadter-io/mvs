@@ -16,15 +16,17 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 	mod := mdr.module
 	sf := mod.SumFile
 
-	// fmt.Println("=====  Root  =====")
+	fmt.Println("=====  Root  =====")
 
 	for path, R := range mod.SelfDeps {
+
+		// Missing sum file, need to fetch (cache -> internet)
 		if sf == nil {
 			// fmt.Printf("missing mod file, fetch %s %#+v\n", path, R)
 
 			// Local REPLACE
 			if strings.HasPrefix(R.NewPath, "./") || strings.HasPrefix(R.NewPath, "../") {
-				// fmt.Println("Local replace:", R)
+				fmt.Println("Local replace:", path)
 				m := &Module{
 					// TODO Think about Replace syntax options and the existence of git
 					// XXX  How does go mod handle this question
@@ -38,21 +40,9 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 
 				var err error
 
-				err = m.LoadModFile(mdr.ModFile)
+				err = m.LoadMetaFiles(mdr.ModFile, mdr.SumFile, mdr.MappingFile, true /* ignoreReplace directives */)
 				if err != nil {
 					return err
-				}
-
-				err = m.LoadSumFile(mdr.SumFile)
-				if err != nil {
-					// fmt.Println(err)
-					// return err
-				}
-
-				err = m.LoadMappingFile(mdr.MappingFile)
-				if err != nil {
-					// fmt.Println(err)
-					// return err
 				}
 
 				err = mdr.MvsMergeDependency(m)
@@ -60,7 +50,7 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 					return err
 				}
 
-				// fmt.Printf("  module: %#+v\n", m)
+				fmt.Println("  root loaded local module: %s", m.Module, m.Version, m.ReplaceModule, m.ReplaceVersion)
 
 				continue
 			}
@@ -96,23 +86,9 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 			}
 			m.FS = m.Clone.FS
 
-			// TODO load the modules .mvsconfig if present
-
-			err = m.LoadModFile(mdr.ModFile)
+			err = m.LoadMetaFiles(mdr.ModFile, mdr.SumFile, mdr.MappingFile, true /* ignoreReplace directives */)
 			if err != nil {
 				return err
-			}
-
-			err = m.LoadSumFile(mdr.SumFile)
-			if err != nil {
-				// fmt.Println(err)
-				// return err
-			}
-
-			err = m.LoadMappingFile(mdr.MappingFile)
-			if err != nil {
-				// fmt.Println(err)
-				// return err
 			}
 
 			err = mdr.MvsMergeDependency(m)
@@ -120,6 +96,7 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 				return err
 			}
 
+			fmt.Println("  root loaded remote module: %s", m.Module, m.Version, m.ReplaceModule, m.ReplaceVersion)
 			// fmt.Printf("  module: %#+v\n", m)
 
 			continue
@@ -144,7 +121,7 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 
 	}
 
-	// fmt.Println("==================")
+	fmt.Println("==== END ROOT ====")
 	return nil
 }
 
@@ -157,9 +134,12 @@ func (mdr *Modder) CheckAndFetchDepsDeps(deps map[string]*Module) (map[string]*M
 
 	newDeps := map[string]*Module{}
 	for path, M := range deps {
-		fmt.Printf("  %q %q %q\n", path, mdr.module.Module, M.Module)
+
+		fmt.Println("  dep module loading other:", mdr.module.Module, mdr.module.Version, mdr.module.ReplaceModule, mdr.module.ReplaceVersion)
+		fmt.Println("     ", path, M.Module, M.Version, M.ReplaceModule, M.ReplaceVersion)
+
 		for _, dep := range M.SelfDeps {
-			fmt.Println("    ", dep.NewPath, dep.NewVersion)
+			fmt.Println("        ", dep.NewPath, dep.NewVersion)
 			// Don't add the root module to the dependencies
 			if mdr.module.Module == dep.NewPath || mdr.module.Module == dep.OldPath {
 				continue
@@ -176,12 +156,18 @@ func (mdr *Modder) CheckAndFetchDepsDeps(deps map[string]*Module) (map[string]*M
 			mod, ok := mdr.depsMap[dep.NewPath]
 			// XXX Not sure why this doesn't have a version...
 			// See change in module_load.go lines 28:29
-			// fmt.Printf("     found %#+v\n", mod)
 			// Found an exiting dep, check versions
 			if ok {
+				fmt.Println("     found", mod.Module, mod.Version, mod.ReplaceModule, mod.ReplaceVersion)
+				// Is the existing a replace already?
+				if mod.ReplaceModule != "" {
+					fmt.Println("     SKIPPING, replaced already by root module")
+					continue
+				}
+
 				// is the current version equal or newer than the incoming version
 				if semver.Compare(mod.Version, dep.NewVersion) >= 0 {
-					fmt.Println("     FETCH UPDATE", dep.NewVersion)
+					fmt.Println("     FETCH UPDATE", mod.Version, dep.NewVersion)
 					continue
 				}
 			}
@@ -213,21 +199,9 @@ func (mdr *Modder) CheckAndFetchDepsDeps(deps map[string]*Module) (map[string]*M
 
 			// TODO load the modules .mvsconfig if present
 
-			err = m.LoadModFile(mdr.ModFile)
+			err = m.LoadMetaFiles(mdr.ModFile, mdr.SumFile, mdr.MappingFile, true /* ginoreReplace directives */)
 			if err != nil {
 				return newDeps, err
-			}
-
-			err = m.LoadSumFile(mdr.SumFile)
-			if err != nil {
-				// fmt.Println(err)
-				// return err
-			}
-
-			err = m.LoadMappingFile(mdr.MappingFile)
-			if err != nil {
-				// fmt.Println(err)
-				// return err
 			}
 
 			// we already checked the semver, but this should
@@ -242,7 +216,7 @@ func (mdr *Modder) CheckAndFetchDepsDeps(deps map[string]*Module) (map[string]*M
 
 	}
 
-	fmt.Println("==================")
+	fmt.Println("==== End Deps ====")
 	return newDeps, nil
 }
 
