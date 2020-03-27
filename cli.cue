@@ -1,13 +1,14 @@
 package mvs
 
 import (
-	"github.com/hofstadter-io/cuemod--cli-golang:cli"
-	"github.com/hofstadter-io/cuemod--cli-golang/schema:schema"
+	"github.com/hofstadter-io/hofmod-cli:cli"
+	"github.com/hofstadter-io/hofmod-cli/schema"
 )
 
 Outdir: "./"
 
 GenCli: cli.HofGenerator & {
+  Outdir: "./"
 	Cli: CLI
 }
 
@@ -17,7 +18,7 @@ _CmdImports :: [
 	{Path: CLI.Package + "/lib", ...},
 ]
 
-CLI: cli.Schema & {
+CLI: schema.Cli & {
 	Name:    "mvs"
 	Package: "github.com/hofstadter-io/mvs"
 
