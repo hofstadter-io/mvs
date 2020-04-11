@@ -53,7 +53,7 @@ func (mdr *Modder) WriteVendor() error {
 				// Found one!
 				if strings.HasPrefix(strings.ToUpper(file.Name()), fn) {
 					// TODO, these functions should just take 2 billy FS
-					err = util.BillyCopyFile(baseDir, "/"+file.Name(), m.FS)
+					err = util.BillyWriteFileToOS(baseDir, "/"+file.Name(), m.FS)
 					if err != nil {
 						return err
 					}
@@ -65,7 +65,7 @@ func (mdr *Modder) WriteVendor() error {
 		if len(mdr.VendorIncludeGlobs) > 0 || len(mdr.VendorExcludeGlobs) > 0 {
 			// Just copy everything
 			// TODO, these functions should just take 2 billy FS
-			err = util.BillyGlobCopy(baseDir, "/", m.FS, mdr.VendorIncludeGlobs, mdr.VendorExcludeGlobs)
+			err = util.BillyGlobWriteDirToOS(baseDir, "/", m.FS, mdr.VendorIncludeGlobs, mdr.VendorExcludeGlobs)
 			if err != nil {
 				return err
 			}
@@ -73,7 +73,7 @@ func (mdr *Modder) WriteVendor() error {
 		} else {
 			// Just copy everything
 			// TODO, these functions should just take 2 billy FS
-			err = util.BillyCopyDir(baseDir, "/", m.FS)
+			err = util.BillyWriteDirToOS(baseDir, "/", m.FS)
 			if err != nil {
 				return err
 			}

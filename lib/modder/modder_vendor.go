@@ -66,11 +66,17 @@ func (mdr *Modder) VendorMVS() error {
 	var err error
 
 	// Load minimal root module
-	err = mdr.LoadMinimalFromFS(".")
+	err = mdr.LoadMetaFromFS(".")
 	if err != nil {
 		fmt.Println(err)
 		// return err
 	}
+
+
+
+
+
+	return nil
 
 	err = mdr.CheckAndFetchRootDeps()
 	if err != nil {

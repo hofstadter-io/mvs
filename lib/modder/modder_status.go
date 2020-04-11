@@ -34,7 +34,7 @@ func (mdr *Modder) StatusMVS() error {
 	var err error
 
 	// Load minimal root module
-	err = mdr.LoadMinimalFromFS(".")
+	err = mdr.LoadMetaFromFS(".")
 	if err != nil {
 		return err
 	}
@@ -52,10 +52,11 @@ func (mdr *Modder) StatusMVS() error {
 	fmt.Println("==================")
 
 	if sf != nil {
-		err = sf.Print()
+		out, err := sf.Write()
 		if err != nil {
 			return err
 		}
+		fmt.Println(out)
 
 	} else {
 		fmt.Printf("No sum file %q found for lang %q\n", mdr.SumFile, mdr.Name)

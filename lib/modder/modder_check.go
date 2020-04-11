@@ -55,6 +55,8 @@ func (mdr *Modder) CheckAndFetchRootDeps() error {
 				continue
 			}
 
+			// TODO Lookup in cache
+
 			// HANDLE remote and non-local replace the same way
 			ref, refs, err := git.IndexGitRemote(R.NewPath, R.NewVersion)
 			if err != nil {
@@ -249,6 +251,33 @@ func (mdr *Modder) CompareModToSum() error {
 
 	fmt.Println("==================")
 	return nil
+}
+
+func (mdr *Modder) FindPresentMissingInSum() ([]string, []string, error) {
+	present := []string{}
+	missing := []string{}
+
+	mod := mdr.module
+	sf := mod.SumFile
+	if sf == nil {
+		return nil, nil, fmt.Errorf("No sum file %q for %s, run 'mvs vendor [%s]' to fix.", mdr.SumFile, mdr.Name, mdr.Name)
+	}
+
+	for path, R := range mod.SelfDeps {
+		ver := sumfile.Version{
+			Path:    path,
+			Version: R.NewVersion,
+		}
+
+		_, ok := sf.Mods[ver]
+		if ok {
+			present = append(present, path)
+		} else {
+			missing = append(missing, path)
+		}
+	}
+
+	return present, missing, nil
 }
 
 func (mdr *Modder) CompareSumToVendor() error {
