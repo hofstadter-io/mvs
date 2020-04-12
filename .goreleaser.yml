@@ -67,7 +67,7 @@ release:
   draft: false
   github:
     owner: hofstadter-io
-    name: hof
+    name: mvs
 
 dockers:
 - binaries:

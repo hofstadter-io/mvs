@@ -49,7 +49,7 @@ CLI :: schema.Cli & {
 
     GitHub: {
       Owner: "hofstadter-io"
-      Repo:  "hof"
+      Repo:  "mvs"
     }
 
     Docker: {
