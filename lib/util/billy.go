@@ -1,12 +1,15 @@
 package util
 
 import (
+	"archive/zip"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 
-	"github.com/bmatcuk/doublestar"
 	"github.com/go-git/go-billy/v5"
+	"golang.org/x/mod/sumdb/dirhash"
 )
 
 func BillyReadAllString(filename string, FS billy.Filesystem) (string, error) {
@@ -27,8 +30,8 @@ func BillyReadAll(filename string, FS billy.Filesystem) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-// Copies dir in FS onto the os filesystem at baseDir
-func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
+// Writes dir in FS onto the os filesystem at baseDir
+func BillyWriteDirToOS(baseDir string, dir string, FS billy.Filesystem) error {
 	// fmt.Println("DIR:  ", baseDir, dir)
 	files, err := FS.ReadDir(dir)
 	if err != nil {
@@ -37,16 +40,16 @@ func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
 
 	for _, file := range files {
 		longname := path.Join(dir, file.Name())
-		// fmt.Println("DIR:  ", baseDir, dir, file.Name(), longname, outname)
+		// fmt.Println("DIR:  ", baseDir, dir, file.Name(), longname)
 
 		if file.IsDir() {
-			err = BillyCopyDir(baseDir, longname, FS)
+			err = BillyWriteDirToOS(baseDir, longname, FS)
 			if err != nil {
 				return err
 			}
 
 		} else {
-			err = BillyCopyFile(baseDir, longname, FS)
+			err = BillyWriteFileToOS(baseDir, longname, FS)
 			if err != nil {
 				return err
 			}
@@ -57,36 +60,36 @@ func BillyCopyDir(baseDir string, dir string, FS billy.Filesystem) error {
 	return nil
 }
 
-// Copies file in FS onto the os filesystem at baseDir
-func BillyCopyFile(baseDir string, file string, FS billy.Filesystem) error {
+// Writes file in FS onto the os filesystem at baseDir
+func BillyWriteFileToOS(baseDir string, file string, FS billy.Filesystem) error {
 	outName := path.Join(baseDir, file)
 
+	// fmt.Println("FILE: ", outName)
 	err := os.MkdirAll(path.Dir(outName), 0755)
 	if err != nil {
 		return err
 	}
 
-	bf, err := FS.Open(file)
+	src, err := FS.Open(file)
 	if err != nil {
 		return err
 	}
+	defer src.Close()
 
-	content, err := ioutil.ReadAll(bf)
+	dst, err := os.Create(outName)
 	if err != nil {
 		return err
 	}
+	defer dst.Close()
 
-	err = ioutil.WriteFile(outName, content, 0644)
-	if err != nil {
-		return err
-	}
+	io.Copy(dst, src)
 
 	return nil
 }
 
-// Copies dir in FS onto the os filesystem at baseDir
+// Write dir in FS onto the os filesystem at baseDir
 //
-func BillyGlobCopy(baseDir string, dir string, FS billy.Filesystem, includes, excludes []string) error {
+func BillyGlobWriteDirToOS(baseDir string, dir string, FS billy.Filesystem, includes, excludes []string) error {
 	// fmt.Println("DIR:  ", baseDir, dir)
 	files, err := FS.ReadDir(dir)
 	if err != nil {
@@ -99,47 +102,18 @@ func BillyGlobCopy(baseDir string, dir string, FS billy.Filesystem, includes, ex
 		// fmt.Println("GLOB?  ", longname)
 
 		if file.IsDir() {
-			err = BillyGlobCopy(baseDir, longname, FS, includes, excludes)
+			err = BillyGlobWriteDirToOS(baseDir, longname, FS, includes, excludes)
 			if err != nil {
 				return err
 			}
 
 		} else {
 
-			include := false
-			if len(includes) > 0 {
-				for _, pattern := range includes {
-					include, err = doublestar.PathMatch(pattern, longname)
-					// fmt.Println("GLOB++  ", longname, pattern, include)
-					if err != nil {
-						return err
-					}
-					if include {
-						break
-					}
-				}
-			} else {
-				include = true
-			}
-
-			exclude := false
-			if len(excludes) > 0 {
-				for _, pattern := range excludes {
-					exclude, err = doublestar.PathMatch(pattern, longname)
-					// fmt.Println("GLOB--  ", longname, pattern, exclude)
-					if err != nil {
-						return err
-					}
-					if exclude {
-						break
-					}
-				}
-			}
-
+			include, _ := CheckShouldInclude(longname, includes, excludes)
 			// fmt.Println("COPY ==>", longname, include, exclude, include && !exclude)
 
-			if include && !exclude {
-				err = BillyCopyFile(baseDir, longname, FS)
+			if include {
+				err = BillyWriteFileToOS(baseDir, longname, FS)
 				if err != nil {
 					return err
 				}
@@ -149,4 +123,174 @@ func BillyGlobCopy(baseDir string, dir string, FS billy.Filesystem, includes, ex
 	}
 
 	return nil
+}
+
+func BillyLoadFromZip(zReader *zip.Reader, FS billy.Filesystem, trimFirstDir bool) error {
+	for _, f := range zReader.File {
+
+		// Is this a directory?
+		if strings.HasSuffix(f.Name, "/") {
+			err := FS.MkdirAll(f.Name, 0755)
+			if err != nil {
+				return err
+			}
+			continue
+		}
+
+		fn := f.Name[strings.Index(f.Name, "/")+1:]
+
+    src, err := f.Open()
+    if err != nil {
+			return err
+    }
+    defer src.Close()
+
+		dst, err := FS.Create(fn)
+		if err != nil {
+			return err
+		}
+    defer dst.Close()
+
+		_, err = io.Copy(dst, src)
+		if err != nil {
+			return err
+		}
+
+		// fmt.Println("FromZip:", fn, cnt)
+	}
+
+	return nil
+}
+
+// Loads an initialized  zip.Reader into an initialize billy.Filesystem
+func BillyGlobLoadFromZip(zReader *zip.Reader, FS billy.Filesystem, includes, excludes []string) error {
+
+	for _, f := range zReader.File {
+		include, _ := CheckShouldInclude(f.Name, includes, excludes)
+		if !include {
+			continue
+		}
+
+		// Is this a directory?
+		if strings.HasSuffix(f.Name, "/") {
+			err := FS.MkdirAll(f.Name, 0755)
+			if err != nil {
+				return err
+			}
+			continue
+		}
+
+		fn := f.Name[strings.Index(f.Name, "/")+1:]
+
+    src, err := f.Open()
+    if err != nil {
+			return err
+    }
+    defer src.Close()
+
+		dst, err := FS.Create(fn)
+		if err != nil {
+			return err
+		}
+    defer dst.Close()
+
+		_, err = io.Copy(dst, src)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func BillyFilenames(dir string, FS billy.Filesystem) ([]string, error) {
+	out := []string{}
+
+	files, err := FS.ReadDir(dir)
+	if err != nil {
+		return out, err
+	}
+
+	for _, file := range files {
+		fullname := path.Join(dir, file.Name())
+
+		if file.IsDir() {
+			tmp, err := BillyFilenames(fullname, FS)
+			if err != nil {
+				return out, err
+			}
+			out = append(out, tmp...)
+		} else {
+			out = append(out, fullname)
+		}
+	}
+
+	return out, nil
+}
+
+func BillyCalcHash(FS billy.Filesystem) (string, error) {
+	return BillyCalcDirHash("/", FS)
+}
+
+func BillyGlobCalcHash(FS billy.Filesystem, include, exclude []string) (string, error) {
+	return BillyGlobCalcDirHash("/", FS, include, exclude)
+}
+
+func BillyCalcDirHash(dir string, FS billy.Filesystem) (string, error) {
+	all, err := BillyFilenames(dir, FS)
+	if err != nil {
+		return "", err
+	}
+
+	var files []string
+	for _, f := range all {
+		// fmt.Println("FILE:", f)
+		if strings.HasPrefix(f, "/.git/") || strings.HasPrefix(f, ".git/"){
+			continue
+		}
+
+		files = append(files, f)
+	}
+
+	open := func (fn string) (io.ReadCloser, error) {
+		return FS.Open(fn)
+	}
+
+	return dirhash.Hash1(files, open)
+}
+
+func BillyGlobCalcDirHash(dir string, FS billy.Filesystem, includes, excludes []string) (string, error) {
+	all, err := BillyFilenames(dir, FS)
+	if err != nil {
+		return "", err
+	}
+
+	var files []string
+	for _, f := range all {
+		include, _ := CheckShouldInclude(f, includes, excludes)
+		if !include {
+			continue
+		}
+		// fmt.Println("FILE:", f)
+		files = append(files, f)
+	}
+
+	open := func (fn string) (io.ReadCloser, error) {
+		return FS.Open(fn)
+	}
+
+	return dirhash.Hash1(files, open)
+}
+
+func BillyCalcFileHash(filename string, FS billy.Filesystem) (string, error) {
+	if !strings.HasPrefix(filename, "/") {
+		filename = "/" + filename
+	}
+
+	open := func (fn string) (io.ReadCloser, error) {
+		return FS.Open(fn)
+	}
+
+	return dirhash.Hash1([]string{filename}, open)
 }

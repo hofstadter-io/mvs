@@ -2,6 +2,9 @@ package modder
 
 import (
 	"fmt"
+	"strings"
+
+	"golang.org/x/mod/semver"
 
 	"github.com/hofstadter-io/mvs/lib/repos/git"
 )
@@ -45,8 +48,50 @@ func (mdr *Modder) MvsMergeDependency(m *Module) error {
 		return nil
 	}
 
-	// TODO check for existing module, version comparison
-	mdr.depsMap[m.Module] = m
+	// check for existing module
+	e, ok := mdr.depsMap[m.Module]
+	if !ok {
+		// just add
+		mdr.depsMap[m.Module] = m
+
+	} else {
+		// check local replace
+		if strings.HasPrefix(e.ReplaceModule, ".") {
+			// do nothing
+			return nil
+		}
+
+		// check remote replace
+		if m.ReplaceModule != "" {
+			if e.ReplaceModule == m.ReplaceModule {
+				// check version, is what we have a newer version?
+				if semver.Compare(e.ReplaceVersion, m.ReplaceVersion) >= 0 {
+					// do nothing, only 1/4 cases
+					return nil
+				}
+			}
+			// all other cases, want to update module
+		} else {
+			// check version, is what we have a newer version?
+			if semver.Compare(e.Version, m.Version) >= 0 {
+				// do nothing
+				return nil
+			}
+		}
+
+		mdr.depsMap[m.Module] = m
+
+	}
+
+	fmt.Printf("Merge   %-48s => %s\n", m.Module + "@" + m.Version, m.ReplaceModule + "@" + m.ReplaceVersion)
+
+	// XXX This is what basically makes us BFS
+	for _, R := range m.SelfDeps {
+		err := mdr.VendorDep(R)
+		if err != nil {
+			mdr.errors = append(mdr.errors, err)
+		}
+	}
 
 	return nil
 }

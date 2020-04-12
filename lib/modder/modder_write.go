@@ -2,10 +2,12 @@ package modder
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
 	"strings"
 
+	"github.com/hofstadter-io/mvs/lib/parse/sumfile"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
@@ -27,6 +29,7 @@ var (
 )
 
 func (mdr *Modder) WriteVendor() error {
+	// fmt.Println("Writing Vendor from scratch")
 	os.RemoveAll(mdr.ModsDir)
 
 	// make vendor dir if not present
@@ -37,11 +40,38 @@ func (mdr *Modder) WriteVendor() error {
 
 	// write out each dep
 	for _, m := range mdr.depsMap {
+		dirhash, err := util.BillyCalcHash(m.FS)
+		if err != nil {
+			mdr.errors = append(mdr.errors, err)
+			return fmt.Errorf("While calculating dir hash\n%w\n", err)
+		}
+
+		modhash, err := util.BillyCalcFileHash(mdr.ModFile, m.FS)
+		if err != nil {
+			mdr.errors = append(mdr.errors, err)
+			return fmt.Errorf("While calculating mod hash\n%w\n", err)
+		}
+
+
+		dver := sumfile.Version{
+			Path: strings.Join([]string{m.Module}, "/"),
+			Version: m.Version,
+		}
+		mdr.module.SumFile.Add(dver, dirhash)
+
+		mver := sumfile.Version{
+			Path: strings.Join([]string{m.Module}, "/"),
+			Version: strings.Join([]string{m.Version, mdr.ModFile}, "/"),
+		}
+		mdr.module.SumFile.Add(mver, modhash)
 
 		baseDir := path.Join(mdr.ModsDir, m.Module)
 		// TODO make billy FS here
 
-		fmt.Println("Copying", baseDir)
+		if m.ReplaceVersion == "" {
+			m.ReplaceVersion = "latest"
+		}
+		fmt.Printf("Writing %-48s => %s\n", m.ReplaceModule + "@" + m.ReplaceVersion, baseDir)
 
 		// copy definite files always
 		files, err := m.FS.ReadDir("/")
@@ -53,7 +83,7 @@ func (mdr *Modder) WriteVendor() error {
 				// Found one!
 				if strings.HasPrefix(strings.ToUpper(file.Name()), fn) {
 					// TODO, these functions should just take 2 billy FS
-					err = util.BillyCopyFile(baseDir, "/"+file.Name(), m.FS)
+					err = util.BillyWriteFileToOS(baseDir, "/"+file.Name(), m.FS)
 					if err != nil {
 						return err
 					}
@@ -65,7 +95,7 @@ func (mdr *Modder) WriteVendor() error {
 		if len(mdr.VendorIncludeGlobs) > 0 || len(mdr.VendorExcludeGlobs) > 0 {
 			// Just copy everything
 			// TODO, these functions should just take 2 billy FS
-			err = util.BillyGlobCopy(baseDir, "/", m.FS, mdr.VendorIncludeGlobs, mdr.VendorExcludeGlobs)
+			err = util.BillyGlobWriteDirToOS(baseDir, "/", m.FS, mdr.VendorIncludeGlobs, mdr.VendorExcludeGlobs)
 			if err != nil {
 				return err
 			}
@@ -73,7 +103,7 @@ func (mdr *Modder) WriteVendor() error {
 		} else {
 			// Just copy everything
 			// TODO, these functions should just take 2 billy FS
-			err = util.BillyCopyDir(baseDir, "/", m.FS)
+			err = util.BillyWriteDirToOS(baseDir, "/", m.FS)
 			if err != nil {
 				return err
 			}
@@ -81,6 +111,14 @@ func (mdr *Modder) WriteVendor() error {
 		}
 
 	}
+
+	// Write sumfile
+	out, err := mdr.module.SumFile.Write()
+	if err != nil {
+		return err
+	}
+
+	ioutil.WriteFile(mdr.SumFile, []byte(out), 0644)
 
 	return nil
 }

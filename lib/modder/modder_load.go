@@ -10,9 +10,20 @@ import (
 - MappingFile
 */
 
-func (mdr *Modder) LoadMinimalFromFS(dir string) error {
+/*
+func (mdr *Modder) LoadRootFromFS() error {
 	// Load the root module
-	err := mdr.LoadRootFromFS(".")
+	err := mdr.LoadMetaFromFS(".")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (mdr *Modder) LoadModderFromFS(dir string) error {
+	// Load the root module
+	err := mdr.LoadMetaFromFS(dir)
 	if err != nil {
 		return err
 	}
@@ -22,7 +33,7 @@ func (mdr *Modder) LoadMinimalFromFS(dir string) error {
 
 func (mdr *Modder) LoadIndexDepsFromFS(dir string) error {
 	// Load the root module
-	err := mdr.LoadRootFromFS(".")
+	err := mdr.LoadMetaFromFS(".")
 	if err != nil {
 		return err
 	}
@@ -36,8 +47,29 @@ func (mdr *Modder) LoadIndexDepsFromFS(dir string) error {
 
 	return nil
 }
+*/
 
-func (mdr *Modder) LoadRootFromFS(dir string) error {
+func (mdr *Modder) LoadMetaFromBilly() error {
+	// Load the root module
+	err := mdr.LoadMetaFromFS(".")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (mdr *Modder) LoadMetaFromZip() error {
+	// Load the root module
+	err := mdr.LoadMetaFromFS(".")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (mdr *Modder) LoadMetaFromFS(dir string) error {
 	// Shortcut for no load modules, forget the reason for no load...
 	if mdr.NoLoad {
 		return nil
@@ -54,17 +86,17 @@ func (mdr *Modder) LoadRootFromFS(dir string) error {
 
 	// Load module files
 	var err error
-	err = mdr.LoadRootModFile()
+	err = mdr.LoadModFile()
 	if err != nil {
 		return err
 	}
 
-	err = mdr.LoadRootSumFile()
+	err = mdr.LoadSumFile()
 	if err != nil {
 		return err
 	}
 
-	err = mdr.LoadRootMappingsFile()
+	err = mdr.LoadMappingsFile()
 	if err != nil {
 		return err
 	}
@@ -73,7 +105,7 @@ func (mdr *Modder) LoadRootFromFS(dir string) error {
 }
 
 // Loads the root modules mod file
-func (mdr *Modder) LoadRootModFile() error {
+func (mdr *Modder) LoadModFile() error {
 	fn := mdr.ModFile
 	m := mdr.module
 
@@ -88,7 +120,7 @@ func (mdr *Modder) LoadRootModFile() error {
 }
 
 // Loads the root modules sum file
-func (mdr *Modder) LoadRootSumFile() error {
+func (mdr *Modder) LoadSumFile() error {
 	fn := mdr.SumFile
 	m := mdr.module
 
@@ -101,7 +133,7 @@ func (mdr *Modder) LoadRootSumFile() error {
 }
 
 // Loads the root modules mapping file
-func (mdr *Modder) LoadRootMappingsFile() error {
+func (mdr *Modder) LoadMappingsFile() error {
 	fn := mdr.MappingFile
 	m := mdr.module
 

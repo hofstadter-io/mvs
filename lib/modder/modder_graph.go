@@ -33,7 +33,7 @@ func (mdr *Modder) Graph() error {
 func (mdr *Modder) GraphMVS() error {
 
 	// Load minimal root module
-	err := mdr.LoadMinimalFromFS(".")
+	err := mdr.LoadMetaFromFS(".")
 	if err != nil {
 		return err
 	}

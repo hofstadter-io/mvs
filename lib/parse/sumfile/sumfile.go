@@ -58,7 +58,17 @@ func ParseSum(data []byte, file string) (Sum, error) {
 	return sum, nil
 }
 
-func (sum *Sum) Print() error {
+func (sum *Sum) Add(ver Version, hash string) {
+	val, ok := sum.Mods[ver]
+	if !ok {
+		val = make([]string,0)
+	}
+	val = append(val, hash)
+	sum.Mods[ver] = val
+}
+
+func (sum *Sum) Write() (string, error) {
+	var w strings.Builder
 	// build up slice
 	var sorted []Version
 	for ver, _ := range sum.Mods {
@@ -67,14 +77,17 @@ func (sum *Sum) Print() error {
 
 	// sort slice by ver.Path
 	sort.Slice(sorted, func(i, j int) bool {
+		if sorted[i].Path == sorted[j].Path {
+			return sorted[i].Version < sorted[j].Version
+		}
 		return sorted[i].Path < sorted[j].Path
 	})
 
 	// print
 	for _, ver := range sorted {
 		list := sum.Mods[ver]
-		fmt.Println(ver.Path, ver.Version, list)
+		fmt.Fprintln(&w, ver.Path, ver.Version, list[0])
 	}
 
-	return nil
+	return w.String(), nil
 }

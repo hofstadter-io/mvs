@@ -33,7 +33,7 @@ func (mdr *Modder) Tidy() error {
 func (mdr *Modder) TidyMVS() error {
 
 	// Load minimal root module
-	err := mdr.LoadMinimalFromFS(".")
+	err := mdr.LoadMetaFromFS(".")
 	if err != nil {
 		return err
 	}

@@ -3,12 +3,8 @@ package mvs
 cue: {
   Name: "cue"
 
-  VendorIncludeGlobs: [
-    "/cue.mods",
-    "/cue.sums",
-    "/cue.mod/module.cue",
-    "/cue.mod/modules.txt",
-    "**/*.cue"
+	VendorExcludeGlobs: [
+    "/.git/**",
+    "**/cue.mod/pkg/**",
   ]
-	VendorExcludeGlobs: ["**/cue.mod/pkg/**"]
 }
