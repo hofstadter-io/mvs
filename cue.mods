@@ -4,5 +4,5 @@ cue 0.1.1
 
 require (
   github.com/hofstadter-io/cuelib v0.0.5
-  github.com/hofstadter-io/hofmod-cli v0.3.4
+  github.com/hofstadter-io/hofmod-cli v0.3.5
 )
