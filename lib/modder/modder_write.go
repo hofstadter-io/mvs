@@ -66,11 +66,7 @@ func (mdr *Modder) WriteVendor() error {
 		mdr.module.SumFile.Add(mver, modhash)
 
 		baseDir := path.Join(mdr.ModsDir, m.Module)
-		// TODO make billy FS here
 
-		if m.ReplaceVersion == "" {
-			m.ReplaceVersion = "latest"
-		}
 		fmt.Printf("Writing %-48s => %s\n", m.ReplaceModule + "@" + m.ReplaceVersion, baseDir)
 
 		// copy definite files always

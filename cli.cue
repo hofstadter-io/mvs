@@ -42,15 +42,18 @@ CLI :: schema.Cli & {
   """
 
 	Releases: schema.GoReleaser & {
-		Author:   "Tony Worm"
-		Homepage: "https://github.com/hofstadter-io/mvs"
+    Author:   "Tony Worm"
+    Homepage: "https://github.com/hofstadter-io/mvs"
 
-		Brew: {
-			GitHubOwner:    "hofstadter-io"
-			GitHubRepoName: "homebrew-tap"
-			GitHubUsername: "verdverm"
-			GitHubEmail:    "tony@hofstadter.io"
-		}
+    GitHub: {
+      Owner: "hofstadter-io"
+      Repo:  "hof"
+    }
+
+    Docker: {
+      Maintainer: "Hofstadter, Inc <open-source@hofstadter.io>"
+      Repo: "hofstadter"
+    }
 	}
 
 	OmitRun: true
