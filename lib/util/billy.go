@@ -233,10 +233,47 @@ func BillyCalcHash(FS billy.Filesystem) (string, error) {
 	return BillyCalcDirHash("/", FS)
 }
 
+func BillyGlobCalcHash(FS billy.Filesystem, include, exclude []string) (string, error) {
+	return BillyGlobCalcDirHash("/", FS, include, exclude)
+}
+
 func BillyCalcDirHash(dir string, FS billy.Filesystem) (string, error) {
-	files, err := BillyFilenames(dir, FS)
+	all, err := BillyFilenames(dir, FS)
 	if err != nil {
 		return "", err
+	}
+
+	var files []string
+	for _, f := range all {
+		// fmt.Println("FILE:", f)
+		if strings.HasPrefix(f, "/.git/") || strings.HasPrefix(f, ".git/"){
+			continue
+		}
+
+		files = append(files, f)
+	}
+
+	open := func (fn string) (io.ReadCloser, error) {
+		return FS.Open(fn)
+	}
+
+	return dirhash.Hash1(files, open)
+}
+
+func BillyGlobCalcDirHash(dir string, FS billy.Filesystem, includes, excludes []string) (string, error) {
+	all, err := BillyFilenames(dir, FS)
+	if err != nil {
+		return "", err
+	}
+
+	var files []string
+	for _, f := range all {
+		include, _ := CheckShouldInclude(f, includes, excludes)
+		if !include {
+			continue
+		}
+		// fmt.Println("FILE:", f)
+		files = append(files, f)
 	}
 
 	open := func (fn string) (io.ReadCloser, error) {

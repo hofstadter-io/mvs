@@ -1,25 +1,22 @@
 package cache
 
 import (
-	"fmt"
-	"path/filepath"
 	"os"
+	"strings"
 
 	"golang.org/x/mod/sumdb/dirhash"
 )
 
 func Checksum(lang, mod, ver string) (string, error) {
 
-	dir := filepath.Join(
-		LocalCacheBaseDir,
-		"mod",
-		lang,
-		mod,
-		"@",
-		ver,
-	)
+	flds := strings.Split(mod, "/")
+	remote := flds[0]
+	owner := flds[1]
+	repo := flds[2]
+	tag := ver
 
-	fmt.Println("Cache Load:", dir)
+	dir := Outdir(lang, remote, owner, repo, tag)
+	// fmt.Println("Cache Checksum:", dir)
 
 	_, err := os.Lstat(dir)
 	if err != nil {

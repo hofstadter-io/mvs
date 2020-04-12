@@ -2,7 +2,11 @@ package modder
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/go-git/go-billy/v5/osfs"
+
+	"github.com/hofstadter-io/mvs/lib/cache"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
@@ -71,32 +75,125 @@ func (mdr *Modder) VendorMVS() error {
 		fmt.Println(err)
 		// return err
 	}
+	for _, R := range mdr.module.SelfDeps {
+		err := mdr.VendorDep(R)
+		if err != nil {
+			mdr.errors = append(mdr.errors, err)
+		}
+	}
 
-
-
-
-
-	return nil
-
-	err = mdr.CheckAndFetchRootDeps()
-	if err != nil {
-		fmt.Println(err)
+	if err := mdr.CheckForErrors(); err != nil {
 		return err
 	}
 
-	for {
-		deps, err := mdr.CheckAndFetchDepsDeps(mdr.depsMap)
+	// Finally, write out anything that needs to be
+	err = mdr.WriteVendor()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (mdr *Modder) VendorDep(R Replace) error {
+	fmt.Printf("VendorDep %#+v\n", R)
+
+	// Fetch and Load module
+	if strings.HasPrefix(R.NewPath, "./") || strings.HasPrefix(R.NewPath, "../") {
+		err := mdr.LoadLocalReplace(R)
 		if err != nil {
-			fmt.Println(err)
+			mdr.errors = append(mdr.errors, err)
 			return err
 		}
+		return nil
+	} else {
+		err := mdr.LoadRemoteModule(R)
+		if err != nil {
+			mdr.errors = append(mdr.errors, err)
+			return err
+		}
+		return nil
+	}
 
-		if len(deps) == 0 {
-			break
+	return nil
+}
+
+func (mdr *Modder) LoadRemoteModule(R Replace) error {
+	fmt.Printf("LoadRemoteReplace %#+v\n", R)
+
+	// If sumfile, check integrity and possibly shortcut
+	if mdr.module.SumFile != nil {
+		err := mdr.CompareSumEntryToVendor(R)
+		if err == nil {
+			// return nil
+			// TODO, add dependencies to processing
+		} else {
+			fmt.Println("Error:", err)
 		}
 	}
 
-	err = mdr.WriteVendor()
+	// TODO, check if valid and just add m.deps to processing
+	// We can do this in a BFS manner
+
+	m := &Module{
+		Module:         R.OldPath,
+		Version:        R.OldVersion,
+		ReplaceModule:  R.NewPath,
+		ReplaceVersion: R.NewVersion,
+	}
+
+	if m.Module == "" {
+		m.Module = R.NewPath
+		m.Version = R.NewVersion
+	}
+
+	err := cache.Fetch(mdr.Name, R.NewPath, R.NewVersion)
+	if err != nil {
+		return err
+	}
+
+	m.FS, err = cache.Load(mdr.Name, R.NewPath, R.NewVersion)
+	if err != nil {
+		return err
+	}
+
+	err = m.LoadMetaFiles(mdr.ModFile, mdr.SumFile, mdr.MappingFile, true /* ignoreReplace directives */)
+	if err != nil {
+		return err
+	}
+
+	// TODO, check if valid and just add m.deps to processing
+	// We can do this in a BFS manner
+
+	err = mdr.MvsMergeDependency(m)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (mdr *Modder) LoadLocalReplace(R Replace) error {
+	fmt.Printf("LoadLocalReplace %#+v\n", R)
+	var err error
+
+	m := &Module{
+		Module:         R.OldPath,
+		Version:        R.OldVersion,
+		ReplaceModule:  R.NewPath,
+		ReplaceVersion: R.NewVersion,
+	}
+
+	m.FS = osfs.New(R.NewPath)
+
+	err = m.LoadMetaFiles(mdr.ModFile, mdr.SumFile, mdr.MappingFile, true /* ignoreReplace directives */)
+	if err != nil {
+		return err
+	}
+
+	// TODO, check if valid and just add m.deps to processing
+	// We can do this in a BFS manner
+
+	err = mdr.MvsMergeDependency(m)
 	if err != nil {
 		return err
 	}

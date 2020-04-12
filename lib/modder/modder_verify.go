@@ -41,7 +41,7 @@ func (mdr *Modder) VerifyMVS() error {
 	}
 
 	// Load the root module's deps
-	present, missing, err := mdr.FindPresentMissingInSum()
+	present, missing, local, err := mdr.PartitionSumEntries()
 	if err != nil {
 		return err
 	}
@@ -57,6 +57,16 @@ func (mdr *Modder) VerifyMVS() error {
 	for _, p := range present {
 		R := mdr.module.SelfDeps[p]
 		err := mdr.CompareSumEntryToVendor(R)
+		// Something is wrong with the vendored copy or the hash
+		if err != nil {
+			valid = false
+			mdr.errors = append(mdr.errors, err)
+		}
+	}
+
+	for _, p := range local {
+		R := mdr.module.SelfDeps[p]
+		err := mdr.CompareLocalReplaceToVendor(R)
 		// Something is wrong with the vendored copy or the hash
 		if err != nil {
 			valid = false

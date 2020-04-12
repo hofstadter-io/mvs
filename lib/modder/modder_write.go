@@ -2,10 +2,12 @@ package modder
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
 	"strings"
 
+	"github.com/hofstadter-io/mvs/lib/parse/sumfile"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
@@ -27,6 +29,7 @@ var (
 )
 
 func (mdr *Modder) WriteVendor() error {
+	fmt.Println("Writing Vendor from scratch")
 	os.RemoveAll(mdr.ModsDir)
 
 	// make vendor dir if not present
@@ -37,6 +40,30 @@ func (mdr *Modder) WriteVendor() error {
 
 	// write out each dep
 	for _, m := range mdr.depsMap {
+		dirhash, err := util.BillyCalcHash(m.FS)
+		if err != nil {
+			mdr.errors = append(mdr.errors, err)
+			return fmt.Errorf("While calculating dir hash\n%w\n", err)
+		}
+
+		modhash, err := util.BillyCalcFileHash(mdr.ModFile, m.FS)
+		if err != nil {
+			mdr.errors = append(mdr.errors, err)
+			return fmt.Errorf("While calculating mod hash\n%w\n", err)
+		}
+
+
+		dver := sumfile.Version{
+			Path: strings.Join([]string{m.Module}, "/"),
+			Version: m.Version,
+		}
+		mdr.module.SumFile.Add(dver, dirhash)
+
+		mver := sumfile.Version{
+			Path: strings.Join([]string{m.Module}, "/"),
+			Version: strings.Join([]string{m.Version, mdr.ModFile}, "/"),
+		}
+		mdr.module.SumFile.Add(mver, modhash)
 
 		baseDir := path.Join(mdr.ModsDir, m.Module)
 		// TODO make billy FS here
@@ -81,6 +108,14 @@ func (mdr *Modder) WriteVendor() error {
 		}
 
 	}
+
+	// Write sumfile
+	out, err := mdr.module.SumFile.Write()
+	if err != nil {
+		return err
+	}
+
+	ioutil.WriteFile(mdr.SumFile, []byte(out), 0644)
 
 	return nil
 }

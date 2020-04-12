@@ -8,7 +8,7 @@ import (
 	"github.com/hofstadter-io/mvs/lib/util"
 )
 
-func Write(lang, remote, owner, repo, tag string, FS billy.Filesystem) error {
+func Outdir(lang, remote, owner, repo, tag string) string {
 	outdir := filepath.Join(
 		LocalCacheBaseDir,
 		"mod",
@@ -17,6 +17,10 @@ func Write(lang, remote, owner, repo, tag string, FS billy.Filesystem) error {
 		owner,
 		repo + "@" + tag,
 	)
+	return outdir
+}
 
+func Write(lang, remote, owner, repo, tag string, FS billy.Filesystem) error {
+	outdir := Outdir(lang, remote, owner, repo, tag)
 	return util.BillyWriteDirToOS(outdir, "/", FS)
 }

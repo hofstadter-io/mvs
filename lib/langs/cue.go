@@ -14,13 +14,10 @@ cue: {
 		"""
 		...
 	}
-	VendorIncludeGlobs: [...string] | *[
-		"/cue.mods",
-		"/cue.sums",
-		"/cue.mod/module.cue",
-		"/cue.mod/modules.txt",
-		"**/*.cue"
+	VendorIncludeGlobs: [...string] | *[]
+	VendorExcludeGlobs: [...string] | *[
+		"/.git/**",
+		"**/cue.mod/pkg/**",
 	]
-	VendorExcludeGlobs: [...string] | *["**/cue.mod/pkg/**"]
 }
 `

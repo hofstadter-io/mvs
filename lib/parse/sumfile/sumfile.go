@@ -86,7 +86,7 @@ func (sum *Sum) Write() (string, error) {
 	// print
 	for _, ver := range sorted {
 		list := sum.Mods[ver]
-		fmt.Fprintln(&w, ver.Path, ver.Version, strings.Join(list, " "))
+		fmt.Fprintln(&w, ver.Path, ver.Version, list[0])
 	}
 
 	return w.String(), nil
