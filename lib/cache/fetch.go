@@ -20,7 +20,7 @@ func Fetch(lang, mod, ver string) (err error) {
 	tag := ver
 
 	dir := Outdir(lang, remote, owner, repo, tag)
-	fmt.Println("Cache Fetch:", dir)
+	// fmt.Println("Cache Fetch:", dir)
 
 	_, err = os.Lstat(dir)
 	if err != nil {
@@ -32,7 +32,7 @@ func Fetch(lang, mod, ver string) (err error) {
 	}
 
 	// else we have it already
-	fmt.Println("Found in cache")
+	// fmt.Println("Found in cache")
 
 	return nil
 }

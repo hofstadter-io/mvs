@@ -29,7 +29,7 @@ var (
 )
 
 func (mdr *Modder) WriteVendor() error {
-	fmt.Println("Writing Vendor from scratch")
+	// fmt.Println("Writing Vendor from scratch")
 	os.RemoveAll(mdr.ModsDir)
 
 	// make vendor dir if not present
@@ -68,7 +68,10 @@ func (mdr *Modder) WriteVendor() error {
 		baseDir := path.Join(mdr.ModsDir, m.Module)
 		// TODO make billy FS here
 
-		fmt.Println("Copying", baseDir)
+		if m.ReplaceVersion == "" {
+			m.ReplaceVersion = "latest"
+		}
+		fmt.Printf("Writing %-48s => %s\n", m.ReplaceModule + "@" + m.ReplaceVersion, baseDir)
 
 		// copy definite files always
 		files, err := m.FS.ReadDir("/")

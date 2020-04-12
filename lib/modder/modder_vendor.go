@@ -95,7 +95,7 @@ func (mdr *Modder) VendorMVS() error {
 }
 
 func (mdr *Modder) VendorDep(R Replace) error {
-	fmt.Printf("VendorDep %#+v\n", R)
+	// fmt.Printf("VendorDep %#+v\n", R)
 
 	// Fetch and Load module
 	if strings.HasPrefix(R.NewPath, "./") || strings.HasPrefix(R.NewPath, "../") {
@@ -118,7 +118,7 @@ func (mdr *Modder) VendorDep(R Replace) error {
 }
 
 func (mdr *Modder) LoadRemoteModule(R Replace) error {
-	fmt.Printf("LoadRemoteReplace %#+v\n", R)
+	// fmt.Printf("LoadRemoteReplace %#+v\n", R)
 
 	// If sumfile, check integrity and possibly shortcut
 	if mdr.module.SumFile != nil {
@@ -127,7 +127,7 @@ func (mdr *Modder) LoadRemoteModule(R Replace) error {
 			// return nil
 			// TODO, add dependencies to processing
 		} else {
-			fmt.Println("Error:", err)
+			// fmt.Println("Error:", err)
 		}
 	}
 
@@ -173,7 +173,7 @@ func (mdr *Modder) LoadRemoteModule(R Replace) error {
 }
 
 func (mdr *Modder) LoadLocalReplace(R Replace) error {
-	fmt.Printf("LoadLocalReplace %#+v\n", R)
+	// fmt.Printf("LoadLocalReplace %#+v\n", R)
 	var err error
 
 	m := &Module{
