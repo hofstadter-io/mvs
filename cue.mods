@@ -1,6 +1,6 @@
 module github.com/hofstadter-io/mvs
 
-cue 0.0.15
+cue 0.1.1
 
 require (
   github.com/hofstadter-io/cuelib v0.0.5
