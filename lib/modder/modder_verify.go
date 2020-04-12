@@ -47,28 +47,27 @@ func (mdr *Modder) VerifyMVS() error {
 	}
 
 	// Invalid if there are missing deps
-	if len(missing) > 0 {
-		valid = false
-	}
-
 	for _, m := range missing {
+		valid = false
 		R := mdr.module.SelfDeps[m]
-		fmt.Printf("Sumfile missing: %s@%s\n", R.NewPath, R.NewVersion)
 		err := fmt.Errorf("Sumfile missing: %s@%s", R.NewPath, R.NewVersion)
 		mdr.errors = append(mdr.errors, err)
 	}
 
-	fmt.Println("Present\n-----------------")
 	for _, p := range present {
 		R := mdr.module.SelfDeps[p]
-		fmt.Println(R.NewPath, R.NewVersion)
+		err := mdr.CompareSumEntryToVendor(R)
+		// Something is wrong with the vendored copy or the hash
+		if err != nil {
+			valid = false
+			mdr.errors = append(mdr.errors, err)
+		}
 	}
-	fmt.Println("-----------------")
-
 
 	if !valid {
-
 		return fmt.Errorf("Vendoring is in an inconsistent state, please run 'mvs vendor %s' ", mdr.Name)
 	}
+
+	// We are OK!
 	return nil
 }

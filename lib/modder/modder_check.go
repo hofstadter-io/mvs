@@ -2,6 +2,7 @@ package modder
 
 import (
 	"fmt"
+	"path"
 	"strings"
 
 	"github.com/go-git/go-billy/v5/osfs"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/hofstadter-io/mvs/lib/parse/sumfile"
 	"github.com/hofstadter-io/mvs/lib/repos/git"
+	"github.com/hofstadter-io/mvs/lib/util"
 )
 
 func (mdr *Modder) CheckAndFetchRootDeps() error {
@@ -264,6 +266,12 @@ func (mdr *Modder) FindPresentMissingInSum() ([]string, []string, error) {
 	}
 
 	for path, R := range mod.SelfDeps {
+		// local replace?
+		if strings.HasPrefix(R.NewPath, ".") {
+			// then ignore
+			continue
+		}
+
 		ver := sumfile.Version{
 			Path:    path,
 			Version: R.NewVersion,
@@ -280,7 +288,79 @@ func (mdr *Modder) FindPresentMissingInSum() ([]string, []string, error) {
 	return present, missing, nil
 }
 
-func (mdr *Modder) CompareSumToVendor() error {
+func (mdr *Modder) CompareSumEntryToVendor(R Replace) error {
+	sf := mdr.module.SumFile
+
+	// sumfile ver from Replace
+	dirver := sumfile.Version{
+		Path:    R.NewPath,
+		Version: R.NewVersion,
+	}
+	modver := sumfile.Version{
+		Path:    R.NewPath,
+		Version: path.Join(dirver.Version, mdr.ModFile),
+	}
+
+	// sumfile dirhash
+	d, ok := sf.Mods[dirver]
+	if !ok {
+		merr := fmt.Errorf("Missing module dirhash in sumfile for '%v' from modfile entry '%v'", dirver, R)
+		mdr.errors = append(mdr.errors, merr)
+		return merr
+	}
+	sumDirhash := d[0]
+
+	// sumfile modhash
+	m, ok := sf.Mods[modver]
+	if !ok {
+		merr := fmt.Errorf("Missing module modhash in sumfile for '%v' from modfile entry '%v'", modver, R)
+		mdr.errors = append(mdr.errors, merr)
+		return merr
+	}
+	sumModhash := m[0]
+
+	// fmt.Println("SUMHASH", sumDirhash, sumModhash)
+
+	// load vendor copy, oldpath because that is how it will be imported
+	rpath := R.OldPath
+	if R.OldPath == "" {
+		rpath = R.NewPath
+	}
+	vpath := path.Join(mdr.ModsDir, rpath)
+	// fmt.Println("VPATH", vpath)
+	FS := osfs.New(vpath)
+
+	// Calc hashes for vendor from billy
+	vdrDirhash, err := util.BillyCalcHash(FS)
+	if err != nil {
+		merr := fmt.Errorf("While calculating vendor dirhash for '%v' from '%v'\n%w\n", dirver, R, err)
+		mdr.errors = append(mdr.errors, merr)
+		return merr
+	}
+
+	vdrModhash, err := util.BillyCalcFileHash(mdr.ModFile, FS)
+	if err != nil {
+		merr := fmt.Errorf("While calculating vendor modhash for '%v' from '%v'\n%w\n", modver, R, err)
+		mdr.errors = append(mdr.errors, merr)
+		return merr
+	}
+	// fmt.Println("VDRHASH", vdrDirhash, vdrModhash)
+
+	mismatch := false
+	if sumDirhash != vdrDirhash {
+		merr := fmt.Errorf("Mismatched dir hashes in sumfile for '%v' from modfile entry '%v'", dirver, R)
+		mdr.errors = append(mdr.errors, merr)
+		mismatch = true
+	}
+	if sumModhash != vdrModhash {
+		merr := fmt.Errorf("Mismatched modfile hashes in sumfile for '%v' from modfile entry '%v'", modver, R)
+		mdr.errors = append(mdr.errors, merr)
+		mismatch = true
+	}
+
+	if mismatch {
+		return fmt.Errorf("Errors with vendor integrity")
+	}
 
 	return nil
 }
