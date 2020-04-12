@@ -162,8 +162,9 @@ func (mdr *Modder) LoadRemoteModule(R Replace) error {
 	}
 
 	// TODO, check if valid and just add m.deps to processing
-	// We can do this in a BFS manner
 
+	// XXX Within this call is what basically makes us BFS
+	// It's where we load the dependencies
 	err = mdr.MvsMergeDependency(m)
 	if err != nil {
 		return err
@@ -191,8 +192,9 @@ func (mdr *Modder) LoadLocalReplace(R Replace) error {
 	}
 
 	// TODO, check if valid and just add m.deps to processing
-	// We can do this in a BFS manner
 
+	// XXX Within this call is what basically makes us BFS
+	// It's where we load the dependencies
 	err = mdr.MvsMergeDependency(m)
 	if err != nil {
 		return err
