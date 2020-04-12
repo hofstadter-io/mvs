@@ -64,7 +64,7 @@ changelog:
 
 release:
   disable: true
-  draft: true
+  draft: false
   github:
     owner: hofstadter-io
     name: hof
