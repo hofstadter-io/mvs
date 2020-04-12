@@ -1,16 +1,17 @@
 # MVS
 
-A flexible MVS tool and library based on Go mods.
+`mvs` is a flexible tool and library based on Go mods.
 
-Create module systems with [Minimum Version Selection](https://research.swtch.com/vgo-mvs) semantics
-for any language, and generally any mix of git repositories and package managers.
+Use and create module systems with [Minimum Version Selection](https://research.swtch.com/vgo-mvs) semantics
+and manage dependencies `go mod` style.
+Mix any set of language, code bases, git repositories, package managers, and subdirectories.
 Manage polyglot and monorepo codebase dependencies with
 [100% reproducible builds](https://github.com/golang/go/wiki/Modules#version-selection) from a single tool.
 
 
 ### Features
 
-- Based on go mods MVS system for 100% reproducible builds.
+- Based on go mods MVS system, aiming for 100% reproducible builds.
 - Recursive dependencies, version resolution, and code instrospection.
 - Custom module systems with custom file names and vendor directories.
 - Control configuration for naming, vendoring, and other behaviors.
@@ -20,9 +21,9 @@ Manage polyglot and monorepo codebase dependencies with
 
 Language support:
 
-- [golang](https://golang.org) - shells out and uses the go tool to run commands for convienence
+- [golang](https://golang.org) - delegates to the go tool for the commands mirrored here
 - [cuelang](https://cuelang.org) - builtin in default using the custom module feature
-- [hof-lang](https://hof-lang.org) - extends Cuelang with low-code capabilities (also a builtin custom)
+- [hofmods](https://hofstadter.io) - extends Cue with advanced code generation capabilities
 - [custom](./docs/custom-modders.md) - Create your own locally or globally with `.mvsconfig` files
 
 Upcoming languages: Python and JavaScript
@@ -51,10 +52,22 @@ The go mods is shelled out to as a convience, and often languages impose restric
 
 ### Install
 
-```shell
-go get github.com/hofstadter-io/mvs
-```
+[Releases for Linux, Mac, and Windows are available](https://github.com/hofstadter-io/mvs/releases).
 
+Development setup (requires the [hof tool](https://github.com/hofstadter-io/hof)):
+
+```shell
+git clone https://github.com/hofstadter-io/mvs
+cd mvs
+
+go mod vendor
+go install
+mvs vendor cue
+
+hof gen
+git status # should be no difference
+go install
+```
 
 ### Usage
 
@@ -68,7 +81,7 @@ mvs init <lang> <module-path>
 # Add your requirements
 vim <lang>.mods  # go.mod like file
 
-# Pull in dependencies, no args discovers and runs all
+# Pull in dependencies, no args discovers by *.mods and runs all
 mvs vendor [langs...]
 
 # See all of the commands
@@ -91,17 +104,16 @@ module <module-path>
 # go = 1.14
 <lang> = <version>
 
+# Required dependencies section
 require (
   # <module-path> <module-semver>
   github.com/hof-lang/cuemod--cli-golang v0.0.0      # This is latest on HEAD
   github.com/hof-lang/cuemod--cli-golang v0.1.5      # This is a tag v0.1.5 (can omit 'v' in tag, but not here)
 )
 
-
 # replace <module-path> => <module-path|local-path> [version]
 replace github.com/hof-lang/cuemod--cli-golang => github.com/hofstadter-io/hofmod-cli-golang v0.2.0
 replace github.com/hof-lang/cuemod--cli-golang => ../../cuelibs/cuemod--cli-golang
-
 ```
 
 
@@ -116,35 +128,27 @@ See the [custom-modder docs](./docs/custom-modders.md)
 to learn more about writing
 you own module systems.
 
-This is the current Cuelang Modder configuration:
+This is the current Cue __modder__ configuration:
 
 ```cue
 cue: {
   Name: "cue"
-  Version: "0.0.16"
+  Version: "0.1.1"
   ModFile: "cue.mods"
   SumFile: "cue.sums"
   ModsDir: "cue.mod/pkg"
-  Checksum: "cue.mod/modules.txt"
+  MappingFile: "cue.mod/modules.txt"
   InitTemplates: {
     "cue.mod/module.cue": """
       module "{{ .Module }}"
       """
     }
 
-  VendorIncludeGlobs: [
-    ".mvsconfig.cue",
-    "cue.mods",
-    "cue.sums",
-    "cue.mod/module.cue",
-    "cue.mod/modules.txt",
-    "**/*.cue"
+  VendorIncludeGlobs: []
+  VendorExcludeGlobs: [
+    "/.git/**",
+    "**/cue.mod/pkg/**",
   ]
-  VendorExcludeGlobs: ["cue.mod/pkg"]
-
-  IntrospectIncludeGlobs: ["**/*.cue"]
-  IntrospectExcludeGlobs: ["cue.mod/pkg"]
-  IntrospectExtractRegex: ["tbd... same as go import"]
 }
 ```
 
@@ -157,13 +161,18 @@ Here are some commands if you want to develop `mvs`.
 
 Make sure you have go 1.14 and [cue installed](https://cuelang.org/docs/install/).
 We are mainly [developing with cuelang tip](https://github.com/cuelang/cue/blob/master/doc/contribute.md#overview-1) (just step-1 at the link)
+Development setup requires the [hof tool](https://github.com/hofstadter-io/hof) as well.
 
 ```shell
 # Fetch deps (go and cue)
 mvs vendor
 
 # Generate code
-cue gen        # Generate gocode for the cmd implementation
+hof gen        # Generate gocode for the cmd implementation
+
+# Validate cuecode that is input to hof
+cue eval
+cue export
 
 # Build binary
 go build
@@ -172,9 +181,11 @@ go build
 ./mvs help
 ```
 
-You may also want to look at the [cuemod--cli-golang](https://github.com/hof-lang/cuemod--cli-golang) project.
+You may also like to look at the [hofmod-cli](https://github.com/hofstadter-io/hofmod-cli) project.
 We use this to generate the CLI code and files for CI.
-It is a pure cuelang prototype of our [hof tool](https://github.com/hofstadter-io/hof) for code generation.
+The `mvs` uses our [hof tool](https://github.com/hofstadter-io/hof) for code generation of itself
+and is also imported into the hof tool as both cue and go modules,
+embedding the `mvs` cli as the subcommand `hof mod`.
 
 You can find us in the
 [cuelang slack](https://join.slack.com/t/cuelang/shared_invite/enQtNzQwODc3NzYzNTA0LTAxNWQwZGU2YWFiOWFiOWQ4MjVjNGQ2ZTNlMmIxODc4MDVjMDg5YmIyOTMyMjQ2MTkzMTU5ZjA1OGE0OGE1NmE)
@@ -195,4 +206,6 @@ for now.
 [Go and Versioning](https://research.swtch.com/vgo)
 
 [More about version selection](https://github.com/golang/go/wiki/Modules#version-selection)
+
+
 
