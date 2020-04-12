@@ -10,7 +10,7 @@ func (mdr *Modder) Status() error {
 
 	// Status Command Override
 	if len(mdr.CommandStatus) > 0 {
-		for _, cmd := range mdr.CommandGraph {
+		for _, cmd := range mdr.CommandStatus {
 			out, err := util.Exec(cmd)
 			fmt.Println(out)
 			if err != nil {

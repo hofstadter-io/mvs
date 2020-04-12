@@ -10,7 +10,7 @@ func (mdr *Modder) Verify() error {
 
 	// Verify Command Override
 	if len(mdr.CommandVerify) > 0 {
-		for _, cmd := range mdr.CommandGraph {
+		for _, cmd := range mdr.CommandVerify {
 			out, err := util.Exec(cmd)
 			fmt.Println(out)
 			if err != nil {

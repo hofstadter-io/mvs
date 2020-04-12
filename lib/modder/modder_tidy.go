@@ -10,7 +10,7 @@ func (mdr *Modder) Tidy() error {
 
 	// Tidy Command Override
 	if len(mdr.CommandTidy) > 0 {
-		for _, cmd := range mdr.CommandGraph {
+		for _, cmd := range mdr.CommandTidy {
 			out, err := util.Exec(cmd)
 			fmt.Println(out)
 			if err != nil {

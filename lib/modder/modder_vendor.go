@@ -44,7 +44,7 @@ func (mdr *Modder) Vendor() error {
 
 	// Vendor Command Override
 	if len(mdr.CommandVendor) > 0 {
-		for _, cmd := range mdr.CommandGraph {
+		for _, cmd := range mdr.CommandVendor {
 			out, err := util.Exec(cmd)
 			fmt.Println(out)
 			if err != nil {
