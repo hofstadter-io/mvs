@@ -57,6 +57,9 @@ func (mdr *Modder) WriteVendor() error {
 			Path: strings.Join([]string{m.Module}, "/"),
 			Version: m.Version,
 		}
+		if mdr.module.SumFile == nil {
+			mdr.module.SumFile = &sumfile.Sum{}
+		}
 		mdr.module.SumFile.Add(dver, dirhash)
 
 		mver := sumfile.Version{

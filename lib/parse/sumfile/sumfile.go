@@ -59,6 +59,9 @@ func ParseSum(data []byte, file string) (Sum, error) {
 }
 
 func (sum *Sum) Add(ver Version, hash string) {
+	if sum.Mods == nil {
+		sum.Mods = make(map[Version][]string)
+	}
 	val, ok := sum.Mods[ver]
 	if !ok {
 		val = make([]string,0)
