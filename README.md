@@ -52,22 +52,7 @@ The go mods is shelled out to as a convience, and often languages impose restric
 
 ### Install
 
-[Releases for Linux, Mac, and Windows are available](https://github.com/hofstadter-io/mvs/releases).
-
-Development setup (requires the [hof tool](https://github.com/hofstadter-io/hof)):
-
-```shell
-git clone https://github.com/hofstadter-io/mvs
-cd mvs
-
-go mod vendor
-go install
-mvs vendor cue
-
-hof gen
-git status # should be no difference
-go install
-```
+### [Releases for Linux, Mac, and Windows are available](https://github.com/hofstadter-io/mvs/releases).
 
 ### Usage
 
@@ -159,26 +144,27 @@ Want to help out?
 
 Here are some commands if you want to develop `mvs`.
 
-Make sure you have go 1.14 and [cue installed](https://cuelang.org/docs/install/).
-We are mainly [developing with cuelang tip](https://github.com/cuelang/cue/blob/master/doc/contribute.md#overview-1) (just step-1 at the link)
+Make sure you have go 1.14 and [cue 0.1.1](https://cuelang.org/docs/install/) are installed.
 Development setup requires the [hof tool](https://github.com/hofstadter-io/hof) as well.
 
 ```shell
-# Fetch deps (go and cue)
-mvs vendor
+# Fetch mvs code
+git clone https://github.com/hofstadter-io/mvs
+cd mvs
 
-# Generate code
-hof gen        # Generate gocode for the cmd implementation
-
-# Validate cuecode that is input to hof
-cue eval
-cue export
-
-# Build binary
+# Fetch golang deps and build
+go mod vendor
 go build
 
 # Run local mvs
 ./mvs help
+
+# Fetch cue/hof deps
+./mvs vendor cue
+
+# Generate code
+hof gen        # Generate gocode for the cmd implementation
+git status # should be no difference
 ```
 
 You may also like to look at the [hofmod-cli](https://github.com/hofstadter-io/hofmod-cli) project.
