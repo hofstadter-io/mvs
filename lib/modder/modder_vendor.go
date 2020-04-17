@@ -72,8 +72,8 @@ func (mdr *Modder) VendorMVS() error {
 	// Load minimal root module
 	err = mdr.LoadMetaFromFS(".")
 	if err != nil {
-		fmt.Println(err)
-		// return err
+		// fmt.Println(err)
+		return err
 	}
 	for _, R := range mdr.module.SelfDeps {
 		err := mdr.VendorDep(R)
