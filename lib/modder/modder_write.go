@@ -40,6 +40,11 @@ func (mdr *Modder) WriteVendor() error {
 
 	// write out each dep
 	for _, m := range mdr.depsMap {
+		// XXX, this only (?) happens with local replaces with no matching require entry
+		if m.Version == "" {
+			m.Version = "v0.0.0"
+		}
+
 		dirhash, err := util.BillyCalcHash(m.FS)
 		if err != nil {
 			mdr.errors = append(mdr.errors, err)

@@ -93,12 +93,14 @@ func (mdr *Modder) LoadMetaFromFS(dir string) error {
 
 	err = mdr.LoadSumFile()
 	if err != nil {
-		return err
+		mdr.errors = append(mdr.errors, err)
+		return nil
 	}
 
 	err = mdr.LoadMappingsFile()
 	if err != nil {
-		return err
+		mdr.errors = append(mdr.errors, err)
+		return nil
 	}
 
 	return nil
