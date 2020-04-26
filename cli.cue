@@ -1,26 +1,25 @@
 package mvs
 
 import (
-	"github.com/hofstadter-io/hofmod-cli:cli"
+	"github.com/hofstadter-io/hofmod-cli/gen"
 	"github.com/hofstadter-io/hofmod-cli/schema"
 )
 
 Outdir: "./"
+#Module: "github.com/hofstadter-io/mvs"
 
-HofGenCli: cli.HofGenerator & {
+HofGenCli: gen.#HofGenerator & {
   Outdir: "./"
-	Cli: CLI
+	Cli: #CLI
 }
 
-_CmdImports :: [
-	{Path: "fmt", ...},
-	{Path: "os", ...},
-	{Path: CLI.Package + "/lib", ...},
+#_CmdImports: [
+	{Path: #Module + "/lib", ...},
 ]
 
-CLI :: schema.Cli & {
+#CLI: schema.#Cli & {
 	Name:    "mvs"
-	Package: "github.com/hofstadter-io/mvs"
+	Package: "github.com/hofstadter-io/mvs/cmd/mvs"
 
 	Usage: "mvs"
 	Short: "MVS is a polyglot dependency management tool based on go mods"
@@ -41,7 +40,7 @@ CLI :: schema.Cli & {
     ...
   """
 
-	Releases: schema.GoReleaser & {
+	Releases: schema.#GoReleaser & {
     Disabled: false
     Draft: false
     Author:   "Tony Worm"
@@ -58,10 +57,12 @@ CLI :: schema.Cli & {
     }
 	}
 
+  GenCmdLib: true
+
 	OmitRun: true
 
 	Imports: [
-		schema.Import & {Path: CLI.Package + "/lib"},
+		schema.#Import & {Path: #Module + "/lib"},
 	]
 
 	PersistentPrerun: true
@@ -71,7 +72,7 @@ CLI :: schema.Cli & {
   """
 
 	Commands: [
-		schema.Command & {
+		schema.#Command & {
 			Name:  "info"
 			Usage: "info [language]"
 			Short: "print info about languages and modders known to mvs"
@@ -82,14 +83,14 @@ CLI :: schema.Cli & {
       """
 
 			Args: [
-				schema.Arg & {
+				schema.#Arg & {
 					Name: "lang"
 					Type: "string"
 					Help: "name of the language to print info about"
 				},
 			]
 
-			Imports: _CmdImports
+			Imports: #_CmdImports
 
 			Body: """
       msg, err := lib.LangInfo(lang)
@@ -100,20 +101,20 @@ CLI :: schema.Cli & {
       fmt.Println(msg)
       """
 		},
-		schema.Command & {
+		schema.#Command & {
 			Name:  "convert"
 			Usage: "convert <lang> <file>"
 			Short: "convert another package system to MVS."
 			Long:  Short
 
 			Args: [
-				schema.Arg & {
+				schema.#Arg & {
 					Name:     "lang"
 					Type:     "string"
 					Required: true
 					Help:     "name of the language to print info about"
 				},
-				schema.Arg & {
+				schema.#Arg & {
 					Name:     "filename"
 					Type:     "string"
 					Required: true
@@ -121,65 +122,62 @@ CLI :: schema.Cli & {
 				},
 			]
 
-			Imports: [
-				{Path: "fmt", ...},
-				{Path: CLI.Package + "/lib", ...},
-			]
+			Imports: #_CmdImports
 
 			Body: """
-      err := lib.Convert(lang, filename)
+      err = lib.Convert(lang, filename)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
       }
       """
 		},
-		schema.Command & {
+		schema.#Command & {
 			Name:  "graph"
 			Usage: "graph"
 			Short: "print module requirement graph"
 			Long:  Short
 
-			Imports: _CmdImports
+			Imports: #_CmdImports
 
 			Body: """
-      err := lib.ProcessLangs("graph", args)
+      err = lib.ProcessLangs("graph", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
       }
       """
 		},
-		schema.Command & {
+		schema.#Command & {
 			Name:  "status"
 			Usage: "status"
 			Short: "print module dependencies status"
 			Long:  Short
 
-			Imports: _CmdImports
+			Imports: #_CmdImports
 
 			Body: """
-      err := lib.ProcessLangs("status", args)
+      err = lib.ProcessLangs("status", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
       }
       """
 		},
-		schema.Command & {
+		schema.#Command & {
 			Name:  "init"
 			Usage: "init <lang> <module>"
 			Short: "initialize a new module in the current directory"
 			Long:  Short
 
 			Args: [
-				schema.Arg & {
+				schema.#Arg & {
 					Name:     "lang"
 					Type:     "string"
 					Required: true
 					Help:     "name of the language to print info about"
 				},
-				schema.Arg & {
+				schema.#Arg & {
 					Name:     "module"
 					Type:     "string"
 					Required: true
@@ -187,78 +185,75 @@ CLI :: schema.Cli & {
 				},
 			]
 
-			Imports: [
-				{Path: "fmt", ...},
-				{Path: CLI.Package + "/lib", ...},
-			]
+			Imports: #_CmdImports
 
 			Body: """
-      err := lib.Init(lang, module)
+      err = lib.Init(lang, module)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
       }
       """
 		},
-		schema.Command & {
+		schema.#Command & {
 			Name:  "tidy"
 			Usage: "tidy [langs...]"
 			Short: "add missinad and remove unused modules"
 			Long:  Short
 
-			Imports: _CmdImports
+			Imports: #_CmdImports
 
 			Body: """
-      err := lib.ProcessLangs("tidy", args)
+      err = lib.ProcessLangs("tidy", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
       }
       """
 		},
-		schema.Command & {
+		schema.#Command & {
 			Name:  "vendor"
 			Usage: "vendor [langs...]"
 			Short: "make a vendored copy of dependencies"
 			Long:  Short
 
-			Imports: _CmdImports
+			Imports: #_CmdImports
 
 			Body: """
-      err := lib.ProcessLangs("vendor", args)
+      err = lib.ProcessLangs("vendor", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
       }
       """
 		},
-		schema.Command & {
+		schema.#Command & {
 			Name:  "verify"
 			Usage: "verify [langs...]"
 			Short: "verify dependencies have expected content"
 			Long:  Short
 
-			Imports: _CmdImports
+			Imports: #_CmdImports
 
 			Body: """
-      err := lib.ProcessLangs("verify", args)
+      err = lib.ProcessLangs("verify", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
       }
       """
 		},
-		schema.Command & {
+		schema.#Command & {
 			Name:   "hack"
 			Usage:  "hack"
 			Short:  "dev command"
 			Long:   Short
 			Hidden: true
 
-			Imports: _CmdImports
+			Imports: #_CmdImports
 
 			Body: """
-      err := lib.Hack("", args)
+      err = lib.Hack("", args)
       if err != nil {
         fmt.Println(err)
         os.Exit(1)
