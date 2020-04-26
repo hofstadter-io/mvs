@@ -3,7 +3,7 @@ module github.com/hofstadter-io/mvs
 go 1.14
 
 require (
-	cuelang.org/go v0.1.1
+	cuelang.org/go v0.1.3-0.20200424192631-12927e83d318
 	github.com/bmatcuk/doublestar v1.2.2
 	github.com/go-git/go-billy/v5 v5.0.0
 	github.com/go-git/go-git/v5 v5.0.0
@@ -17,5 +17,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 	moul.io/http2curl v1.0.0 // indirect
 )
-
-// replace github.com/hofstadter-io/go-utils => ../go-utils
