@@ -1,10 +1,7 @@
 module github.com/hofstadter-io/mvs
 
-cue 0.2.0
+cue master
 
 require (
-  // github.com/hofstadter-io/hofmod-cli v0.0.0
+  github.com/hofstadter-io/hofmod-cli v0.4.0
 )
-
-replace github.com/hofstadter-io/hofmod-cli => ../mods/hofmod-cli
-replace github.com/hofstadter-io/hof => ../hof
