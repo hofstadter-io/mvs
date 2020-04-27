@@ -64,7 +64,7 @@ changelog:
 
 release:
   disable: true
-  draft: true
+  draft: false
   github:
     owner: hofstadter-io
     name: mvs
@@ -72,7 +72,7 @@ release:
 dockers:
 - binaries:
     - mvs
-  skip_push: true
+  skip_push: false
   dockerfile: ../../ci/mvs/docker/Dockerfile.jessie
   image_templates:
   - "hofstadter/{{.ProjectName}}:{{.Tag}}"
@@ -88,7 +88,7 @@ dockers:
 
 - binaries:
     - mvs
-  skip_push: true
+  skip_push: false
   dockerfile: ../../ci/mvs/docker/Dockerfile.scratch
   image_templates:
   - "hofstadter/{{.ProjectName}}:{{.Tag}}-scratch"
