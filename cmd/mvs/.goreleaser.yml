@@ -10,13 +10,13 @@ builds:
 
   ldflags:
     - -s -w
-    - -X github.com/hofstadter-io/mvs/commands.Version={{.Version}}
-    - -X github.com/hofstadter-io/mvs/commands.Commit={{.FullCommit}}
-    - -X github.com/hofstadter-io/mvs/commands.BuildDate={{.Date}}
-    - -X github.com/hofstadter-io/mvs/commands.GoVersion=go1.14
-    - -X github.com/hofstadter-io/mvs/commands.BuildOS={{.Os}}
-    - -X github.com/hofstadter-io/mvs/commands.BuildArch={{.Arch}}
-    - -X github.com/hofstadter-io/mvs/commands.BuildArm={{.Arm}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.Version={{.Version}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.Commit={{.FullCommit}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.BuildDate={{.Date}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.GoVersion=go1.14
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.BuildOS={{.Os}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.BuildArch={{.Arch}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.BuildArm={{.Arm}}
 
   env:
   - CGO_ENABLED=0
@@ -63,8 +63,8 @@ changelog:
 
 
 release:
-  disable: false
-  draft: false
+  disable: true
+  draft: true
   github:
     owner: hofstadter-io
     name: mvs
@@ -72,7 +72,7 @@ release:
 dockers:
 - binaries:
     - mvs
-  skip_push: false
+  skip_push: true
   dockerfile: ci/docker/Dockerfile.jessie
   image_templates:
   - "hofstadter/{{.ProjectName}}:{{.Tag}}"
@@ -88,7 +88,7 @@ dockers:
 
 - binaries:
     - mvs
-  skip_push: false
+  skip_push: true
   dockerfile: ci/docker/Dockerfile.scratch
   image_templates:
   - "hofstadter/{{.ProjectName}}:{{.Tag}}-scratch"

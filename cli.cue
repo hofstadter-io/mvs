@@ -41,8 +41,8 @@ HofGenCli: gen.#HofGenerator & {
   """
 
 	Releases: schema.#GoReleaser & {
-    Disabled: false
-    Draft: false
+    Disabled: true
+    Draft: true
     Author:   "Tony Worm"
     Homepage: "https://github.com/hofstadter-io/mvs"
 
@@ -56,8 +56,6 @@ HofGenCli: gen.#HofGenerator & {
       Repo: "hofstadter"
     }
 	}
-
-  GenCmdLib: true
 
 	OmitRun: true
 
