@@ -17,3 +17,4 @@
 /cue.mod/pkg
 /vendor
 /dist/
+/cmd/mvs/dist/

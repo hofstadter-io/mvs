@@ -73,7 +73,7 @@ dockers:
 - binaries:
     - mvs
   skip_push: true
-  dockerfile: ci/docker/Dockerfile.jessie
+  dockerfile: ../../ci/mvs/docker/Dockerfile.jessie
   image_templates:
   - "hofstadter/{{.ProjectName}}:{{.Tag}}"
   - "hofstadter/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}"
@@ -89,7 +89,7 @@ dockers:
 - binaries:
     - mvs
   skip_push: true
-  dockerfile: ci/docker/Dockerfile.scratch
+  dockerfile: ../../ci/mvs/docker/Dockerfile.scratch
   image_templates:
   - "hofstadter/{{.ProjectName}}:{{.Tag}}-scratch"
   - "hofstadter/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}-scratch"
