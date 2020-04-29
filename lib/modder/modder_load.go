@@ -1,6 +1,8 @@
 package modder
 
 import (
+	"fmt"
+
 	"github.com/go-git/go-billy/v5/osfs"
 )
 
@@ -114,6 +116,11 @@ func (mdr *Modder) LoadModFile() error {
 	err := m.LoadModFile(fn, false /* Do load replace directives! */)
 	if err != nil {
 		return err
+	}
+
+	// no file
+	if m.ModFile == nil {
+		return fmt.Errorf("no %q file found, directory not initialized for %s", mdr.ModFile, mdr.Name)
 	}
 
 	m.Module = m.ModFile.Module.Mod.Path
