@@ -10,13 +10,13 @@ builds:
 
   ldflags:
     - -s -w
-    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.Version={{.Version}}
-    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.Commit={{.FullCommit}}
-    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.BuildDate={{.Date}}
-    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.GoVersion=go1.14
-    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.BuildOS={{.Os}}
-    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.BuildArch={{.Arch}}
-    - -X github.com/hofstadter-io/mvs/cmd/mvs/cmd.BuildArm={{.Arm}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/verinfo.Version={{.Version}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/verinfo.Commit={{.FullCommit}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/verinfo.BuildDate={{.Date}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/verinfo.GoVersion=go1.14
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/verinfo.BuildOS={{.Os}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/verinfo.BuildArch={{.Arch}}
+    - -X github.com/hofstadter-io/mvs/cmd/mvs/verinfo.BuildArm={{.Arm}}
 
   env:
   - CGO_ENABLED=0

@@ -57,6 +57,8 @@ HofGenCli: gen.#HofGenerator & {
     }
 	}
 
+  Telemetry: "UA-103579574-5"
+
 	OmitRun: true
 
 	Imports: [
