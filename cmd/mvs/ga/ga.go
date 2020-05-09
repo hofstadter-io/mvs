@@ -21,8 +21,6 @@ func SendGaEvent(action, label string, value int) {
 		cid = "unknown"
 	}
 
-	fmt.Println("CID:", cid)
-
 	cfg := yagu.GaConfig{
 		TID: "UA-103579574-5",
 		CID: cid,
@@ -53,26 +51,20 @@ func readGaId() (string, error) {
 
 	_, err := os.Lstat(fn)
 	if err != nil {
-		// make sure we check err for something actually bad
-		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
-			// return "", err
-		}
-		// file does not exist
+		// file does not exist, probably...
 		return writeGaId()
 	}
 
 	content, err := ioutil.ReadFile(fn)
 	if err != nil {
-		fmt.Println("ERROR:", err)
 		return writeGaId()
-		// return "", err
 	}
 
 	return string(content), nil
 }
 
 func writeGaId() (string, error) {
-	fmt.Println("writeGaId")
+	// fmt.Println("writeGaId")
 	ucd := yagu.UserHomeDir()
 
 	dir := filepath.Join(ucd, ".hof")
@@ -81,7 +73,7 @@ func writeGaId() (string, error) {
 		return "", err
 	}
 
-	fmt.Println("Mkdir:", dir)
+	// fmt.Println("Mkdir:", dir)
 
 	fn := filepath.Join(dir, ".uuid")
 
@@ -90,7 +82,7 @@ func writeGaId() (string, error) {
 		return id.String(), err
 	}
 
-	fmt.Println("writeGaId: ", id.String())
+	// fmt.Println("writeGaId: ", id.String())
 
 	err = ioutil.WriteFile(fn, []byte(id.String()), 0644)
 	if err != nil {
