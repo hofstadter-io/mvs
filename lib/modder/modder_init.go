@@ -53,7 +53,7 @@ func (mdr *Modder) initModFile(module string) error {
 		return fmt.Errorf("%s already exists", filename)
 	}
 	// error was not path error, so return
-	if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
+	if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" && err.Error() != "no such file or directory" {
 		return err
 	}
 

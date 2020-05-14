@@ -7,6 +7,8 @@ import (
 	"path"
 	"strings"
 
+	"github.com/hofstadter-io/yagu"
+
 	"github.com/hofstadter-io/mvs/lib/parse/sumfile"
 	"github.com/hofstadter-io/mvs/lib/util"
 )
@@ -33,7 +35,7 @@ func (mdr *Modder) WriteVendor() error {
 	os.RemoveAll(mdr.ModsDir)
 
 	// make vendor dir if not present
-	err := os.MkdirAll(mdr.ModsDir, 0755)
+	err := yagu.Mkdir(mdr.ModsDir)
 	if err != nil {
 		return err
 	}
@@ -48,13 +50,13 @@ func (mdr *Modder) WriteVendor() error {
 		dirhash, err := util.BillyCalcHash(m.FS)
 		if err != nil {
 			mdr.errors = append(mdr.errors, err)
-			return fmt.Errorf("While calculating dir hash\n%w\n", err)
+			return fmt.Errorf("While calculating billy dir hash for %q\n%w\n", mdr.ModsDir, err)
 		}
 
 		modhash, err := util.BillyCalcFileHash(mdr.ModFile, m.FS)
 		if err != nil {
 			mdr.errors = append(mdr.errors, err)
-			return fmt.Errorf("While calculating mod hash\n%w\n", err)
+			return fmt.Errorf("While calculating billy mod hash\n%w\n", err)
 		}
 
 

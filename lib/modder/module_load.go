@@ -14,7 +14,7 @@ func (m *Module) LoadModFile(fn string, ignoreReplace bool) error {
 
 	modBytes, err := util.BillyReadAll(fn, m.FS)
 	if err != nil {
-		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" && err.Error() != "no such file or directory" {
 			return err
 		}
 	} else {
@@ -91,7 +91,7 @@ func (m *Module) LoadSumFile(fn string) error {
 
 	sumBytes, err := util.BillyReadAll(fn, m.FS)
 	if err != nil {
-		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" && err.Error() != "no such file or directory" {
 			return err
 		}
 	} else {
@@ -109,7 +109,7 @@ func (m *Module) LoadMappingFile(fn string) error {
 
 	mapBytes, err := util.BillyReadAll(fn, m.FS)
 	if err != nil {
-		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" && err.Error() != "no such file or directory" {
 			return err
 		}
 	} else {

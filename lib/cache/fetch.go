@@ -20,11 +20,10 @@ func Fetch(lang, mod, ver string) (err error) {
 	tag := ver
 
 	dir := Outdir(lang, remote, owner, repo, tag)
-	// fmt.Println("Cache Fetch:", dir)
 
 	_, err = os.Lstat(dir)
 	if err != nil {
-		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" && err.Error() != "no such file or directory" {
 			return err
 		}
 		// not found
@@ -71,7 +70,7 @@ func fetchGitHub(lang, owner, repo, tag string) error {
 			T = t
 			fmt.Printf("FOUND  ")
 		}
-		fmt.Println(*t.Name, *t.Commit.SHA)
+		// fmt.Println(*t.Name, *t.Commit.SHA)
 	}
 
 	if T != nil {

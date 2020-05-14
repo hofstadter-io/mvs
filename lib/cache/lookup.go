@@ -21,7 +21,9 @@ func Load(lang, mod, ver string) (FS billy.Filesystem, err error) {
 
 	_, err = os.Lstat(dir)
 	if err != nil {
-		return nil, err
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" && err.Error() != "no such file or directory" {
+			return nil, err
+		}
 	}
 
 	FS = osfs.New(dir)

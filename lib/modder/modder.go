@@ -82,7 +82,7 @@ func NewFromFile(lang, filepath string, FS billy.Filesystem) (*Modder, error) {
 
 	bytes, err := util.BillyReadAll(filepath, FS)
 	if err != nil {
-		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" {
+		if _, ok := err.(*os.PathError); !ok && err.Error() != "file does not exist" && err.Error() != "no such file or directory" {
 			return nil, err
 		}
 		// The user has not setup a global $HOME/.mvs/mvsconfig file
