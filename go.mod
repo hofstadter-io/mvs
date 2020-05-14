@@ -9,7 +9,7 @@ require (
 	github.com/go-git/go-git/v5 v5.0.0
 	github.com/google/go-github/v30 v30.1.0
 	github.com/google/uuid v1.1.1
-	github.com/hofstadter-io/yagu v0.0.1
+	github.com/hofstadter-io/yagu v0.0.3
 	github.com/parnurzeal/gorequest v0.2.16
 	github.com/spf13/cobra v1.0.0
 	golang.org/x/mod v0.2.0

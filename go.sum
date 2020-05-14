@@ -118,6 +118,8 @@ github.com/hofstadter-io/hof-lang v0.0.0-20180925221847-4d1c962b0729/go.mod h1:4
 github.com/hofstadter-io/mvs v0.5.0/go.mod h1:Cvq23OVa/x1wA720bNCHPgvNuS5+4g2ZWFsWgXfLMUU=
 github.com/hofstadter-io/yagu v0.0.1 h1:WNtWyXH2vu8C/Il7R2itvgFHHLy/WLqzbm+A+yPYFSc=
 github.com/hofstadter-io/yagu v0.0.1/go.mod h1:UWTxRZtLMwWDfYcKPaWS6Bc4VZT+ue5P6yJcpS323rM=
+github.com/hofstadter-io/yagu v0.0.3 h1:VheQUfbnC7IJ93BN5d1BFBEr6r3CN7loVcG/EpW690o=
+github.com/hofstadter-io/yagu v0.0.3/go.mod h1:UWTxRZtLMwWDfYcKPaWS6Bc4VZT+ue5P6yJcpS323rM=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=

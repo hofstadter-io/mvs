@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"strings"
-
 	"github.com/spf13/cobra"
 
 	"github.com/hofstadter-io/mvs/lib"
@@ -58,7 +56,7 @@ var RootCmd = &cobra.Command{
 
 	PreRun: func(cmd *cobra.Command, args []string) {
 
-		ga.SendGaEvent("root", strings.Join(args, "/"), 0)
+		ga.SendGaEvent("root", "<omit>", 0)
 
 	},
 }
@@ -68,8 +66,7 @@ func init() {
 	hf := RootCmd.HelpFunc()
 	f := func(cmd *cobra.Command, args []string) {
 		if RootCmd.Name() == cmd.Name() {
-			as := strings.Join(args, "/")
-			ga.SendGaEvent("root/help", as, 0)
+			ga.SendGaEvent("root/help", "<omit>", 0)
 		}
 		hf(cmd, args)
 	}
