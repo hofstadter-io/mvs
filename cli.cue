@@ -57,6 +57,8 @@ HofGenCli: gen.#HofGenerator & {
     }
 	}
 
+	Updates: true
+
   Telemetry: "UA-103579574-5"
   TelemetryIdDir: "hof"
 
