@@ -57,7 +57,7 @@ func readGaId() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	dir := filepath.Join(ucd, ".hof")
+	dir := filepath.Join(ucd, "hof")
 	fn := filepath.Join(dir, ".uuid")
 
 	_, err = os.Lstat(fn)
@@ -81,7 +81,7 @@ func writeGaId() (string, error) {
 		return "", err
 	}
 
-	dir := filepath.Join(ucd, ".hof")
+	dir := filepath.Join(ucd, "hof")
 	err = yagu.Mkdir(dir)
 	if err != nil {
 		return "", err
